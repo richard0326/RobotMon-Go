@@ -1,5 +1,5 @@
 # RobotMon-Go
-Robot Monster Catch them all  
+- 포켓몬고를 모방한 게임 개발
  
 ## 사용할 기술
 - Linux
