@@ -1,8 +1,27 @@
 ﻿{
+  "$schema": "https://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:61896",
+      "sslPort": 44393
+    }
+  },
   "profiles": {
-    "APIServer": {
+    "ApiServer": {
       "commandName": "Project",
-      "commandLineArgs": "--serverIndex 301 --name LobbyServer --threadCount 2  --lobbyCountPerThread 2 --lobbyMaxUserCount 4 --lobbyStartNumber 0 --mqServerAddress 127.0.0.1 --mqServerAddressGW 127.0.0.1 DBRequest --mqServerAddressG 127.0.0.1 --mqServerAddressDB 127.0.0.1"
+      "dotnetRunMessages": true,
+      "applicationUrl": "https://localhost:5001;http://localhost:5000",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     }
   }
 }

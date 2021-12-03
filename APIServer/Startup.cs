@@ -4,13 +4,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace APIServer
+namespace ApiServer
 {
     public class Startup
     {
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            //DBManager.Init(Configuration);
         }
 
         public IConfiguration Configuration { get; }
@@ -28,11 +30,7 @@ namespace APIServer
             {
                 app.UseDeveloperExceptionPage();
             }
-            
-            // http 요청을 https로 리디렉션
-            app.UseHttpsRedirection();
 
-            // 요청을 라우팅하도록하는 역할
             app.UseRouting();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

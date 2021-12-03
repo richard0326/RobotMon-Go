@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace APIServer
+namespace ApiServer
 {
     public class Program
     {
