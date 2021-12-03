@@ -1,1 +1,7 @@
 GET http://localhost:5000/Login
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "PW":"123qwe"
+}
