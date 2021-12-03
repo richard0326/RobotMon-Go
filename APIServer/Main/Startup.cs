@@ -12,7 +12,7 @@ namespace ApiServer
         {
             Configuration = configuration;
 
-            //DBManager.Init(Configuration);
+            MemoryManager.Init(Configuration);
         }
 
         public IConfiguration Configuration { get; }

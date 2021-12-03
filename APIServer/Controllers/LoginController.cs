@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServerCommon;
@@ -12,6 +13,7 @@ namespace ApiServer.Controllers
     [Route("[controller]")]
     public class LoginController : ControllerBase
     {
+        [HttpGet]
         public async Task<PkLoginResponse> Get(PkLoginRequest request)
         {
             Console.WriteLine(request.ID);
@@ -19,26 +21,28 @@ namespace ApiServer.Controllers
             
             // 반환할 응답 객체
             var response = new PkLoginResponse();
-            //response.Result = SErrorCode.None;
-            response.Result = 0;
+            response.Result = SErrorCode.None;
             
-            // 암호화된 PW를 가져온다.
-            // saltstring + SHA 암호화하여 hash 값을 얻는다.
-            var saltValue = ServerCommon.Security.SaltString();
-            var hashingPassword = ServerCommon.Security.MakeHashingPassWord(saltValue, request.PW);
-
-            string ez = request.ID;
-            // DB에 확인
-            if (false)
+            // DB에 ID, PW 확인
+            using (var connection = await MemoryManager.GetGameDBConnection())
             {
-                //response.Result = SErrorCode.login_Fail_NotUser;
-                return response;
-            }
+                var userInfo = await connection.QuerySingleOrDefaultAsync<DBUserInfo>(
+                    @"select UID, PW, NickName, Salt from Users where ID = @id", new {id = request.ID});
+                if (userInfo == null || string.IsNullOrEmpty(userInfo.PW))
+                {
+                    response.Result = ServerCommon.SErrorCode.login_Fail_NotUser;
+                    return response;
+                }
             
-            if (false)
-            {
-                //response.Result = SErrorCode.login_Fail_PW;
-                return response;
+                // 암호화된 PW를 가져온다.
+                // saltstring + SHA 암호화하여 hash 값을 얻는다.
+                var saltValue = ServerCommon.Security.SaltString();
+                var hashingPassword = ServerCommon.Security.MakeHashingPassWord(saltValue, request.PW);    
+                if (userInfo.PW != hashingPassword)
+                {
+                    response.Result = ServerCommon.SErrorCode.login_Fail_PW;
+                    return response;
+                }
             }
 
             // 토큰 발행
@@ -59,8 +63,7 @@ namespace ApiServer.Controllers
     
     public class PkLoginResponse
     {
-        //public ServerCommon.SErrorCode Result;
-        public int Result { get; set; }
+        public ServerCommon.SErrorCode Result { get; set; }
         public string Authtoken { get; set; }
     }
 
