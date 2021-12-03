@@ -36,14 +36,6 @@ note right APIServer: 유저 위치 정보에 따른 주변 지역 정보를 제
 @enduml
 ```
  
-### 유저 이동
-```
-@startuml
-Client <-> APIServer: Req/ResMove
-note right APIServer: 유저 이동한 위치 정보에 따른 주변 지역 정보를 제공한다. (기존 위치의 정보를 제외한 정보) 
-@enduml
-```
- 
 ### 로봇몬 잡기
 ```
 @startuml
