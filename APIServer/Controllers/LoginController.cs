@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ServerCommon;
 
 namespace ApiServer.Controllers
 {
@@ -11,20 +12,34 @@ namespace ApiServer.Controllers
     [Route("[controller]")]
     public class LoginController : ControllerBase
     {
-        private static int varInt = 0;
-        [HttpGet]
-        public async Task<int> Get()
+        [HttpPut]
+        public async Task<PkLoginResponse> Put(PkLoginRequest request)
         {
-            varInt++;
-            return varInt;
-        }
-        
-        [HttpPost]
-        public async Task<PkLoginResponse> Post(PkLoginRequest request)
-        {
-            Console.WriteLine($"[Request Login] ID:{request.ID}, PW:{request.PW}");
+            // 반환할 응답 객체
             var response = new PkLoginResponse();
+            response.Result = SErrorCode.None;
             
+            // 암호화된 PW를 가져온다.
+            // saltstring + SHA 암호화하여 hash 값을 얻는다.
+            var saltValue = ServerCommon.Security.SaltString();
+            var hashingPassword = ServerCommon.Security.MakeHashingPassWord(saltValue, request.PW);
+            
+            // DB에 확인
+            if (false)
+            {
+                response.Result = SErrorCode.Login_Fail_NotUser;
+                return response;
+            }
+            
+            if (false)
+            {
+                response.Result = SErrorCode.Login_Fail_PW;
+                return response;
+            }
+
+            // 토큰 발행
+            response.Authtoken = ServerCommon.Security.AuthToken();
+
             return response;
         }
     }
@@ -38,8 +53,7 @@ namespace ApiServer.Controllers
     
     public class PkLoginResponse
     {
-        //public ErrorCode Result;
-        public int Result;
+        public ServerCommon.SErrorCode Result;
         public string Authtoken;
     }
 

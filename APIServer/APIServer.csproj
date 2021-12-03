@@ -9,6 +9,11 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.2.7" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+        <PackageReference Include="ZLogger" Version="1.6.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ServerCommon\ServerCommon.csproj" />
     </ItemGroup>
 
 </Project>
