@@ -7,25 +7,25 @@ namespace ApiServer
 {
     public class MemoryManager
     {
-        static string s_gameDBConnectString;
-        static string s_redisAddress;
+        public static string GameDBConnectString;
+        public static string RedisAddress;
         
-        public static RedisConnection s_redisConnection { get; set; }
+        public static RedisConnection RedisConnection { get; set; }
         
         public static void Init(IConfiguration configuration)
         {
             // Conf 파일에서 DB와 Redis 정보를 긁어온다.
-            s_gameDBConnectString = configuration.GetSection("DBConnection")["MySqlGame"];
-            s_redisAddress = configuration.GetSection("DBConnection")["Redis"];
+            GameDBConnectString = configuration.GetSection("DBConnection")["MySqlGame"];
+            RedisAddress = configuration.GetSection("DBConnection")["Redis"];
             
-            var config = new RedisConfig("basic", s_redisAddress);
-            s_redisConnection = new RedisConnection(config);
+            var config = new RedisConfig("basic", RedisAddress);
+            RedisConnection = new RedisConnection(config);
         }
         
         public static async Task<MySqlConnection> GetGameDBConnection()
         {
             // GetOpenMySqlConnection함수 통해서 DB 연결하기...
-            return await GetOpenMySqlConnection(s_gameDBConnectString);
+            return await GetOpenMySqlConnection(GameDBConnectString);
         }
         
         static async Task<MySqlConnection> GetOpenMySqlConnection(string connectionString)
