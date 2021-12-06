@@ -6,11 +6,11 @@ namespace ServerCommon
 {
     public class Security
     {
-        public  static string MakeHashingPassWord(string saltValue, string pw)
+        public static string MakeHashingPassWord(string saltValue, string pw)
         {
             // SHA 암호화하여 hash 값을 얻는다.
             var sha = new SHA256Managed();
-            byte[] hash = sha.ComputeHash(Encoding.ASCII.GetBytes((saltValue+pw)));
+            byte[] hash = sha.ComputeHash(Encoding.ASCII.GetBytes((saltValue + pw)));
             
             // 이후에 해시 내용을 stringBuilder에 옮긴다...
             StringBuilder stringBuilder = new StringBuilder();
@@ -22,7 +22,7 @@ namespace ServerCommon
             return stringBuilder.ToString();
         }
         
-        public  static string SaltString()
+        public static string SaltString()
         {
             const string allowableCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
         
@@ -33,8 +33,7 @@ namespace ServerCommon
             }
             return new string(bytes.Select(x => allowableCharacters[x % allowableCharacters.Length]).ToArray());
         }
-        
-        
+
         private const string AllowableCharacters = "abcdefghijklmnopqrstuvwxyz0123456789";
         public static string AuthToken()
         {

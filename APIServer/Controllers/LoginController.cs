@@ -21,7 +21,7 @@ namespace ApiServer.Controllers
             
             // 반환할 응답 객체
             var response = new PkLoginResponse();
-            response.Result = SErrorCode.None;
+            response.Result = ErrorCode.None;
             
             // DB에 ID, PW 확인
             using (var connection = await MemoryManager.GetGameDBConnection())
@@ -30,7 +30,7 @@ namespace ApiServer.Controllers
                     @"select UID, PW, NickName, Salt from Users where ID = @id", new {id = request.ID});
                 if (userInfo == null || string.IsNullOrEmpty(userInfo.PW))
                 {
-                    response.Result = ServerCommon.SErrorCode.login_Fail_NotUser;
+                    response.Result = ServerCommon.ErrorCode.login_Fail_NotUser;
                     return response;
                 }
             
@@ -40,7 +40,7 @@ namespace ApiServer.Controllers
                 var hashingPassword = ServerCommon.Security.MakeHashingPassWord(saltValue, request.PW);    
                 if (userInfo.PW != hashingPassword)
                 {
-                    response.Result = ServerCommon.SErrorCode.login_Fail_PW;
+                    response.Result = ServerCommon.ErrorCode.login_Fail_PW;
                     return response;
                 }
             }
@@ -63,7 +63,7 @@ namespace ApiServer.Controllers
     
     public class PkLoginResponse
     {
-        public ServerCommon.SErrorCode Result { get; set; }
+        public ServerCommon.ErrorCode Result { get; set; }
         public string Authtoken { get; set; }
     }
 
