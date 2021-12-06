@@ -8,6 +8,11 @@ namespace ApiServer
 {
     public class Program
     {
+        public static void Main(string[] args)
+        {
+            CreateHostBuilder(args).Build().Run();
+        }
+        
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
@@ -22,11 +27,6 @@ namespace ApiServer
                     // launchSettings.json의 ip를 사용함.
                     //webBuilder.UseUrls(ServerAddress);
                 });
-        }
-
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
         }
     }
 }

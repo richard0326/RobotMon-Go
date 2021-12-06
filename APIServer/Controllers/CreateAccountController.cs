@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using ServerCommon;
 
 namespace ApiServer.Controllers
@@ -8,11 +11,29 @@ namespace ApiServer.Controllers
     [Route("[controller]")]
     public class CreateAccountController : ControllerBase
     {
-        [HttpGet]
-        public async Task<PkCreateAccountResponse> Get(PkCreateAccountRequest request)
+        protected readonly ICommonDb HandleCommonDb;
+        
+        public CreateAccountController(ICommonDb commonDb)
+        {
+            HandleCommonDb = commonDb;
+        }
+        
+        [HttpPost]
+        public async Task<PkCreateAccountResponse> CreateAccountPost(PkCreateAccountRequest request)
         {
             var response = new PkCreateAccountResponse();
             response.Result = ErrorCode.None;
+
+            // PW 암호화 ( Salt + HashingPassword )
+            var saltValue = Security.SaltString();
+            var hashingPassword = Security.MakeHashingPassWord(saltValue, request.PW);
+
+            //using (HandleCommonDb)
+            {
+                var resultCode = await HandleCommonDb.InsertCreateAccountDataAsync(request.ID, hashingPassword, saltValue);
+                response.Result = resultCode;
+            }
+
             return response;
         }
     }

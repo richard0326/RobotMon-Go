@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using ApiServer.Controllers;
+using ApiServer.Options;
+using ApiServer.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,8 +14,6 @@ namespace ApiServer
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-            MemoryManager.Init(Configuration);
         }
 
         public IConfiguration Configuration { get; }
@@ -20,8 +21,17 @@ namespace ApiServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.Configure<SessionConfig>(Configuration.GetSection(nameof(SessionConfig)));
+            services.Configure<CommonDbConfig>(Configuration.GetSection("CommonDbConfig"));
+            
+            // Dapper 를 통한 Mysql DB 서비스를 등록한다
+            services.AddTransient<ICommonDb, CommonDb>();
+            
             services.AddLogging();  // logger 등록
-            services.AddControllers();
+            var builder = services.AddControllers();
+            builder.AddApplicationPart(typeof(LoginController).Assembly);
+            builder.AddApplicationPart(typeof(CreateAccountController).Assembly);
+            builder.AddApplicationPart(typeof(UserInfoController).Assembly);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

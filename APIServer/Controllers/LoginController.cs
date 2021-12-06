@@ -13,43 +13,32 @@ namespace ApiServer.Controllers
     [Route("[controller]")]
     public class LoginController : ControllerBase
     {
-        [HttpGet]
-        public async Task<PkLoginResponse> Get(PkLoginRequest request)
+        protected readonly ICommonDb HandleCommonDb;
+        
+        public LoginController(ICommonDb commonDb)
         {
-            Console.WriteLine(request.ID);
-            Console.WriteLine(request.PW);
-            
+            HandleCommonDb = commonDb;
+        }
+        
+        [HttpPost]
+        public async Task<PkLoginResponse> LoginPost(PkLoginRequest request)
+        {
             // 반환할 응답 객체
             var response = new PkLoginResponse();
-            response.Result = ErrorCode.None;
-            
-            // DB에 ID, PW 확인
-            using (var connection = await MemoryManager.GetGameDBConnection())
+
+            //using (HandleCommonDb)
             {
-                var userInfo = await connection.QuerySingleOrDefaultAsync<DBUserInfo>(
-                    @"select UID, PW, NickName, Salt from Users where ID = @id", new {id = request.ID});
-                if (userInfo == null || string.IsNullOrEmpty(userInfo.PW))
+                // DB에서 로그인 시도에 대한 결과를 받아온다.
+                var resultCode = await HandleCommonDb.GetLoginDataAsync(request.ID, request.PW);
+                if (resultCode == ErrorCode.None)
                 {
-                    response.Result = ServerCommon.ErrorCode.login_Fail_NotUser;
-                    return response;
+                    // 토큰 발행
+                    response.Authtoken = ServerCommon.Security.AuthToken();
                 }
-            
-                // 암호화된 PW를 가져온다.
-                // saltstring + SHA 암호화하여 hash 값을 얻는다.
-                var saltValue = ServerCommon.Security.SaltString();
-                var hashingPassword = ServerCommon.Security.MakeHashingPassWord(saltValue, request.PW);    
-                if (userInfo.PW != hashingPassword)
-                {
-                    response.Result = ServerCommon.ErrorCode.login_Fail_PW;
-                    return response;
-                }
+
+                response.Result = resultCode;
             }
 
-            // 토큰 발행
-            response.Authtoken = ServerCommon.Security.AuthToken();
-
-            Console.WriteLine(response.Authtoken);
-            
             return response;
         }
     }
@@ -64,13 +53,5 @@ namespace ApiServer.Controllers
     {
         public ServerCommon.ErrorCode Result { get; set; }
         public string Authtoken { get; set; }
-    }
-
-    class DBUserInfo
-    {
-        public UInt64 UID;
-        public string PW;
-        public string NickName;
-        public string Salt;
     }
 }
