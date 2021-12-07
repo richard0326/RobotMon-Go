@@ -7,26 +7,32 @@ using ApiServer.Options;
 using CloudStructures;
 using Dapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
 using ServerCommon;
+using ZLogger;
 
 namespace ApiServer.Services
 {
-    public class AccountDb : IAccountDb, IDisposable
+    public class AccountDb : IAccountDb
     {
-        private readonly IOptions<AccountDbConfig> _accountDbConfig;
-        private IDbConnection DBConn;
-        
-        public AccountDb(IOptions<AccountDbConfig> accountDbConfig)
+        private readonly IOptions<DbConfig> _accountDbConfig;
+        private IDbConnection? DBConn;
+        private readonly ILogger<AccountDb> _logger;
+
+        public AccountDb(ILogger<AccountDb> logger, IOptions<DbConfig> accountDbConfig)
         {
             _accountDbConfig = accountDbConfig;
+            _logger = logger;
             Open();
+            _logger.ZLogDebug($"Open");
         }
 
         public void Dispose()
         {
             Close();
+            _logger.ZLogDebug($"Dispose");
         }
         
         public void Open()
@@ -44,17 +50,17 @@ namespace ApiServer.Services
             DBConn?.Close();
         }
         
-        public async Task<ServerCommon.ErrorCode> CreateAccountDataAsync(string id, string pw, string salt)
+        public async Task<ErrorCode> CreateAccountDataAsync(string? id, string pw, string salt)
         {
-            string InsertQuery = $"insert Users(ID, PW, Salt) Values(@userid, @userpw, @usersalt)";
+            string InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
             Console.WriteLine(InsertQuery);
             try
             {
                 var count = await DBConn.ExecuteAsync(InsertQuery, new
                 {
-                    userid = id,
-                    userpw = pw,
-                    usersalt = salt
+                    userId = id,
+                    userPw = pw,
+                    userSalt = salt
                 });
 
                 // ID를 Unique하게 해놔서... 일로 들어오진 않는다.
@@ -65,6 +71,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
+                _logger.ZLogDebug($"CreateAccount_Exception : @ex", e);
                 return ErrorCode.CreateAccount_Fail_Duplicate;
             }
 
@@ -72,7 +79,7 @@ namespace ApiServer.Services
         }
         
         // 유저의 Password, Salt 값 반환
-        public async Task<Tuple<string, string>> GetLoginDataAsync(string id, string pw)
+        public async Task<Tuple<string?, string?>?> GetLoginDataAsync(string? id, string? pw)
         {
             string SelectQuery = $"select PW, Salt from Users where ID = @userid";
             
@@ -88,10 +95,11 @@ namespace ApiServer.Services
                     return null;
                 }
                 
-                return new Tuple<string, string>(loginData.PW, loginData.Salt);
+                return new Tuple<string?, string?>(loginData.PW, loginData.Salt);
             }
             catch (Exception e)
             {
+                _logger.ZLogDebug($"GetLoginData_Exception : @ex", e);
                 return null;
             }
         }

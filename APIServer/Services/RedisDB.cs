@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using CloudStructures;
 using CloudStructures.Structures;
@@ -7,7 +8,7 @@ namespace ApiServer.Services
 {
     public class RedisDB
     {
-        private static RedisConnection s_connection;
+        private static RedisConnection? s_connection;
 
         public static void Init(string address)
         {

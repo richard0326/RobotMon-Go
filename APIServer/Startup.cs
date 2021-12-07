@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace ApiServer
 {
@@ -23,12 +24,11 @@ namespace ApiServer
         {
             // TODO Redis 연결 부분 추가 예정
             //services.Configure<SessionConfig>(Configuration.GetSection(nameof(SessionConfig)));
-            services.Configure<AccountDbConfig>(Configuration.GetSection(nameof(AccountDbConfig)));
-            
+            services.Configure<DbConfig>(Configuration.GetSection(nameof(DbConfig)));
+
             // Dapper 를 통한 Mysql DB 서비스를 등록한다
             services.AddTransient<IAccountDb, AccountDb>();
-            
-            services.AddLogging();  // logger 등록
+
             services.AddControllers();
         }
 

@@ -10,7 +10,7 @@ namespace ApiServer.Controllers
     {
         // TODO 유저 정보 받기 기능 구현
         [HttpPost]
-        public async Task<LoginResponse> UserInfoPost(LoginRequest request)
+        public async Task<LoginResponse?> UserInfoPost(LoginRequest request)
         {
             return null;
         }

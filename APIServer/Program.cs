@@ -19,7 +19,17 @@ namespace ApiServer
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
-                    logging.AddZLoggerConsole();    // Zlogger 사용
+                    //logging.SetMinimumLevel(LogLevel.Debug); // appsettings.json 파일에 의해서 Information으로 오버라이드됨.
+                    //logging.AddZLoggerFile("filename.txt");
+
+                    logging.AddZLoggerConsole();
+                    /*
+                    logging.AddZLoggerConsole(options =>
+                    {
+                        // 구조화된 형식으로 로그 출력
+                        options.EnableStructuredLogging = true;
+                    }); // Zlogger 사용
+                    */
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

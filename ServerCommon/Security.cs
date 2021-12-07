@@ -6,7 +6,7 @@ namespace ServerCommon
 {
     public class Security
     {
-        public static string MakeHashingPassWord(string saltValue, string pw)
+        public static string MakeHashingPassWord(string? saltValue, string? pw)
         {
             // SHA 암호화하여 hash 값을 얻는다.
             var sha = new SHA256Managed();
