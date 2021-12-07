@@ -1,5 +1,8 @@
 
+using System;
+using ApiServer.Services;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ZLogger;
@@ -15,7 +18,9 @@ namespace ApiServer
         
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            return Host.CreateDefaultBuilder(args)
+            //string portStr = Environment.GetEnvironmentVariable("Port");
+            //string serverAddress = $"http://*:{portStr}";
+            var builder = Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();
@@ -36,8 +41,10 @@ namespace ApiServer
                     webBuilder.UseStartup<Startup>();
                     // launchSettings.json의 ip를 활용하여 ip 주소를 변경할 수 있다.
                     // launchSettings.json 파일을 빌드 시 항상 복사(Always Copy)로 되어 있다.
-                    //webBuilder.UseUrls(ServerAddress);
+                    //webBuilder.UseUrls(serverAddress);
                 });
+
+            return builder;
         }
     }
 }

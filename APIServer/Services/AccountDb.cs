@@ -18,7 +18,7 @@ namespace ApiServer.Services
     public class AccountDb : IAccountDb
     {
         private readonly IOptions<DbConfig> _accountDbConfig;
-        private IDbConnection? DBConn;
+        private IDbConnection? _dbConn;
         private readonly ILogger<AccountDb> _logger;
 
         public AccountDb(ILogger<AccountDb> logger, IOptions<DbConfig> accountDbConfig)
@@ -37,17 +37,17 @@ namespace ApiServer.Services
         
         public void Open()
         {
-            if(DBConn == null)
+            if(_dbConn == null)
             {
-                DBConn = new MySqlConnection(_accountDbConfig.Value.ConnStr);
+                _dbConn = new MySqlConnection(_accountDbConfig.Value.ConnStr);
             }
 
-            DBConn.Open();
+            _dbConn.Open();
         }
         
         public void Close()
         {
-            DBConn?.Close();
+            _dbConn?.Close();
         }
         
         public async Task<ErrorCode> CreateAccountDataAsync(string? id, string pw, string salt)
@@ -56,7 +56,7 @@ namespace ApiServer.Services
             Console.WriteLine(InsertQuery);
             try
             {
-                var count = await DBConn.ExecuteAsync(InsertQuery, new
+                var count = await _dbConn.ExecuteAsync(InsertQuery, new
                 {
                     userId = id,
                     userPw = pw,
@@ -85,7 +85,7 @@ namespace ApiServer.Services
             
             try
             {
-                var loginData = await DBConn.QuerySingleOrDefaultAsync<TableLoginData>(SelectQuery, new
+                var loginData = await _dbConn.QuerySingleOrDefaultAsync<TableLoginData>(SelectQuery, new
                 {
                     userid = id
                 });

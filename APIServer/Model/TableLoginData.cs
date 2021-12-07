@@ -6,7 +6,6 @@ namespace ApiServer.Model
 {
     public class TableLoginData
     {
-        public Int64 UID { get; set; }
         public string? PW { get; set; }
         public string? Salt { get; set; }
     }

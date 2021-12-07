@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using ApiServer.Model;
 using CloudStructures;
 using CloudStructures.Structures;
+using StackExchange.Redis;
 
 namespace ApiServer.Services
 {
@@ -16,27 +18,35 @@ namespace ApiServer.Services
             s_connection = new RedisConnection(config);
         }
 
-        // TODO 
-        public static async Task SetUserAuthToken(string key, string authToken)
+        public static async Task<bool> CheckUserExist(string? key)
         {
-            var redis = new RedisString<string>(s_connection, key, null);
-            await redis.SetAsync(authToken, null);
+            var redisStr = new RedisString<RedisLoginData>(s_connection, key, null);
+            
+            // TODO redis Async에서 에러가 발생해서 진행되지 않음.
+            bool exists = await redisStr.ExistsAsync();
+            return exists;
+        }
+        
+        public static async Task SetUserInfo(string key, RedisLoginData redisLoginData)
+        {
+            var redisStr = new RedisString<RedisLoginData>(s_connection, key, null);
+            await redisStr.SetAsync(redisLoginData, null);
         }
 
-        public static async Task<string> GetUserAuthToken(string key)
+        public static async Task<RedisLoginData> GetUserAuthToken(string key)
         {
-            var redis = new RedisString<string>(s_connection, key, null);
+            var redisStr = new RedisString<RedisLoginData>(s_connection, key, null);
 
             try
             {
-                var redisResult = await redis.GetAsync();
+                var redisResult = await redisStr.GetAsync();
                 if (!redisResult.HasValue)
                 {
                     return null;
                 }
                 
-                var authToken = redisResult.Value;
-                return authToken;
+                var redisLogin = redisResult.Value;
+                return redisLogin;
             }
             catch (Exception e)
             {
