@@ -13,7 +13,7 @@ using ServerCommon;
 
 namespace ApiServer.Services
 {
-    public class CommonDb : ICommonDb
+    public class CommonDb : ICommonDb, IDisposable
     {
         private readonly IOptions<CommonDbConfig> HandleCommonDbConfig;
         private IDbConnection DBConn;
@@ -21,20 +21,19 @@ namespace ApiServer.Services
         public CommonDb(IOptions<CommonDbConfig> commonDbConfig)
         {
             HandleCommonDbConfig = commonDbConfig;
-            //Open();
+            Open();
         }
 
-        //public void Dispose()
-        //{
-        //    Close();
-        //}
+        public void Dispose()
+        {
+            Close();
+        }
         
         public void Open()
         {
             if(DBConn == null)
             {
-                //DBConn = new MySqlConnection(HandleCommonDbConfig.Value.ConnStr);
-                DBConn = new MySqlConnection("server=127.0.0.1;user=root;password=root1234;port=3306;database=game;Pooling=true;Min Pool Size=0;Max Pool Size=40;AllowUserVariables=True;");
+                DBConn = new MySqlConnection(HandleCommonDbConfig.Value.ConnStr);
             }
 
             DBConn.Open();
@@ -47,15 +46,6 @@ namespace ApiServer.Services
         
         public async Task<ServerCommon.ErrorCode> InsertCreateAccountDataAsync(string id, string pw, string salt)
         {
-            try
-            {
-                Open();
-            }
-            catch (Exception e)
-            {
-                return ServerCommon.ErrorCode.DbConnection_Fail;
-            }
-
             string InsertQuery = $"insert Users(ID, PW, Salt) Values(@userid, @userpw, @usersalt)";
             Console.WriteLine(InsertQuery);
             try
@@ -72,12 +62,9 @@ namespace ApiServer.Services
                 {
                     return ErrorCode.CreateAccount_Fail_Duplicate;
                 }
-                
-                Close();
             }
             catch (Exception e)
             {
-                Close();
                 return ServerCommon.ErrorCode.CreateAccount_Fail_Exception;
             }
             
@@ -86,15 +73,6 @@ namespace ApiServer.Services
         
         public async Task<ServerCommon.ErrorCode> GetLoginDataAsync(string id, string pw)
         {
-            try
-            {
-                Open();
-            }
-            catch (Exception e)
-            {
-                return ServerCommon.ErrorCode.DbConnection_Fail;
-            }
-
             string SelectQuery = $"select PW, Salt from Users where ID = @userid";
             
             try
@@ -114,11 +92,9 @@ namespace ApiServer.Services
                 {
                     return ServerCommon.ErrorCode.Login_Fail_WrongPassword;
                 }
-                Close();
             }
             catch (Exception e)
             {
-                Close();
                 return ServerCommon.ErrorCode.Login_Fail_Exception;
             }
             

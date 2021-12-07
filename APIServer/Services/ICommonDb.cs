@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace ApiServer
 {
-    public interface ICommonDb // : IDisposable
+    public interface ICommonDb
     {
         // DB 열기.
         public void Open();

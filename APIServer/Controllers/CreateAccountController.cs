@@ -19,6 +19,8 @@ namespace ApiServer.Controllers
         }
         
         [HttpPost]
+        //public async Task<PkCreateAccountResponse> CreateAccountPost(PkCreateAccountRequest request, [FromServices] ICommonDb commonDb)
+        // -> 서비스 여기서 받고 싶은 경우
         public async Task<PkCreateAccountResponse> CreateAccountPost(PkCreateAccountRequest request)
         {
             var response = new PkCreateAccountResponse();
@@ -28,11 +30,8 @@ namespace ApiServer.Controllers
             var saltValue = Security.SaltString();
             var hashingPassword = Security.MakeHashingPassWord(saltValue, request.PW);
 
-            //using (HandleCommonDb)
-            {
-                var resultCode = await HandleCommonDb.InsertCreateAccountDataAsync(request.ID, hashingPassword, saltValue);
-                response.Result = resultCode;
-            }
+            var resultCode = await HandleCommonDb.InsertCreateAccountDataAsync(request.ID, hashingPassword, saltValue);
+            response.Result = resultCode;
 
             return response;
         }
