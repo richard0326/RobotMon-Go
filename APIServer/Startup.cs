@@ -21,27 +21,20 @@ namespace ApiServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // TODO Redis 연결 부분 추가 예정
             //services.Configure<SessionConfig>(Configuration.GetSection(nameof(SessionConfig)));
-            services.Configure<CommonDbConfig>(Configuration.GetSection("CommonDbConfig"));
+            services.Configure<AccountDbConfig>(Configuration.GetSection(nameof(AccountDbConfig)));
             
             // Dapper 를 통한 Mysql DB 서비스를 등록한다
-            services.AddTransient<ICommonDb, CommonDb>();
+            services.AddTransient<IAccountDb, AccountDb>();
             
             services.AddLogging();  // logger 등록
-            var builder = services.AddControllers();
-            builder.AddApplicationPart(typeof(LoginController).Assembly);
-            builder.AddApplicationPart(typeof(CreateAccountController).Assembly);
-            builder.AddApplicationPart(typeof(UserInfoController).Assembly);
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             app.UseRouting();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

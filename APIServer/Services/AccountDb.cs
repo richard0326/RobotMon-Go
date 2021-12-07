@@ -13,14 +13,14 @@ using ServerCommon;
 
 namespace ApiServer.Services
 {
-    public class CommonDb : ICommonDb, IDisposable
+    public class AccountDb : IAccountDb, IDisposable
     {
-        private readonly IOptions<CommonDbConfig> HandleCommonDbConfig;
+        private readonly IOptions<AccountDbConfig> _accountDbConfig;
         private IDbConnection DBConn;
         
-        public CommonDb(IOptions<CommonDbConfig> commonDbConfig)
+        public AccountDb(IOptions<AccountDbConfig> accountDbConfig)
         {
-            HandleCommonDbConfig = commonDbConfig;
+            _accountDbConfig = accountDbConfig;
             Open();
         }
 
@@ -33,7 +33,7 @@ namespace ApiServer.Services
         {
             if(DBConn == null)
             {
-                DBConn = new MySqlConnection(HandleCommonDbConfig.Value.ConnStr);
+                DBConn = new MySqlConnection(_accountDbConfig.Value.ConnStr);
             }
 
             DBConn.Open();
@@ -44,7 +44,7 @@ namespace ApiServer.Services
             DBConn?.Close();
         }
         
-        public async Task<ServerCommon.ErrorCode> InsertCreateAccountDataAsync(string id, string pw, string salt)
+        public async Task<ServerCommon.ErrorCode> CreateAccountDataAsync(string id, string pw, string salt)
         {
             string InsertQuery = $"insert Users(ID, PW, Salt) Values(@userid, @userpw, @usersalt)";
             Console.WriteLine(InsertQuery);
@@ -65,40 +65,35 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                return ServerCommon.ErrorCode.CreateAccount_Fail_Exception;
+                return ErrorCode.CreateAccount_Fail_Duplicate;
             }
-            
-            return ServerCommon.ErrorCode.None;
+
+            return ErrorCode.None;
         }
         
-        public async Task<ServerCommon.ErrorCode> GetLoginDataAsync(string id, string pw)
+        // 유저의 Password, Salt 값 반환
+        public async Task<Tuple<string, string>> GetLoginDataAsync(string id, string pw)
         {
             string SelectQuery = $"select PW, Salt from Users where ID = @userid";
             
             try
             {
-                var loginData = await DBConn.QuerySingleOrDefaultAsync<TbLoginData>(SelectQuery, new
+                var loginData = await DBConn.QuerySingleOrDefaultAsync<TableLoginData>(SelectQuery, new
                 {
                     userid = id
                 });
-                if (loginData == null || string.IsNullOrWhiteSpace(loginData.PW))
+                
+                if (loginData == null)
                 {
-                    return ServerCommon.ErrorCode.Login_Fail_NoUserExist;
+                    return null;
                 }
-
-                var hashingPassword = ServerCommon.Security.MakeHashingPassWord(loginData.Salt, pw);
-
-                if (loginData.PW != hashingPassword)
-                {
-                    return ServerCommon.ErrorCode.Login_Fail_WrongPassword;
-                }
+                
+                return new Tuple<string, string>(loginData.PW, loginData.Salt);
             }
             catch (Exception e)
             {
-                return ServerCommon.ErrorCode.Login_Fail_Exception;
+                return null;
             }
-            
-            return ServerCommon.ErrorCode.None;
         }
     }
 }
