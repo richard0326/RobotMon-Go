@@ -21,10 +21,17 @@ namespace ApiServer.Services
         public static async Task<bool> CheckUserExist(string? key)
         {
             var redisStr = new RedisString<RedisLoginData>(s_connection, key, null);
-            
-            // TODO redis Async에서 에러가 발생해서 진행되지 않음.
-            bool exists = await redisStr.ExistsAsync();
-            return exists;
+
+            try
+            {
+                bool exists = await redisStr.ExistsAsync();
+                return exists;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
         }
         
         public static async Task SetUserInfo(string key, RedisLoginData redisLoginData)
