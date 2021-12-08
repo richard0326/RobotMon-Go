@@ -15,7 +15,7 @@ namespace ApiServer
         
         public static void Main(string[] args)
         {
-            if (args == null || args.Length == 0)
+            if (args.Length == 0)
             {
                 // rider에서 WebAPI 개발할때, args 전달이 자꾸 무시되는 현상 발생함.
                 Console.WriteLine("No args!");

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using ApiServer.Model;
 using ServerCommon;
 
 namespace ApiServer.Services
@@ -12,10 +13,10 @@ namespace ApiServer.Services
         // DB 닫기.
         public void Close();
 
-        // TODO 게임 DB 기능 구현
-        public Task<ErrorCode> CreateAccountDataAsync(string? id, string pw, string salt);
+        // 유저 정보 가져오기
+        public Task<TableUserInfo> GetUserInfoAsync(string id);
         
-        // 유저의 Password, Salt 값 반환
-        public Task<Tuple<string?, string?>?> GetLoginDataAsync(string? id, string? pw);
+        // 유저 정보 설정하기
+        public Task<bool> SetUserInfoAsync(TableUserInfo table);
     }
 }

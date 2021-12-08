@@ -45,12 +45,17 @@ namespace ApiServer.Controllers
             
             // TODO DB 초기화 부분 또 실수하지 말고 확인하자...
             // db에서 유저 정보 받아오기...
+            // TODO 몬스터, 친구 목록, 몬스터 캔디는 나중에 추가할 예정
+            // 일단은 1차원적인 정보만 DB로 붙어 받아온다.
             
-            // 없는 경우 생성해서 넣어놓는다.
+            
+            // 없는 경우 생성해서 데이터를 입력한다.
             
             // 유저 정보 전달하기
+            response.RankPoint = 0;
+            response.StarPoint = 0;
             
-            return null;
+            return response;
         }
     }
 }

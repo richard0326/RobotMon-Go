@@ -14,13 +14,13 @@ namespace ApiServer.Services
 {
     public class GameDb : IGameDb
     {
-        private readonly IOptions<DbConfig> _accountDbConfig;
+        private readonly IOptions<DbConfig> _dbConfig;
         private IDbConnection? _dbConn;
         private readonly ILogger<GameDb> _logger;
 
-        public GameDb(ILogger<GameDb> logger, IOptions<DbConfig> accountDbConfig)
+        public GameDb(ILogger<GameDb> logger, IOptions<DbConfig> dbConfig)
         {
-            _accountDbConfig = accountDbConfig;
+            _dbConfig = dbConfig;
             _logger = logger;
             Open();
             _logger.ZLogDebug($"Open");
@@ -36,7 +36,7 @@ namespace ApiServer.Services
         {
             if(_dbConn == null)
             {
-                _dbConn = new MySqlConnection(_accountDbConfig.Value.ConnStr);
+                _dbConn = new MySqlConnection(_dbConfig.Value.GameConnStr);
             }
 
             _dbConn.Open();
@@ -47,59 +47,20 @@ namespace ApiServer.Services
             _dbConn?.Close();
         }
         
-        // TODO 게임 DB 기능 구현
-        public async Task<ErrorCode> CreateAccountDataAsync(string? id, string pw, string salt)
+        // TODO 게임 DB 기능 구현 진행중
+        // 유저 정보 가져오기
+        public async Task<TableUserInfo> GetUserInfoAsync(string id)
         {
-            string InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
-            Console.WriteLine(InsertQuery);
-            try
-            {
-                var count = await _dbConn.ExecuteAsync(InsertQuery, new
-                {
-                    userId = id,
-                    userPw = pw,
-                    userSalt = salt
-                });
-
-                // ID를 Unique하게 해놔서... 일로 들어오진 않는다.
-                if (count != 1)
-                {
-                    return ErrorCode.CreateAccount_Fail_Duplicate;
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.ZLogDebug($"CreateAccount_Exception : @ex", e);
-                return ErrorCode.CreateAccount_Fail_Duplicate;
-            }
-
-            return ErrorCode.None;
+            // UID로 검색하면 더 좋을 듯.
+            string SelectQuery = $"select PW, Salt from Userinfo where ID = @userId";
+            return null;
         }
         
-        // 유저의 Password, Salt 값 반환
-        public async Task<Tuple<string?, string?>?> GetLoginDataAsync(string? id, string? pw)
+        // 유저 정보 설정하기
+        public async Task<bool> SetUserInfoAsync(TableUserInfo table)
         {
-            string SelectQuery = $"select PW, Salt from Users where ID = @userid";
-            
-            try
-            {
-                var loginData = await _dbConn.QuerySingleOrDefaultAsync<TableLoginData>(SelectQuery, new
-                {
-                    userid = id
-                });
-                
-                if (loginData == null)
-                {
-                    return null;
-                }
-                
-                return new Tuple<string?, string?>(loginData.PW, loginData.Salt);
-            }
-            catch (Exception e)
-            {
-                _logger.ZLogDebug($"GetLoginData_Exception : @ex", e);
-                return null;
-            }
+            string InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
+            return null;
         }
     }
 }

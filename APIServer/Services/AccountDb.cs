@@ -17,13 +17,13 @@ namespace ApiServer.Services
 {
     public class AccountDb : IAccountDb
     {
-        private readonly IOptions<DbConfig> _accountDbConfig;
+        private readonly IOptions<DbConfig> _dbConfig;
         private IDbConnection? _dbConn;
         private readonly ILogger<AccountDb> _logger;
 
-        public AccountDb(ILogger<AccountDb> logger, IOptions<DbConfig> accountDbConfig)
+        public AccountDb(ILogger<AccountDb> logger, IOptions<DbConfig> dbConfig)
         {
-            _accountDbConfig = accountDbConfig;
+            _dbConfig = dbConfig;
             _logger = logger;
             Open();
             _logger.ZLogDebug($"Open");
@@ -39,7 +39,7 @@ namespace ApiServer.Services
         {
             if(_dbConn == null)
             {
-                _dbConn = new MySqlConnection(_accountDbConfig.Value.ConnStr);
+                _dbConn = new MySqlConnection(_dbConfig.Value.AccountConnStr);
             }
 
             _dbConn.Open();
@@ -50,7 +50,7 @@ namespace ApiServer.Services
             _dbConn?.Close();
         }
         
-        public async Task<ErrorCode> CreateAccountDataAsync(string? id, string pw, string salt)
+        public async Task<ErrorCode> CreateAccountDataAsync(string id, string pw, string salt)
         {
             string InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
             Console.WriteLine(InsertQuery);
@@ -79,15 +79,15 @@ namespace ApiServer.Services
         }
         
         // 유저의 Password, Salt 값 반환
-        public async Task<Tuple<string?, string?>?> GetLoginDataAsync(string? id, string? pw)
+        public async Task<Tuple<string?, string?>?> GetLoginDataAsync(string id, string pw)
         {
-            string SelectQuery = $"select PW, Salt from Users where ID = @userid";
+            string SelectQuery = $"select PW, Salt from Users where ID = @userId";
             
             try
             {
                 var loginData = await _dbConn.QuerySingleOrDefaultAsync<TableLoginData>(SelectQuery, new
                 {
-                    userid = id
+                    userId = id
                 });
                 
                 if (loginData == null)

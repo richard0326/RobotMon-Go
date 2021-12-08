@@ -6,6 +6,7 @@ namespace ApiServer.Model
     public class UserInfoResponse
     {
         public ErrorCode Result { get; set; } = ErrorCode.None;
+        
         // TODO UID도 유저에게 주면 좋을 것 같긴 합니다...
         
         //public List<Monster> MonsterList { get; set; } // 유저가 소유 중인 로봇 몬스터 정보
