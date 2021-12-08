@@ -26,6 +26,9 @@ namespace ApiServer
             //services.Configure<SessionConfig>(Configuration.GetSection(nameof(SessionConfig)));
             services.Configure<DbConfig>(Configuration.GetSection(nameof(DbConfig)));
 
+            // 세션 정보를 저장하는 Redis
+            RedisDB.Init(Configuration["SessionConfig:SessionCacheRedisIp"]);
+            
             // Dapper 를 통한 Mysql DB 서비스를 등록한다
             services.AddTransient<IAccountDb, AccountDb>();
 

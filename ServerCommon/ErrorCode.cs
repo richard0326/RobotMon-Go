@@ -7,6 +7,7 @@
         Login_Fail_UserAlreadyExist = 20201,
         Login_Fail_NoUserExist = 20202,
         Login_Fail_WrongPassword = 20203,
+        Login_Fail_RedisError = 20204,
         
         CreateAccount_Fail_Duplicate = 20212,
 

@@ -11,7 +11,7 @@ namespace ApiServer
 {
     public class Program
     {
-        private static string s_serverAddress;
+        private static string? s_serverAddress;
         
         public static void Main(string[] args)
         {
