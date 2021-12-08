@@ -24,3 +24,6 @@
     - Host OS와 VirtualBox 간의 공유 디렉토리나 클립보드 복사 방식은 사용하지 않는다.
 	- SSH, SFTP, Git 등을 사용하여 배포한다.
   
+## 개발일정표
+![](./Document/images/readme1.PNG)
+![](./Document/images/readme2.PNG)
