@@ -17,11 +17,13 @@ namespace ApiServer
         {
             if (args == null || args.Length == 0)
             {
+                // rider에서 WebAPI 개발할때, args 전달이 자꾸 무시되는 현상 발생함.
                 Console.WriteLine("No args!");
                 s_serverAddress = "http://*:5000";
             }
             else
             {
+                // Console에서 직접 인자를 전달하는 방식은 사용 가능한 것을 확인.
                 var serverOption = ParseCommandLine(args);
                 if(serverOption == null)
                 {
