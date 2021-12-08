@@ -1,6 +1,6 @@
 ﻿namespace ApiServer.Model
 {
-    public class RedisLoginData
+    public class UserInfoRequest
     {
         public string? ID { get; set; }
         public string? AuthToken { get; set; }

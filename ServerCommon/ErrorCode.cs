@@ -11,6 +11,8 @@
         
         CreateAccount_Fail_Duplicate = 20212,
 
+        UserInfo_Fail_LoginFail = 20220,
+        
         // PVP Server 20401 ~ 20600
 
         // Raid Server  20601 ~ 20800

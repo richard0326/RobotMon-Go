@@ -47,6 +47,7 @@ namespace ApiServer.Services
             _dbConn?.Close();
         }
         
+        // TODO 게임 DB 기능 구현
         public async Task<ErrorCode> CreateAccountDataAsync(string? id, string pw, string salt)
         {
             string InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";

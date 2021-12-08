@@ -64,7 +64,6 @@ namespace ApiServer.Controllers
             if (!await RedisDB.SetUserInfo(request.ID, new RedisLoginData()
             {
                 ID = request.ID,
-                Salt = salt,
                 AuthToken = response.Authtoken
             }))
             {

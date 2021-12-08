@@ -59,7 +59,7 @@ namespace ApiServer.Services
             return false;
         }
 
-        public static async Task<RedisLoginData> GetUserInfo(string key)
+        public static async Task<RedisLoginData> GetUserInfo(string? key)
         {
             if (s_connection != null)
             {

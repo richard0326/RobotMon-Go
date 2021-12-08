@@ -12,6 +12,7 @@ namespace ApiServer.Services
         // DB 닫기.
         public void Close();
 
+        // TODO 게임 DB 기능 구현
         public Task<ErrorCode> CreateAccountDataAsync(string? id, string pw, string salt);
         
         // 유저의 Password, Salt 값 반환
