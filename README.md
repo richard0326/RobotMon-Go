@@ -62,4 +62,4 @@ http://[IP]:[port]/CreateAccount
 Req    
 <img src="./Document/images/CreateAccountReq.PNG" width="400" height="200"/>  
 Res  
-<img src="./Document/images/CreateAccountRes.PNG" width="400" height="200"/>  
+<img src="./Document/images/CreateAccountRes.PNG" width="600" height="200"/>  
