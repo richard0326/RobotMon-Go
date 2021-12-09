@@ -45,6 +45,7 @@ namespace ApiServer.Controllers
                 return response;
             }
             
+            /*
             // GameDB에 유저 기본 초기화 정보 세팅하기
             if (!await _gameDb.SetUserInfoAsync(new TableUserInfo()
             {
@@ -59,7 +60,8 @@ namespace ApiServer.Controllers
                 _logger.ZLogDebug($"CreateAccountPost ErrorCode : {resultCode}");
                 return response;
             }
-
+            */
+            
             return response;
         }
     }

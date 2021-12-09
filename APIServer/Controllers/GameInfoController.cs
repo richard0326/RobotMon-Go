@@ -10,21 +10,21 @@ namespace ApiServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserInfoController : ControllerBase
+    public class UserGameInfoController : ControllerBase
     {
         private readonly IGameDb _gameDb;
-        private readonly ILogger<UserInfoController> _logger;
+        private readonly ILogger<UserGameInfoController> _logger;
         
-        public UserInfoController(ILogger<UserInfoController> logger, IGameDb gameDb)
+        public UserGameInfoController(ILogger<UserGameInfoController> logger, IGameDb gameDb)
         {
             _logger = logger;
             _gameDb = gameDb;
         }
         
         [HttpPost]
-        public async Task<UserInfoResponse?> UserInfoPost(UserInfoRequest request)
+        public async Task<UserGameInfoResponse> GameInfoPost(UserGameInfoRequest request)
         {
-            var response = new UserInfoResponse();
+            var response = new UserGameInfoResponse();
             
             // redis에서 로그인 유저 정보 받아오기... 없으면 로그인 성공한 유저가 아님.
             var userInfo = await RedisDB.GetUserInfo(request.ID);

@@ -13,10 +13,12 @@ namespace ApiServer.Services
         // DB 닫기.
         public void Close();
 
+        /*
         // 유저 정보 가져오기
         public Task<TableUserInfo> GetUserInfoAsync(string id);
         
         // 유저 정보 설정하기
         public Task<bool> SetUserInfoAsync(TableUserInfo table);
+        */
     }
 }

@@ -75,8 +75,7 @@ namespace ApiServer.Services
             return ErrorCode.None;
         }
         
-        // 유저의 Password, Salt 값 반환
-        public async Task<Tuple<string, string>> GetPasswordInfoAsync(string id, string pw)
+        public async Task<ErrorCode> CheckPasswordAsync(string id, string pw)
         {
             var SelectQuery = $"select PW, Salt from Users where ID = @userId";
             
@@ -89,16 +88,28 @@ namespace ApiServer.Services
                 
                 if (loginData == null)
                 {
-                    return null;
+                    return ErrorCode.LoginFailNoUserExist;
+                }
+
+                if (string.IsNullOrWhiteSpace(loginData.PW))
+                {
+                    return ErrorCode.LoginFailNoUserExist;
                 }
                 
-                return new Tuple<string, string>(loginData.PW, loginData.Salt);
+                // password 일치 여부 확인
+                var hashingPassword = Security.MakeHashingPassWord(loginData.Salt, pw);
+                if (loginData.PW != hashingPassword)
+                {
+                    return ErrorCode.LoginFailWrongPassword;
+                }
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"GetLoginData_Exception : {e}");
-                return null;
+                return ErrorCode.LoginFailException;
             }
+
+            return ErrorCode.None;
         }
     }
 }

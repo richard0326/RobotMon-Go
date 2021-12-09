@@ -26,6 +26,7 @@ namespace ApiServer
             RedisDB.Init(Configuration["SessionConfig:SessionCacheRedisIp"]);
             
             services.AddTransient<IAccountDb, AccountDb>();
+            services.AddTransient<IGameDb, GameDb>();
 
             services.AddControllers();
         }

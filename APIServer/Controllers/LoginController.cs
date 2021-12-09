@@ -30,29 +30,12 @@ namespace ApiServer.Controllers
         {
             // 반환할 응답 객체
             var response = new LoginResponse();
-
-            // Redis에 먼저 접근해서 AuthToken이 있는지 확인. 이미 존재한다면 이미 로그인되어 있는 상황이다.
-            if (await RedisDB.CheckUserExist(request.ID))
-            {
-                response.Result = ErrorCode.LoginFailUserAlreadyExist;
-                _logger.ZLogDebug($"LoginPost ErrorCode : {response.Result}");
-                return response;
-            }
             
             // Redis에 정보가 존재하지 않기에 AccountDB에서 로그인 시도에 대한 결과를 받아온다.
-            var (password, salt) = (await _accountDb.GetPasswordInfoAsync(request.ID, request.PW))!;
-            if (string.IsNullOrWhiteSpace(password))
+            var result = (await _accountDb.CheckPasswordAsync(request.ID, request.PW))!;
+            if(result != ErrorCode.None)
             {
-                response.Result = ErrorCode.LoginFailNoUserExist;
-                _logger.ZLogDebug($"LoginPost ErrorCode : {response.Result}");
-                return response;
-            }
-            
-            // password 일치 여부 확인
-            var hashingPassword = Security.MakeHashingPassWord(salt, request.PW);
-            if (password != hashingPassword)
-            {
-                response.Result = ErrorCode.LoginFailWrongPassword;
+                response.Result = result;
                 _logger.ZLogDebug($"LoginPost ErrorCode : {response.Result}");
                 return response;
             }

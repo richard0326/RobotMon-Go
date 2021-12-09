@@ -18,21 +18,6 @@ namespace ApiServer.Services
             var config = new RedisConfig("redisDb", address);
             s_connection = new RedisConnection(config);
         }
-
-        public static async Task<bool> CheckUserExist(string key)
-        {
-            var redis = new RedisString<RedisLoginData>(s_connection, key, null);
-
-            try
-            {
-                var redisResult = await redis.ExistsAsync();
-                return redisResult;
-            }
-            catch
-            {
-                return false;
-            }
-        }
         
         public static async Task<bool> SetUserInfo(string key, RedisLoginData redisLoginData)
         {

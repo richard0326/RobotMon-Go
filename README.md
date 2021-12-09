@@ -16,6 +16,7 @@
 - 서버 구조도
 - 패킷(WebAPI에서는 요청과 응답) 시퀸스 다이얼 그램
     - PlantUML로 작성한다
+- Database Table
 
 
 
@@ -36,7 +37,7 @@
 - csv tool 개발 (12/8~ )  
 
 
-# 서버 실행 방법
+## 서버 실행 방법
 windows 환경  
 1번 방식  
 - 실행 파일(app.exe, app.dll)이 있는 파일 경로로 이동한다.
@@ -47,4 +48,18 @@ windows 환경
 
 사용 예시
 - 명령어1 : dotnet ApiServer.dll --urls "http://localhost:5110"
-- 명령어2 : dotnet run --project C:\Users\...\RobotMon-Go\ApiServer\ApiServer.csproj --urls "http://localhost:5110"
+- 명령어2 : dotnet run --project C:\Users\ ... \RobotMon-Go\ApiServer\ApiServer.csproj --urls "http://*:5110"
+
+## URL 설명
+모든 요청은 POST로 진행  
+http://[IP]:[port]/Login 
+Req
+![](./Document/images/loginReq.PNG)
+Res
+![](./Document/images/loginRes.PNG)      
+
+http://[IP]:[port]/CreateAccount 
+Req
+![](./Document/images/CreateAccountReq.PNG)
+Res
+![](./Document/images/CreateAccountRes.PNG)     

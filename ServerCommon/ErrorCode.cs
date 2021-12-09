@@ -4,7 +4,7 @@
     {
         None = 0,
         // API Server 전용  20201 ~ 20400
-        LoginFailUserAlreadyExist = 20201,
+        LoginFailException = 20201,
         LoginFailNoUserExist = 20202,
         LoginFailWrongPassword = 20203,
         LoginFailRedisError = 20204,

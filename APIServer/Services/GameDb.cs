@@ -23,21 +23,18 @@ namespace ApiServer.Services
             _dbConfig = dbConfig;
             _logger = logger;
             Open();
-            _logger.ZLogDebug($"Open");
+            //_logger.ZLogDebug($"Open");
         }
 
         public void Dispose()
         {
             Close();
-            _logger.ZLogDebug($"Dispose");
+            //_logger.ZLogDebug($"Dispose");
         }
         
         public void Open()
         {
-            if(_dbConn == null)
-            {
-                _dbConn = new MySqlConnection(_dbConfig.Value.GameConnStr);
-            }
+            _dbConn = new MySqlConnection(_dbConfig.Value.GameConnStr);
 
             _dbConn.Open();
         }
@@ -47,6 +44,7 @@ namespace ApiServer.Services
             _dbConn.Close();
         }
         
+        /*
         // TODO 게임 DB 기능 구현 진행중
         // 유저 정보 가져오기
         public async Task<TableUserInfo> GetUserInfoAsync(string id)
@@ -62,5 +60,6 @@ namespace ApiServer.Services
             var InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
             return false;
         }
+        */
     }
 }

@@ -14,3 +14,12 @@ Content-Type: application/json
   "ID":"jacking751",
   "PW":"123qwe"
 }
+
+###
+POST http://localhost:5000/GameInfo
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":""
+}

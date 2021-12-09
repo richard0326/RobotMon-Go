@@ -18,7 +18,6 @@ namespace ApiServer
         
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
-            //string serverAddress = $"http://*:{portStr}";
             var builder = Host.CreateDefaultBuilder(args)
                 .ConfigureLogging(logging =>
                 {

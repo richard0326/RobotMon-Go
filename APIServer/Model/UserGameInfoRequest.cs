@@ -1,6 +1,6 @@
 ﻿namespace ApiServer.Model
 {
-    public class UserInfoRequest
+    public class UserGameInfoRequest
     {
         public string ID { get; set; } = "";
         public string AuthToken { get; set; } = "";

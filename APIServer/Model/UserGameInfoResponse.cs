@@ -3,7 +3,7 @@ using ServerCommon;
 
 namespace ApiServer.Model
 {
-    public class UserInfoResponse
+    public class UserGameInfoResponse
     {
         public ErrorCode Result { get; set; } = ErrorCode.None;
         public Int64 UserLevel { get; set; }

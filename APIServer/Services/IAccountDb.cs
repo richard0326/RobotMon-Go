@@ -15,6 +15,6 @@ namespace ApiServer
         public Task<ErrorCode> CreateAccountDataAsync(string id, string pw, string salt);
         
         // 유저의 Password, Salt 값 반환
-        public Task<Tuple<string, string>> GetPasswordInfoAsync(string id, string pw);
+        public Task<ErrorCode> CheckPasswordAsync(string id, string pw);
     }
 }
