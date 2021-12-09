@@ -28,16 +28,23 @@
 
 
 
-## 개발일정표
-수정 예정  
+## 개발일정
+- 개발일정, 기획서 작성 (12/2~3)  
+- 로그인 (12/3~8)  
+- 계정 생성 (12/4~8)  
+- 게임 정보 받기 (12/8~ )  
+- csv tool 개발 (12/8~ )  
 
 
 # 서버 실행 방법
 windows 환경  
 1번 방식  
 - 실행 파일(app.exe, app.dll)이 있는 파일 경로로 이동한다.
-- 다음 명령어로 실행 : "dotnet [프로젝트명].dll [외부인자]"
-- [외부인자]의 사용 예시 (ex : --port 8000, --변수명 변수값, ... )
+- 다음 명령어로 실행 : "dotnet [프로젝트명].dll --urls [IP주소]"
 
 2번 방식  
-- cmd 창에서 다음 명령어로 실행 : "dotnet run --project [프로젝트경로] [외부인자]" 
+- cmd 창에서 다음 명령어로 실행 : "dotnet run --project [프로젝트경로] --urls [IP주소]" 
+
+사용 예시
+- 명령어1 : dotnet ApiServer.dll --urls "http://localhost:5110"
+- 명령어2 : dotnet run --project C:\Users\...\RobotMon-Go\ApiServer\ApiServer.csproj --urls "http://localhost:5110"
