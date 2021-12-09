@@ -19,23 +19,17 @@ namespace ApiServer
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // TODO Redis 연결 부분 추가 예정
-            //services.Configure<SessionConfig>(Configuration.GetSection(nameof(SessionConfig)));
             services.Configure<DbConfig>(Configuration.GetSection(nameof(DbConfig)));
 
-            // 세션 정보를 저장하는 Redis
             RedisDB.Init(Configuration["SessionConfig:SessionCacheRedisIp"]);
             
-            // Dapper 를 통한 Mysql DB 서비스를 등록한다
             services.AddTransient<IAccountDb, AccountDb>();
 
             services.AddControllers();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseRouting();

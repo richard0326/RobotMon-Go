@@ -15,7 +15,7 @@ namespace ApiServer.Services
     public class GameDb : IGameDb
     {
         private readonly IOptions<DbConfig> _dbConfig;
-        private IDbConnection? _dbConn;
+        private IDbConnection _dbConn;
         private readonly ILogger<GameDb> _logger;
 
         public GameDb(ILogger<GameDb> logger, IOptions<DbConfig> dbConfig)
@@ -44,7 +44,7 @@ namespace ApiServer.Services
         
         public void Close()
         {
-            _dbConn?.Close();
+            _dbConn.Close();
         }
         
         // TODO 게임 DB 기능 구현 진행중
@@ -52,15 +52,15 @@ namespace ApiServer.Services
         public async Task<TableUserInfo> GetUserInfoAsync(string id)
         {
             // UID로 검색하면 더 좋을 듯.
-            string SelectQuery = $"select PW, Salt from Userinfo where ID = @userId";
+            var SelectQuery = $"select PW, Salt from Userinfo where ID = @userId";
             return null;
         }
         
         // 유저 정보 설정하기
         public async Task<bool> SetUserInfoAsync(TableUserInfo table)
         {
-            string InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
-            return null;
+            var InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
+            return false;
         }
     }
 }

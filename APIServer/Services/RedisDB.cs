@@ -11,7 +11,7 @@ namespace ApiServer.Services
 {
     public class RedisDB
     {
-        private static RedisConnection? s_connection = null;
+        private static RedisConnection s_connection;
 
         public static void Init(string address)
         {
@@ -21,112 +21,88 @@ namespace ApiServer.Services
 
         public static async Task<bool> CheckUserExist(string key)
         {
-            if (s_connection != null)
+            var redis = new RedisString<RedisLoginData>(s_connection, key, null);
+
+            try
             {
-                var redis = new RedisString<RedisLoginData>(s_connection, key, null);
-
-                try
-                {
-                    var redisResult = await redis.ExistsAsync();
-                    return redisResult;
-                }
-                catch (Exception e)
-                {
-                    return false;
-                }
+                var redisResult = await redis.ExistsAsync();
+                return redisResult;
             }
-
-            return false;
+            catch
+            {
+                return false;
+            }
         }
         
         public static async Task<bool> SetUserInfo(string key, RedisLoginData redisLoginData)
         {
-            if (s_connection != null)
+            var redis = new RedisString<RedisLoginData>(s_connection, key, null);
+
+            try
             {
-                var redis = new RedisString<RedisLoginData>(s_connection, key, null);
-
-                try
-                {
-                    await redis.SetAsync(redisLoginData, null);
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    return false;
-                }
+                await redis.SetAsync(redisLoginData, null);
+                return true;
             }
-
-            return false;
+            catch
+            {
+                return false;
+            }
         }
 
-        public static async Task<RedisLoginData> GetUserInfo(string? key)
+        public static async Task<RedisLoginData> GetUserInfo(string key)
         {
-            if (s_connection != null)
-            {
-                var redis = new RedisString<RedisLoginData>(s_connection, key, null);
+            var redis = new RedisString<RedisLoginData>(s_connection, key, null);
 
-                try
-                {
-                    var redisResult = await redis.GetAsync();
-                    if (!redisResult.HasValue)
-                    {
-                        return null;
-                    }
-                    return redisResult.Value;
-                }
-                catch (Exception e)
+            try
+            {
+                var redisResult = await redis.GetAsync();
+                if (!redisResult.HasValue)
                 {
                     return null;
                 }
-            }
 
-            return null;
+                return redisResult.Value;
+            }
+            catch
+            {
+                return null;
+            }
         }
-        
+
         public static async Task<bool> DelUserInfo(string key)
         {
-            if (s_connection != null)
+            var redis = new RedisString<RedisLoginData>(s_connection, key, null);
+
+            try
             {
-                var redis = new RedisString<RedisLoginData>(s_connection, key, null);
-
-                try
-                {
-                    var redisResult = await redis.DeleteAsync();
-                    return redisResult;
-                }
-                catch (Exception e)
-                {
-                    return false;
-                }
+                var redisResult = await redis.DeleteAsync();
+                return redisResult;
             }
-
-            return false;
+            catch
+            {
+                return false;
+            }
         }
 
         public static async Task<RedisLoginData> GetUserAuthToken(string key)
         {
-            if (s_connection != null)
-            {
-                var redis = new RedisString<RedisLoginData>(s_connection, key, null);
+            var redis = new RedisString<RedisLoginData>(s_connection, key, null);
 
-                try
-                {
-                    var redisResult = await redis.GetAsync();
-                    if (!redisResult.HasValue)
-                    {
-                        return null;
-                    }
-                
-                    var redisLogin = redisResult.Value;
-                    return redisLogin;
-                }
-                catch (Exception e)
+            try
+            {
+                var redisResult = await redis.GetAsync();
+                if (!redisResult.HasValue)
                 {
                     return null;
                 }
+            
+                var redisLogin = redisResult.Value;
+                return redisLogin;
             }
-
-            return null;
+            catch
+            {
+                return null;
+            }
         }
     }
 }

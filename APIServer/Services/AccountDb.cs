@@ -18,7 +18,7 @@ namespace ApiServer.Services
     public class AccountDb : IAccountDb
     {
         private readonly IOptions<DbConfig> _dbConfig;
-        private IDbConnection? _dbConn;
+        private IDbConnection _dbConn;
         private readonly ILogger<AccountDb> _logger;
 
         public AccountDb(ILogger<AccountDb> logger, IOptions<DbConfig> dbConfig)
@@ -26,34 +26,31 @@ namespace ApiServer.Services
             _dbConfig = dbConfig;
             _logger = logger;
             Open();
-            _logger.ZLogDebug($"Open");
+            //_logger.ZLogDebug($"Open");
         }
 
         public void Dispose()
         {
             Close();
-            _logger.ZLogDebug($"Dispose");
+            //_logger.ZLogDebug($"Dispose");
         }
         
         public void Open()
         {
-            if(_dbConn == null)
-            {
-                _dbConn = new MySqlConnection(_dbConfig.Value.AccountConnStr);
-            }
+            _dbConn = new MySqlConnection(_dbConfig.Value.AccountConnStr);
 
             _dbConn.Open();
         }
         
         public void Close()
         {
-            _dbConn?.Close();
+            _dbConn.Close();
         }
         
         public async Task<ErrorCode> CreateAccountDataAsync(string id, string pw, string salt)
         {
-            string InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
-            Console.WriteLine(InsertQuery);
+            var InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
+            
             try
             {
                 var count = await _dbConn.ExecuteAsync(InsertQuery, new
@@ -66,22 +63,22 @@ namespace ApiServer.Services
                 // ID를 Unique하게 해놔서... 일로 들어오진 않는다.
                 if (count != 1)
                 {
-                    return ErrorCode.CreateAccount_Fail_Duplicate;
+                    return ErrorCode.CreateAccountFailDuplicate;
                 }
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"CreateAccount_Exception : @ex", e);
-                return ErrorCode.CreateAccount_Fail_Duplicate;
+                _logger.ZLogDebug($"CreateAccount_Exception : {e}");
+                return ErrorCode.CreateAccountFailDuplicate;
             }
 
             return ErrorCode.None;
         }
         
         // 유저의 Password, Salt 값 반환
-        public async Task<Tuple<string?, string?>?> GetLoginDataAsync(string id, string pw)
+        public async Task<Tuple<string, string>> GetPasswordInfoAsync(string id, string pw)
         {
-            string SelectQuery = $"select PW, Salt from Users where ID = @userId";
+            var SelectQuery = $"select PW, Salt from Users where ID = @userId";
             
             try
             {
@@ -95,11 +92,11 @@ namespace ApiServer.Services
                     return null;
                 }
                 
-                return new Tuple<string?, string?>(loginData.PW, loginData.Salt);
+                return new Tuple<string, string>(loginData.PW, loginData.Salt);
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"GetLoginData_Exception : @ex", e);
+                _logger.ZLogDebug($"GetLoginData_Exception : {e}");
                 return null;
             }
         }

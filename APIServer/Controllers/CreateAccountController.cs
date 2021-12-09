@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using ApiServer.Model;
+using ApiServer.Services;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,12 +16,14 @@ namespace ApiServer.Controllers
     {
         // ControllerBase 객체는 ASPNET MVC에서 제공하는 객체로 모델 바인딩 하기 위해서 사용됨.
         private readonly IAccountDb _accountDb;
+        private readonly IGameDb _gameDb;
         private readonly ILogger<CreateAccountController> _logger;
         
-        public CreateAccountController(ILogger<CreateAccountController> logger, IAccountDb accountDb)
+        public CreateAccountController(ILogger<CreateAccountController> logger, IAccountDb accountDb, IGameDb gameDb)
         {
             _logger = logger;
             _accountDb = accountDb;
+            _gameDb = gameDb;
         }
         
         [HttpPost]
@@ -38,6 +41,21 @@ namespace ApiServer.Controllers
             if (resultCode != ErrorCode.None)
             {
                 response.Result = resultCode;
+                _logger.ZLogDebug($"CreateAccountPost ErrorCode : {resultCode}");
+                return response;
+            }
+            
+            // GameDB에 유저 기본 초기화 정보 세팅하기
+            if (!await _gameDb.SetUserInfoAsync(new TableUserInfo()
+            {
+                ID = request.ID,
+                UserLevel = 1,
+                UserExp = 0,
+                StarPoint = 0,
+                RankPoint = 0,
+            }))
+            {
+                response.Result = ErrorCode.CreateAccountFailDBFail;
                 _logger.ZLogDebug($"CreateAccountPost ErrorCode : {resultCode}");
                 return response;
             }

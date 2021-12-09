@@ -30,16 +30,16 @@ namespace ApiServer.Controllers
             var userInfo = await RedisDB.GetUserInfo(request.ID);
             if (userInfo == null)
             {
-                response.Result = ErrorCode.UserInfo_Fail_LoginFail;
-                _logger.ZLogDebug($"UserInfoPost ErrorCode : {response.Result}");
+                response.Result = ErrorCode.UserInfoFailLoginFail;
+                //_logger.ZLogDebug($"UserInfoPost ErrorCode : {response.Result}");
                 return response;
             }
             
             // id, AuthToken 일치 여부 확인...
-            if (userInfo.ID != request.ID || userInfo.AuthToken != request.AuthToken)
+            if (userInfo.AuthToken != request.AuthToken)
             {
-                response.Result = ErrorCode.UserInfo_Fail_LoginFail;
-                _logger.ZLogDebug($"UserInfoPost ErrorCode : {response.Result}");
+                response.Result = ErrorCode.UserInfoFailWrongToken;
+                //_logger.ZLogDebug($"UserInfoPost ErrorCode : {response.Result}");
                 return response;   
             }
             

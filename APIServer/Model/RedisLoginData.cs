@@ -2,7 +2,7 @@
 {
     public class RedisLoginData
     {
-        public string? ID { get; set; }
-        public string? AuthToken { get; set; }
+        public string ID { get; set; } = "";
+        public string AuthToken { get; set; } = "";
     }
 }

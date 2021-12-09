@@ -2,7 +2,7 @@
 {
     public class CreateAccountRequest
     {
-        public string? ID { get; set; }
-        public string? PW { get; set; }
+        public string ID { get; set; } = "";
+        public string PW { get; set; } = "";
     }
 }
