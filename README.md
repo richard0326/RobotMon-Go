@@ -29,9 +29,7 @@
 
 
 ## 개발일정표
-![](./Document/images/readme1.PNG)
-![](./Document/images/readme2.PNG)
-
+수정 예정  
 
 
 # 서버 실행 방법
