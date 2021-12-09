@@ -52,14 +52,14 @@ windows 환경
 
 ## URL 설명
 모든 요청은 POST로 진행  
-http://[IP]:[port]/Login   
-Req  
+URL : http://[IP]:[port]/Login   
+요청 Req  
 <img src="./Document/images/loginReq.PNG" width="400" height="200"/>  
-Res  
+응답 Res  
 <img src="./Document/images/loginRes.PNG" width="400" height="200"/>  
   
-http://[IP]:[port]/CreateAccount  
-Req    
+URL : http://[IP]:[port]/CreateAccount  
+요청 Req    
 <img src="./Document/images/CreateAccountReq.PNG" width="400" height="200"/>  
-Res  
+응답 Res  
 <img src="./Document/images/CreateAccountRes.PNG" width="600" height="200"/>  
