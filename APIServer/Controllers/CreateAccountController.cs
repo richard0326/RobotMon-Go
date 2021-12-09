@@ -45,22 +45,21 @@ namespace ApiServer.Controllers
                 return response;
             }
             
-            /*
             // GameDB에 유저 기본 초기화 정보 세팅하기
-            if (!await _gameDb.SetUserInfoAsync(new TableUserInfo()
+            if (await _gameDb.SetUserGameInfoAsync(new TableUserGameInfo()
             {
+                // 유저 초기 정보
                 ID = request.ID,
                 UserLevel = 1,
                 UserExp = 0,
                 StarPoint = 0,
                 RankPoint = 0,
-            }))
+            }) != ErrorCode.None)
             {
                 response.Result = ErrorCode.CreateAccountFailDBFail;
                 _logger.ZLogDebug($"CreateAccountPost ErrorCode : {resultCode}");
                 return response;
             }
-            */
             
             return response;
         }

@@ -30,30 +30,25 @@ namespace ApiServer.Controllers
             var userInfo = await RedisDB.GetUserInfo(request.ID);
             if (userInfo == null)
             {
-                response.Result = ErrorCode.UserInfoFailLoginFail;
-                //_logger.ZLogDebug($"UserInfoPost ErrorCode : {response.Result}");
+                response.Result = ErrorCode.UserGameInfoFailLoginFail;
+                _logger.ZLogDebug($"UserInfoPost ErrorCode : {response.Result}");
                 return response;
             }
             
             // id, AuthToken 일치 여부 확인...
             if (userInfo.AuthToken != request.AuthToken)
             {
-                response.Result = ErrorCode.UserInfoFailWrongToken;
-                //_logger.ZLogDebug($"UserInfoPost ErrorCode : {response.Result}");
+                response.Result = ErrorCode.UserGameInfoFailWrongToken;
+                _logger.ZLogDebug($"UserInfoPost ErrorCode : {response.Result}");
                 return response;   
             }
             
-            // TODO DB 초기화 부분 또 실수하지 말고 확인하자...
-            // db에서 유저 정보 받아오기...
-            // TODO 몬스터, 친구 목록, 몬스터 캔디는 나중에 추가할 예정
-            // 일단은 1차원적인 정보만 DB로 붙어 받아온다.
-            
-            
-            // 없는 경우 생성해서 데이터를 입력한다.
-            
-            // 유저 정보 전달하기
-            response.RankPoint = 0;
-            response.StarPoint = 0;
+            // 유저의 게임 정보 가져오기
+            var gameInfo = await _gameDb.GetUserGameInfoAsync(request.ID);
+            response.RankPoint = gameInfo.RankPoint;
+            response.StarPoint = gameInfo.StarPoint;
+            response.UserLevel = gameInfo.UserLevel;
+            response.UserExp = gameInfo.UserExp;
             
             return response;
         }

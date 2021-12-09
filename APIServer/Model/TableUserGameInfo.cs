@@ -2,7 +2,7 @@
 
 namespace ApiServer.Model
 {
-    public class TableUserInfo
+    public class TableUserGameInfo
     {
         public string ID { get; set; } = "";
         public Int64 UserLevel { get; set; }

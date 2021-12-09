@@ -12,13 +12,12 @@
         CreateAccountFailDBFail = 20211,
         CreateAccountFailDuplicate = 20212,
 
-        UserInfoFailLoginFail = 20221,
-        UserInfoFailWrongToken = 20222,
+        UserGameInfoFailLoginFail = 20221,
+        UserGameInfoFailWrongToken = 20222,
+        UserGameInfoFailDuplicate = 20223,
         
         // PVP Server 20401 ~ 20600
 
         // Raid Server  20601 ~ 20800
-        
-        // DB Error 20801 ~ 21000
     }
 }

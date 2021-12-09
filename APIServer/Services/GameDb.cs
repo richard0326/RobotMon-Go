@@ -44,22 +44,57 @@ namespace ApiServer.Services
             _dbConn.Close();
         }
         
-        /*
-        // TODO 게임 DB 기능 구현 진행중
-        // 유저 정보 가져오기
-        public async Task<TableUserInfo> GetUserInfoAsync(string id)
+        // 게임 정보 가져오기
+        public async Task<TableUserGameInfo> GetUserGameInfoAsync(string id)
         {
             // UID로 검색하면 더 좋을 듯.
-            var SelectQuery = $"select PW, Salt from Userinfo where ID = @userId";
-            return null;
+            var SelectQuery = $"select StarPoint, RankPoint, UserLevel, UserExp from userdata where ID = @userId";
+            
+            try
+            {
+                var gameData = await _dbConn.QuerySingleOrDefaultAsync<TableUserGameInfo>(SelectQuery, new
+                {
+                    userId = id
+                });
+                
+                if (gameData == null)
+                {
+                    return null;
+                }
+
+                return gameData;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"GetLoginData_Exception : {e}");
+                return null;
+            }
         }
         
-        // 유저 정보 설정하기
-        public async Task<bool> SetUserInfoAsync(TableUserInfo table)
+        // 게임 정보 설정하기
+        public async Task<ErrorCode> SetUserGameInfoAsync(TableUserGameInfo gameInfo)
         {
-            var InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
-            return false;
+            var InsertQuery = $"insert userdata(ID, StarPoint, RankPoint, UserLevel, UserExp) Values(@userId, {gameInfo.StarPoint}, {gameInfo.RankPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp})";
+
+            try
+            {
+                var count = await _dbConn.ExecuteAsync(InsertQuery, new
+                {
+                    userId = gameInfo.ID
+                });
+
+                // ID를 Unique하게 해놔서... 일로 들어오진 않는다.
+                if (count != 1)
+                {
+                    return ErrorCode.UserGameInfoFailDuplicate;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"CreateAccount_Exception : {e}");
+                return ErrorCode.UserGameInfoFailDuplicate;
+            }
+            return ErrorCode.None;
         }
-        */
     }
 }

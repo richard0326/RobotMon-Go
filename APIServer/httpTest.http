@@ -16,10 +16,10 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/GameInfo
+POST http://localhost:5000/UserGameInfo
 Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":""
+  "AuthToken":"mkcomabq0fbldj7kxlztwhrqq"
 }
