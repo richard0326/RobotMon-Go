@@ -1,8 +1,7 @@
-﻿namespace ApiServer.Model
+﻿namespace ApiServer.Services
 {
-    public class TableMonsterInfo
+    public class Monster
     {
-        public Int64 MID;   // MonsterID
         public string MonsterName;
         public string Type;
         public Int32 Level;

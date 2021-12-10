@@ -29,6 +29,8 @@ namespace ApiServer
             services.AddTransient<IGameDb, GameDb>();
 
             services.AddControllers();
+            
+            DataStorage.Load(Configuration["DbConfig:GameConnStr"]);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
