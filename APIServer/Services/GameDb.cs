@@ -47,7 +47,6 @@ namespace ApiServer.Services
         // 게임 정보 가져오기
         public async Task<TableUserGameInfo> GetUserGameInfoAsync(string id)
         {
-            // UID로 검색하면 더 좋을 듯.
             var SelectQuery = $"select StarPoint, RankPoint, UserLevel, UserExp from userdata where ID = @userId";
             
             try
@@ -95,6 +94,37 @@ namespace ApiServer.Services
                 return ErrorCode.UserGameInfoFailDuplicate;
             }
             return ErrorCode.None;
+        }
+
+        public async Task<Monster> GetMonsterInfoAsync(Int64 monsterUID)
+        {
+            var SelectQuery = $"select MonsterName, Type, Level, HP, Att, Def, StarPoint from userdata where UID = {monsterUID}";
+
+            try
+            {
+                var monsterInfo = await _dbConn.QuerySingleOrDefaultAsync<TableMonsterInfo>(SelectQuery);
+                
+                if (monsterInfo == null)
+                {
+                    return null;
+                }
+
+                return new Monster()
+                {
+                    UID = monsterUID,
+                    Name = monsterInfo.Name,
+                    Att = monsterInfo.Att,
+                    Def = monsterInfo.Def,
+                    HP = monsterInfo.HP,
+                    Level = monsterInfo.Level,
+                    StarCount = monsterInfo.StarCount,
+                };
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"GetLoginData_Exception : {e}");
+                throw;
+            }
         }
     }
 }

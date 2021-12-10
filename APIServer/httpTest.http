@@ -23,3 +23,12 @@ Content-Type: application/json
   "ID":"jacking751",
   "AuthToken":"mkcomabq0fbldj7kxlztwhrqq"
 }
+
+###
+POST http://localhost:5000/FieldMonster
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":"mkcomabq0fbldj7kxlztwhrqq"  
+}

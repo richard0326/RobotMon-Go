@@ -12,8 +12,8 @@
         CreateAccountFailDBFail = 20211,
         CreateAccountFailDuplicate = 20212,
 
-        UserGameInfoFailLoginFail = 20221,
-        UserGameInfoFailWrongToken = 20222,
+        ReqFailLoginFail = 20221,
+        ReqFailWrongToken = 20222,
         UserGameInfoFailDuplicate = 20223,
         
         // PVP Server 20401 ~ 20600

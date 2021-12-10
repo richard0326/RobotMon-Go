@@ -18,5 +18,7 @@ namespace ApiServer.Services
         
         // 유저 정보 설정하기
         public Task<ErrorCode> SetUserGameInfoAsync(TableUserGameInfo table);
+
+        public Task<Monster> GetMonsterInfoAsync(Int64 monsterUID);
     }
 }
