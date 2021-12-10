@@ -162,29 +162,39 @@ namespace CSV2DatabaseTool
                 var sheetName = entry.Key.Substring(0, entry.Key.Length - 1);
                 var paramList = "";
                 var valueList = "";
-                var parameter = new DynamicParameters();
                 string[] columnNames = entry.Value.Columns.Cast<DataColumn>().Select(x => x.ColumnName).ToArray();
 
                 for (int i = 0; i < columnNames.Length; i++)
                 {
                     paramList += $"{columnNames[i]},";
                     valueList += $"@{columnNames[i]},";
-                    parameter.Add($"@{columnNames[i]}", entry.Value.Rows[0][i], direction: ParameterDirection.Input);
                 }
 
                 paramList = paramList.TrimEnd(',');
                 valueList = valueList.TrimEnd(',');
-                var sqlQuery = $"INSERT {sheetName} ({paramList}) VALUES({valueList})";
 
                 try
                 {
-                    var result = _sqlConnection.Execute(sqlQuery, parameter);
-                    MessageBox.Show($"{sheetName} 마스터 데이터가 성공적으로 입력됨");
+                    var rowLength = entry.Value.Rows.Count;
+                    for (int i = 0; i < rowLength; i++)
+                    {
+                        var parameter = new DynamicParameters();
+                        for (int j = 0; j < columnNames.Length; j++)
+                        {
+                            parameter.Add($"@{columnNames[j]}", entry.Value.Rows[i][j], direction: ParameterDirection.Input);
+                        }
+
+                        var sqlQuery = $"INSERT {sheetName} ({paramList}) VALUES({valueList})";
+                        var result = _sqlConnection.Execute(sqlQuery, parameter);
+                    }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"시트 에러 발생 {sheetName}: {ex.ToString()}");
+                    continue;
                 }
+
+                MessageBox.Show($"{sheetName} 마스터 데이터가 성공적으로 입력됨");
             }
         }
 
