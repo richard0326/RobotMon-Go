@@ -4,3 +4,9 @@
 */vs/
 */.vs/
 */packages/
+*/*/.idea/
+*/*/obj/
+*/*/bin/
+*/*/vs/
+*/*/.vs/
+*/*/packages/
