@@ -37,6 +37,10 @@
           <HintPath>..\packages\Dapper.2.0.123\lib\net461\Dapper.dll</HintPath>
           <Private>True</Private>
         </Reference>
+        <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
+          <HintPath>..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+          <Private>True</Private>
+        </Reference>
         <Reference Include="mscorlib" />
         <Reference Include="MySqlConnector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92">
           <HintPath>..\packages\MySqlConnector.2.1.0\lib\net471\MySqlConnector.dll</HintPath>
