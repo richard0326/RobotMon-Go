@@ -47,7 +47,7 @@ namespace ApiServer.Services
         // 게임 정보 가져오기
         public async Task<TableUserGameInfo> GetUserGameInfoAsync(string id)
         {
-            var SelectQuery = $"select StarPoint, RankPoint, UserLevel, UserExp from userdata where ID = @userId";
+            var SelectQuery = $"select StarPoint, RankPoint, UserLevel, UserExp from gamedata where ID = @userId";
             
             try
             {
@@ -73,7 +73,7 @@ namespace ApiServer.Services
         // 게임 정보 설정하기
         public async Task<ErrorCode> SetUserGameInfoAsync(TableUserGameInfo gameInfo)
         {
-            var InsertQuery = $"insert userdata(ID, StarPoint, RankPoint, UserLevel, UserExp) Values(@userId, {gameInfo.StarPoint}, {gameInfo.RankPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp})";
+            var InsertQuery = $"insert gamedata(ID, StarPoint, RankPoint, UserLevel, UserExp) Values(@userId, {gameInfo.StarPoint}, {gameInfo.RankPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp})";
 
             try
             {
@@ -96,9 +96,9 @@ namespace ApiServer.Services
             return ErrorCode.None;
         }
 
-        public async Task<Monster> GetMonsterInfoAsync(Int64 monsterUID)
+        public async Task<FieldMonsterResponse> GetMonsterInfoAsync(Int64 monsterUID)
         {
-            var SelectQuery = $"select MonsterName, Type, Level, HP, Att, Def, StarPoint from userdata where UID = {monsterUID}";
+            var SelectQuery = $"select MonsterName, Type, Level, HP, Att, Def, StarCount from monsterinfo where MID = {monsterUID}";
 
             try
             {
@@ -109,10 +109,11 @@ namespace ApiServer.Services
                     return null;
                 }
 
-                return new Monster()
+                return new FieldMonsterResponse()
                 {
                     UID = monsterUID,
-                    Name = monsterInfo.Name,
+                    Name = monsterInfo.MonsterName,
+                    Type = monsterInfo.Type,
                     Att = monsterInfo.Att,
                     Def = monsterInfo.Def,
                     HP = monsterInfo.HP,

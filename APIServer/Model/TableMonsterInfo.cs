@@ -3,7 +3,7 @@
     public class TableMonsterInfo
     {
         public Int64 UID;
-        public string Name;
+        public string MonsterName;
         public string Type;
         public Int32 Level;
         public Int32 HP;

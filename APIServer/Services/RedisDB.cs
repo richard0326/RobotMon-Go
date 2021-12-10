@@ -21,11 +21,11 @@ namespace ApiServer.Services
         
         public static async Task<bool> SetUserInfo(string key, RedisLoginData redisLoginData)
         {
-            var redis = new RedisString<RedisLoginData>(s_connection, key, null);
+            var redis = new RedisString<RedisLoginData>(s_connection, key, TimeSpan.FromDays(1));
 
             try
             {
-                await redis.SetAsync(redisLoginData, null);
+                await redis.SetAsync(redisLoginData, TimeSpan.FromDays(1));
                 return true;
             }
             catch
