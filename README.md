@@ -55,7 +55,7 @@ windows 환경
 ## URL 설명
 모든 요청은 POST로 진행  
 사용 예시  :  
-![](.Document/images/UrlExample.PNG)      
+![](./Document/images/UrlExample.PNG)      
 body를 객체와 일치하여 Json 포맷으로 보내면 됨.  
 이 파일 참고 : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/httpTest.http
 
