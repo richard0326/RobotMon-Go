@@ -34,8 +34,9 @@
 - 로그인 (12/3~8)  
 - 계정 생성 (12/4~8)  
 - 게임 정보 받기 (12/8~9)  
-- csv tool 개발 (12/9~ )
-- 필드 정보 받기 (12/9~ ) 
+- csv tool 개발 (12/9)
+- 필드 정보 받기 (12/9)
+- 잡기 기능(12/13~)
 
 
 ## 서버 실행 방법
@@ -53,14 +54,27 @@ windows 환경
 
 ## URL 설명
 모든 요청은 POST로 진행  
-URL : http://[IP]:[port]/Login   
-요청 Req  
-<img src="./Document/images/loginReq.PNG" width="400" height="200"/>  
-응답 Res  
-<img src="./Document/images/loginRes.PNG" width="400" height="200"/>  
+사용 예시  :  
+![](.Document/images/UrlExample.PNG)      
+body를 객체와 일치하여 Json 포맷으로 보내면 됨.  
+이 파일 참고 : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/httpTest.http
+
+http://[IP]:[port]/Login   
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/LoginRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/LoginResponse.cs   
   
-URL : http://[IP]:[port]/CreateAccount  
-요청 Req    
-<img src="./Document/images/CreateAccountReq.PNG" width="400" height="200"/>  
-응답 Res  
-<img src="./Document/images/CreateAccountRes.PNG" width="600" height="200"/>  
+http://[IP]:[port]/CreateAccount  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/CreateAccountRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/CreateAccountResponse.cs   
+
+http://[IP]:[port]/UserGameInfo  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/UserGameInfoRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/UserGameInfoResponse.cs   
+
+http://[IP]:[port]/FieldMonster  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/FieldMonsterRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/FieldMonsterResponse.cs   
+
+http://[IP]:[port]/Catch  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/CatchRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/CatchResponse.cs   
