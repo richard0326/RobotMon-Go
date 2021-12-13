@@ -35,6 +35,8 @@ namespace ApiServer
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<AuthTokenCheckMiddleware>();
+            
             app.UseRouting();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

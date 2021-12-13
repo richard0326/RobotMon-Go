@@ -26,23 +26,6 @@ namespace ApiServer.Controllers
         {
             var response = new UserGameInfoResponse();
             
-            // redis에서 로그인 유저 정보 받아오기... 없으면 로그인 성공한 유저가 아님.
-            var userInfo = await RedisDB.GetUserInfo(request.ID);
-            if (userInfo == null)
-            {
-                response.Result = ErrorCode.ReqFailLoginFail;
-                _logger.ZLogDebug($"ReqPost ErrorCode : {response.Result}");
-                return response;
-            }
-            
-            // id, AuthToken 일치 여부 확인...
-            if (userInfo.AuthToken != request.AuthToken)
-            {
-                response.Result = ErrorCode.ReqFailWrongToken;
-                _logger.ZLogDebug($"ReqPost ErrorCode : {response.Result}");
-                return response;   
-            }
-            
             // 유저의 게임 정보 가져오기
             var gameInfo = await _gameDb.GetUserGameInfoAsync(request.ID);
             response.RankPoint = gameInfo.RankPoint;
