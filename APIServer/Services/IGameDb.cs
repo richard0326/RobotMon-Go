@@ -20,5 +20,8 @@ namespace ApiServer.Services
         public Task<ErrorCode> SetUserGameInfoAsync(TableUserGameInfo table);
 
         public Task<FieldMonsterResponse> GetMonsterInfoAsync(Int64 monsterUID);
+        
+        public Task<TableCatch> GetCatchAsync(Int64 userID);
+        public Task<ErrorCode> SetCatchAsync(TableCatch catchTable);
     }
 }

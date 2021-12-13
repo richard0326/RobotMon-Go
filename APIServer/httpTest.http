@@ -32,3 +32,13 @@ Content-Type: application/json
   "ID":"jacking751",
   "AuthToken":"rnqjs4dg7h893ed38j7j4z5t6"
 }
+
+###
+POST http://localhost:5000/Catch
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":"rnqjs4dg7h893ed38j7j4z5t6",
+  "MonsterID": 1
+}

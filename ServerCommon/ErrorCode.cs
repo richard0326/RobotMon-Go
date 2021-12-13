@@ -14,6 +14,9 @@
 
         UserGameInfoFailDuplicate = 20223,
         
+        CatchFail = 20231,
+        CatchFailDuplicate = 20232,
+        
         // PVP Server 20401 ~ 20600
 
         // Raid Server  20601 ~ 20800

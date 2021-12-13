@@ -16,6 +16,7 @@ namespace ApiServer.Services
     {
         private readonly IOptions<DbConfig> _dbConfig;
         private IDbConnection _dbConn;
+        private IDbTransaction _dBTransaction;
         private readonly ILogger<GameDb> _logger;
 
         public GameDb(ILogger<GameDb> logger, IOptions<DbConfig> dbConfig)
@@ -65,7 +66,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"GetLoginData_Exception : {e}");
+                _logger.ZLogDebug($"UserGameInfo_Exception : {e}");
                 return null;
             }
         }
@@ -90,7 +91,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"CreateAccount_Exception : {e}");
+                _logger.ZLogDebug($"UserGameInfo_Exception : {e}");
                 return ErrorCode.UserGameInfoFailDuplicate;
             }
             return ErrorCode.None;
@@ -111,7 +112,7 @@ namespace ApiServer.Services
 
                 return new FieldMonsterResponse()
                 {
-                    UID = monsterUID,
+                    MonsterID = monsterUID,
                     Name = monsterInfo.MonsterName,
                     Type = monsterInfo.Type,
                     Att = monsterInfo.Att,
@@ -123,9 +124,34 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"GetLoginData_Exception : {e}");
+                _logger.ZLogDebug($"MonsterInfo_Exception : {e}");
                 throw;
             }
+        }
+
+        public async Task<TableCatch> GetCatchAsync(Int64 userID)
+        {
+            return null;
+        }
+
+        public async Task<ErrorCode> SetCatchAsync(TableCatch catchTable)
+        {
+            var InsertQuery = $"insert catch(UserID, MonsterID, CatchTime) Values(@userId, {catchTable.MonsterID}, @catchTime)";
+
+            try
+            {
+                var count = await _dbConn.ExecuteAsync(InsertQuery, new
+                {
+                    userId = catchTable.UserID,
+                    catchTime = catchTable.CatchTime.ToString("yyyy-MM-dd")
+                });
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"Catch_Exception : {e}");
+                return ErrorCode.CatchFailDuplicate;
+            }
+            return ErrorCode.None;
         }
     }
 }

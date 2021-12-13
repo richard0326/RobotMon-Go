@@ -9,5 +9,6 @@
         public Int32 Att;
         public Int32 Def;
         public Int32 StarCount;
+        public Int32 UpgradeCount;
     }
 }

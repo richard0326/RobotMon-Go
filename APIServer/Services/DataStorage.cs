@@ -26,6 +26,7 @@ namespace ApiServer.Services
                     Level = value.Level,
                     MonsterName = value.MonsterName,
                     StarCount = value.StarCount,
+                    UpgradeCount = value.UpgradeCount,
                     Type = value.Type
                 });
             }

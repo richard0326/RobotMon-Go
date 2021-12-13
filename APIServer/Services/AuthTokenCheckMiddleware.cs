@@ -37,14 +37,14 @@ namespace ApiServer.Services
                 }
 
                 var startId = bodyStr.IndexOf($"ID");
-                // ", "  ","  " ," 의 상황을 피하기 위해서 2번 진행
+                // ": "  ":"  " :" 의 상황을 피하기 위해서 2번 진행
                 startId = bodyStr.IndexOf('"', startId) + 1; 
                 startId = bodyStr.IndexOf('"', startId) + 1;
                 var endId = bodyStr.IndexOf('"', startId);
                 var userId = bodyStr.Substring(startId, endId - startId);
 
                 var startAuthToken = bodyStr.IndexOf("AuthToken");
-                // ", "  ","  " ," 의 상황을 피하기 위해서 2번 진행
+                // ": "  ":"  " :" 의 상황을 피하기 위해서 2번 진행
                 startAuthToken = bodyStr.IndexOf('"', startAuthToken) + 1;
                 startAuthToken = bodyStr.IndexOf('"', startAuthToken) + 1;
                 var endAuthToken = bodyStr.IndexOf('"', startAuthToken);
