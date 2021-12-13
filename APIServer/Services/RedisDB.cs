@@ -12,6 +12,7 @@ namespace ApiServer.Services
     public class RedisDB
     {
         private static RedisConnection s_connection;
+        private static RedisConnection s_transaction;
 
         public static void Init(string address)
         {
@@ -25,13 +26,16 @@ namespace ApiServer.Services
 
             try
             {
-                await redis.SetAsync(redisLoginData, TimeSpan.FromDays(1));
-                return true;
+                if (await redis.SetAsync(redisLoginData, TimeSpan.FromDays(1)) == false)
+                {
+                    return false;
+                }
             }
             catch
             {
                 return false;
             }
+            return true;
         }
 
         public static async Task<RedisLoginData> GetUserInfo(string key)
@@ -72,7 +76,7 @@ namespace ApiServer.Services
         public static async Task<RedisLoginData> GetUserAuthToken(string key)
         {
             var redis = new RedisString<RedisLoginData>(s_connection, key, null);
-
+            
             try
             {
                 var redisResult = await redis.GetAsync();
@@ -87,6 +91,43 @@ namespace ApiServer.Services
             catch
             {
                 return null;
+            }
+        }
+
+        public static async Task<bool> SetNxAsync(string key)
+        {
+            var redis = new RedisString<RedisLoginData>(s_connection, key, TimeSpan.FromMinutes(1));
+            
+            try
+            {
+                if (await redis.SetAsync(new RedisLoginData()
+                    {
+                        ID = key,
+                        AuthToken = ""
+                    }, TimeSpan.FromMinutes(1), When.NotExists) == false)
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> DelNxAsync(string key)
+        {
+            var redis = new RedisString<RedisLoginData>(s_connection, key, TimeSpan.FromMinutes(1));
+            
+            try
+            {
+                var redisResult = await redis.DeleteAsync();
+                return redisResult;
+            }
+            catch (Exception e)
+            {
+                return false;
             }
         }
     }

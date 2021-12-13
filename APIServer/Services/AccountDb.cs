@@ -68,7 +68,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"CreateAccount_Exception : {e}");
+                _logger.ZLogDebug($"{nameof(CreateAccountDataAsync)} Exception : {e}");
                 return ErrorCode.CreateAccountFailDuplicate;
             }
 
@@ -105,7 +105,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"GetLoginData_Exception : {e}");
+                _logger.ZLogDebug($"{nameof(CheckPasswordAsync)} Exception : {e}");
                 return ErrorCode.LoginFailException;
             }
 

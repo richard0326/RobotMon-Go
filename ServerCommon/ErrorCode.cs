@@ -11,14 +11,19 @@
         
         CreateAccountFailDBFail = 20211,
         CreateAccountFailDuplicate = 20212,
+        CreateAccountFailGetTable = 20213,
 
         UserGameInfoFailDuplicate = 20223,
         
         CatchFail = 20231,
         CatchFailDuplicate = 20232,
-        
+
         // PVP Server 20401 ~ 20600
 
         // Raid Server  20601 ~ 20800
+        
+        
+        // 기타
+        DataStorageReadMonsterFail = 21001,
     }
 }

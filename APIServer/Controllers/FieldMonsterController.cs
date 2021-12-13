@@ -18,7 +18,8 @@ namespace ApiServer.Controllers
             _logger = logger;
             _gameDb = gameDb;
         }
-
+        
+        // 수습 기간 프로젝트임으로기능이 간단하게 구현되었습니다.
         [HttpPost]
         public async Task<FieldMonsterResponse> FieldMonsterPost(FieldMonsterRequest request)
         {
@@ -27,6 +28,13 @@ namespace ApiServer.Controllers
             var rand = new Random();
             var randValue = rand.Next(1, 7); // 기획 데이터 UID 1~6까지 존재함.
             var monster = DataStorage.GetMonsterInfo(randValue);
+            if (monster == null)
+            {
+                response.Result = ErrorCode.DataStorageReadMonsterFail;
+                _logger.ZLogDebug($"{nameof(FieldMonsterPost)} ErrorCode : {response.Result}");
+                return response;
+            }
+            
             response.MonsterID = randValue;
             response.Att = monster.Att;
             response.Def = monster.Def;

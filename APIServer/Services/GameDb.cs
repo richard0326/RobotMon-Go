@@ -66,7 +66,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"UserGameInfo_Exception : {e}");
+                _logger.ZLogDebug($"{nameof(GetUserGameInfoAsync)} Exception : {e}");
                 return null;
             }
         }
@@ -91,7 +91,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"UserGameInfo_Exception : {e}");
+                _logger.ZLogDebug($"{nameof(SetUserGameInfoAsync)} Exception : {e}");
                 return ErrorCode.UserGameInfoFailDuplicate;
             }
             return ErrorCode.None;
@@ -124,14 +124,9 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"MonsterInfo_Exception : {e}");
+                _logger.ZLogDebug($"{nameof(GetMonsterInfoAsync)} Exception : {e}");
                 throw;
             }
-        }
-
-        public async Task<TableCatch> GetCatchAsync(Int64 userID)
-        {
-            return null;
         }
 
         public async Task<ErrorCode> SetCatchAsync(TableCatch catchTable)
@@ -148,7 +143,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"Catch_Exception : {e}");
+                _logger.ZLogDebug($"{nameof(SetCatchAsync)} Exception : {e}");
                 return ErrorCode.CatchFailDuplicate;
             }
             return ErrorCode.None;

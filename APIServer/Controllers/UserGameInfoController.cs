@@ -28,6 +28,12 @@ namespace ApiServer.Controllers
             
             // 유저의 게임 정보 가져오기
             var gameInfo = await _gameDb.GetUserGameInfoAsync(request.ID);
+            if (gameInfo == null)
+            {
+                response.Result = ErrorCode.CreateAccountFailGetTable;
+                _logger.ZLogDebug($"{nameof(GameInfoPost)} ErrorCode : {response.Result}");
+                return response;
+            }
             response.RankPoint = gameInfo.RankPoint;
             response.StarPoint = gameInfo.StarPoint;
             response.UserLevel = gameInfo.UserLevel;

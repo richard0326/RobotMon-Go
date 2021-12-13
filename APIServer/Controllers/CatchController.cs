@@ -18,7 +18,8 @@ namespace ApiServer.Controllers
             _logger = logger;
             _gameDb = gameDb;
         }
-
+        
+        // 수습 기간 프로젝트임으로기능이 간단하게 구현되었습니다.
         [HttpPost]
         public async Task<CatchResponse> CatchPost(CatchRequest request)
         {
@@ -34,10 +35,16 @@ namespace ApiServer.Controllers
                 return response;
             }
 
-            // 현재 시간
-            response.Date = DateTime.Now;
             var monster = DataStorage.GetMonsterInfo(request.MonsterID);
-            var test = response.Date.ToString("yyyy-MM-dd");
+            if (monster == null)
+            {
+                response.Result = ErrorCode.DataStorageReadMonsterFail;
+                _logger.ZLogDebug($"{nameof(CatchPost)} ErrorCode : {response.Result}");
+                return response;
+            }
+
+            // 현재 시간            
+            response.Date = DateTime.Now;
             
             // DB에 잡은 정보 저장
             var errorCode = await _gameDb.SetCatchAsync(new TableCatch()
@@ -47,13 +54,12 @@ namespace ApiServer.Controllers
                 CatchTime = response.Date
             });
 
-            var test2 = test;
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
                 if (errorCode != ErrorCode.CatchFail)
                 {
-                    _logger.ZLogDebug($"CatchPost ErrorCode : {response.Result}");
+                    _logger.ZLogDebug($"{nameof(CatchPost)} ErrorCode : {response.Result}");
                 }
 
                 return response;

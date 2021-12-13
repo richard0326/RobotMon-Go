@@ -36,7 +36,7 @@ namespace ApiServer.Controllers
             if(result != ErrorCode.None)
             {
                 response.Result = result;
-                _logger.ZLogDebug($"LoginPost ErrorCode : {response.Result}");
+                _logger.ZLogDebug($"{nameof(LoginPost)} ErrorCode : {response.Result}");
                 return response;
             }
             

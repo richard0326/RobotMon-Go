@@ -41,7 +41,7 @@ namespace ApiServer.Controllers
             if (resultCode != ErrorCode.None)
             {
                 response.Result = resultCode;
-                _logger.ZLogDebug($"CreateAccountPost ErrorCode : {resultCode}");
+                _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {resultCode}");
                 return response;
             }
             
