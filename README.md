@@ -36,7 +36,14 @@
 - 게임 정보 받기 (12/8~9)  
 - csv tool 개발 (12/9)
 - 필드 정보 받기 (12/9)
-- 잡기 기능(12/13~)
+- 잡기 기능(12/13)
+- SMTP(12/14)
+- 출석 기능(12/14~ )
+- Rocky Linux 사용법 숙지하기(12/15~)
+- 선물 보내기(12/20~ )
+- 선물 받기(12/21~ )
+- 소켓 서버 개발일정 짜기(12/22)
+- PVP 서버 개발(12/23~ )
 
 
 ## 서버 실행 방법
@@ -53,9 +60,9 @@ windows 환경
 - 명령어2 : dotnet run --project C:\Users\ ... \RobotMon-Go\ApiServer\ApiServer.csproj --urls "http://*:5110"
 
 ## URL 설명
-모든 요청은 POST로 진행  
 사용 예시  :  
 ![](./Document/images/UrlExample.PNG)      
+모든 요청은 POST로 진행  
 body를 객체와 일치하여 Json 포맷으로 보내면 됨.  
 이 파일 참고 : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/httpTest.http
 
