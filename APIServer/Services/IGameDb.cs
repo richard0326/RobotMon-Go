@@ -22,5 +22,7 @@ namespace ApiServer.Services
         public Task<FieldMonsterResponse> GetMonsterInfoAsync(Int64 monsterUID);
         
         public Task<ErrorCode> SetCatchAsync(TableCatch catchTable);
+
+        public Task<ErrorCode> TryDailyCheckAsync(string ID);
     }
 }

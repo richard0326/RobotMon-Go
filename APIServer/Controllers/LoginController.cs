@@ -32,7 +32,7 @@ namespace ApiServer.Controllers
             var response = new LoginResponse();
             
             // Redis에 정보가 존재하지 않기에 AccountDB에서 로그인 시도에 대한 결과를 받아온다.
-            var result = (await _accountDb.CheckPasswordAsync(request.ID, request.PW))!;
+            var result = (await _accountDb.TryPasswordAsync(request.ID, request.PW))!;
             if(result != ErrorCode.None)
             {
                 response.Result = result;

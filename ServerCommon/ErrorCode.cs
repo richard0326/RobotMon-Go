@@ -20,10 +20,12 @@
         CreateAccountFailDuplicate = 20212,
         CreateAccountFailGetTable = 20213,
 
-        UserGameInfoFailDuplicate = 20223,
+        UserGameInfoFailException = 20223,
         
         CatchFail = 20231,
-        CatchFailDuplicate = 20232,
+        CatchFailException = 20232,
+        
+        DailyCheckFailException = 20241,
 
         // PVP Server 20401 ~ 20600
 

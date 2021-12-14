@@ -1,9 +1,13 @@
-﻿namespace ApiServer.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ApiServer.Model
 {
     public class TableMonsterInfo
     {
         public Int64 MID;   // MonsterID
+        [StringLength(100)]
         public string MonsterName;
+        [StringLength(100)]
         public string Type;
         public Int32 Level;
         public Int32 HP;

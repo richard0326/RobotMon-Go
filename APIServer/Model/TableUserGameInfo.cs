@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace ApiServer.Model
 {
     public class TableUserGameInfo
     {
+        [StringLength(45)]
         public string ID { get; set; } = "";
         public Int64 UserLevel { get; set; }
         public Int64 UserExp { get; set; }

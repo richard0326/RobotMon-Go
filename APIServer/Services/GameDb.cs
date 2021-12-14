@@ -82,17 +82,11 @@ namespace ApiServer.Services
                 {
                     userId = gameInfo.ID
                 });
-
-                // ID를 Unique하게 해놔서... 일로 들어오진 않는다.
-                if (count != 1)
-                {
-                    return ErrorCode.UserGameInfoFailDuplicate;
-                }
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(SetUserGameInfoAsync)} Exception : {e}");
-                return ErrorCode.UserGameInfoFailDuplicate;
+                return ErrorCode.UserGameInfoFailException;
             }
             return ErrorCode.None;
         }
@@ -144,7 +138,34 @@ namespace ApiServer.Services
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(SetCatchAsync)} Exception : {e}");
-                return ErrorCode.CatchFailDuplicate;
+                return ErrorCode.CatchFailException;
+            }
+            return ErrorCode.None;
+        }
+
+        public async Task<ErrorCode> TryDailyCheckAsync(string ID)
+        {
+            var updateQuery =
+                $"UPDATE dailycheck Set RewardDate = RewardDate + 1, RewardCount = RewardCount + 1 WHERE ID = @userId and not RewardDate = CURDATE()";
+
+            try
+            {
+                var count = await _dbConn.ExecuteAsync(updateQuery, new
+                {
+                    userId = ID
+                });
+
+                // TODO 진행 예정...
+                if (count == 0)
+                {
+                    // 변화된 쿼리가 없다면... Insert 해줘야함.
+                    var insertQuery = $"INSERT INTO dailycheck(`ID`, `RewardCount`, `RewardDate`) VALUES (@userId, 1, CURDATE());";
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Exception : {e}");
+                return ErrorCode.DailyCheckFailException;
             }
             return ErrorCode.None;
         }

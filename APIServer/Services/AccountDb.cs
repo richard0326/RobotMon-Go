@@ -75,7 +75,7 @@ namespace ApiServer.Services
             return ErrorCode.None;
         }
         
-        public async Task<ErrorCode> CheckPasswordAsync(string id, string pw)
+        public async Task<ErrorCode> TryPasswordAsync(string id, string pw)
         {
             var SelectQuery = $"select PW, Salt from Users where ID = @userId";
             
@@ -105,7 +105,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"{nameof(CheckPasswordAsync)} Exception : {e}");
+                _logger.ZLogDebug($"{nameof(TryPasswordAsync)} Exception : {e}");
                 return ErrorCode.LoginFailException;
             }
 

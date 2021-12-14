@@ -2,11 +2,11 @@
 
 namespace ApiServer.Model
 {
-    public class LoginRequest
+    public class DailyCheckRequest
     {
         [StringLength(45)]
         public string ID { get; set; } = "";
         [StringLength(200)]
-        public string PW { get; set; } = "";
+        public string AuthToken { get; set; } = "";
     }
 }

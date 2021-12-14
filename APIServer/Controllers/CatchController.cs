@@ -43,8 +43,8 @@ namespace ApiServer.Controllers
                 return response;
             }
 
-            // 현재 시간            
-            response.Date = DateTime.Now;
+            // 현재 날짜 - 시간 정보를 원하는 경우 DateTime.Now를 사용할 것.
+            response.Date = DateTime.Today;
             
             // DB에 잡은 정보 저장
             var errorCode = await _gameDb.SetCatchAsync(new TableCatch()

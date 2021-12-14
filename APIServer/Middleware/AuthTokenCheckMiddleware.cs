@@ -63,7 +63,7 @@ namespace ApiServer.Services
                     return;
                 }
 
-                // Redis를 활용한 트랜잭션... 중복 처리 예방
+                // Redis를 활용한 트랜잭션... 중복 처리 예방... 처리되기 전에 메시지를 2번 보내는 현상을 막기 위함.
                 if (!await RedisDB.SetNxAsync(userAuthToken))
                 {
                     // http Response Code
