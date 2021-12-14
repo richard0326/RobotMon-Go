@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using ServerCommon;
 
 namespace ApiServer.Services
 {
@@ -35,6 +36,8 @@ namespace ApiServer.Services
                 // body String에 어떤 문자열도 없다면...
                 if (string.IsNullOrEmpty(bodyStr))
                 {
+                    // http Response Code
+                    context.Response.StatusCode = (int) ErrorCode.AuthTokenFailNoBody;
                     return;
                 }
 
@@ -47,18 +50,24 @@ namespace ApiServer.Services
                 var userInfo = await RedisDB.GetUserInfo(userId);
                 if (userInfo == null)
                 {
+                    // http Response Code
+                    context.Response.StatusCode = (int) ErrorCode.AuthTokenFailNoUser;
                     return;
                 }
 
                 // id, AuthToken 일치 여부 확인...
                 if (String.CompareOrdinal(userInfo.AuthToken, userAuthToken) != 0)
                 {
+                    // http Response Code
+                    context.Response.StatusCode = (int) ErrorCode.AuthTokenFailWrongAuthToken;
                     return;
                 }
 
                 // Redis를 활용한 트랜잭션... 중복 처리 예방
                 if (!await RedisDB.SetNxAsync(userAuthToken))
                 {
+                    // http Response Code
+                    context.Response.StatusCode = (int) ErrorCode.AuthTokenFailSetNx;
                     return;
                 }
             }
