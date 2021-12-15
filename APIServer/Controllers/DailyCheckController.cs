@@ -20,15 +20,8 @@ namespace ApiServer.Controllers
         [HttpPost]
         public async Task<DailyCheckResponse> DailyCheckPost(DailyCheckRequest request)
         {
-            var response = new DailyCheckResponse();
-
-            // Update를 시도한다.
-            _gameDb.TryDailyCheckAsync(request.ID);
-            // Insert를 시도한다.
-            
-            
-            
-            return response;
+            // 내부에서 db 처리 후 보상까지 주고 있습니다.
+            return await _gameDb.TryDailyCheckAsync(request.ID);
         }
     }
 }

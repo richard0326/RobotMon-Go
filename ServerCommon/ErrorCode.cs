@@ -26,7 +26,11 @@
         CatchFailException = 20232,
         
         DailyCheckFailException = 20241,
-
+        DailyCheckFailAlreadyChecked = 20242,
+        DailyCheckFailInsertQuery = 20243,
+        DailyCheckFailUpdateQuery = 20244,
+        DailyCheckFailMaxReceive = 20244,
+        
         // PVP Server 20401 ~ 20600
 
         // Raid Server  20601 ~ 20800

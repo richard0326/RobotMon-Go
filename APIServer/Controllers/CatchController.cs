@@ -19,7 +19,7 @@ namespace ApiServer.Controllers
             _gameDb = gameDb;
         }
         
-        // 수습 기간 프로젝트임으로기능이 간단하게 구현되었습니다.
+        // 수습 기간 프로젝트임으로 기능이 간단하게 구현되었습니다.
         [HttpPost]
         public async Task<CatchResponse> CatchPost(CatchRequest request)
         {

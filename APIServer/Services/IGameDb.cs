@@ -23,6 +23,6 @@ namespace ApiServer.Services
         
         public Task<ErrorCode> SetCatchAsync(TableCatch catchTable);
 
-        public Task<ErrorCode> TryDailyCheckAsync(string ID);
+        public Task<DailyCheckResponse> TryDailyCheckAsync(string ID);
     }
 }

@@ -49,11 +49,11 @@ namespace ApiServer.Services
         
         public async Task<ErrorCode> CreateAccountDataAsync(string id, string pw, string salt)
         {
-            var InsertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
+            var insertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
             
             try
             {
-                var count = await _dbConn.ExecuteAsync(InsertQuery, new
+                var count = await _dbConn.ExecuteAsync(insertQuery, new
                 {
                     userId = id,
                     userPw = pw,
@@ -77,16 +77,16 @@ namespace ApiServer.Services
         
         public async Task<ErrorCode> TryPasswordAsync(string id, string pw)
         {
-            var SelectQuery = $"select PW, Salt from Users where ID = @userId";
+            var selectQuery = $"select PW, Salt from Users where ID = @userId";
             
             try
             {
-                var loginData = await _dbConn.QuerySingleOrDefaultAsync<TableLoginData>(SelectQuery, new
+                var loginData = await _dbConn.QuerySingleOrDefaultAsync<TableLoginData>(selectQuery, new
                 {
                     userId = id
                 });
                 
-                if (loginData == null)
+                if (loginData is null)
                 {
                     return ErrorCode.LoginFailNoUserExist;
                 }
