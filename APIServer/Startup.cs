@@ -30,7 +30,6 @@ namespace ApiServer
 
             services.AddControllers();
             
-            EmailManager.Init(Configuration["EmailConfig:ID"], Configuration["EmailConfig:PW"]);
             DataStorage.Load(Configuration["DbConfig:GameConnStr"]);
         }
 

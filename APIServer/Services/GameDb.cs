@@ -48,10 +48,9 @@ namespace ApiServer.Services
         // 게임 정보 가져오기
         public async Task<TableUserGameInfo> GetUserGameInfoAsync(string id)
         {
-            var selectQuery = $"select StarPoint, RankPoint, UserLevel, UserExp from gamedata where ID = @userId";
-            
             try
             {
+                var selectQuery = $"select StarPoint, RankPoint, UserLevel, UserExp from gamedata where ID = @userId";
                 var gameData = await _dbConn.QuerySingleOrDefaultAsync<TableUserGameInfo>(selectQuery, new
                 {
                     userId = id
@@ -72,12 +71,12 @@ namespace ApiServer.Services
         }
         
         // 게임 정보 설정하기
-        public async Task<ErrorCode> SetUserGameInfoAsync(TableUserGameInfo gameInfo)
+        public async Task<ErrorCode> InitUserGameInfoAsync(TableUserGameInfo gameInfo)
         {
-            var insertQuery = $"insert gamedata(ID, StarPoint, RankPoint, UserLevel, UserExp) Values(@userId, {gameInfo.StarPoint}, {gameInfo.RankPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp})";
-
             try
             {
+                var insertQuery = $"insert gamedata(ID, StarPoint, RankPoint, UserLevel, UserExp) " +
+                                  $"Values(@userId, {gameInfo.StarPoint}, {gameInfo.RankPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp})";
                 var count = await _dbConn.ExecuteAsync(insertQuery, new
                 {
                     userId = gameInfo.ID
@@ -85,7 +84,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"{nameof(SetUserGameInfoAsync)} Exception : {e}");
+                _logger.ZLogDebug($"{nameof(InitUserGameInfoAsync)} Exception : {e}");
                 return ErrorCode.UserGameInfoFailException;
             }
             return ErrorCode.None;
@@ -93,10 +92,9 @@ namespace ApiServer.Services
 
         public async Task<FieldMonsterResponse> GetMonsterInfoAsync(Int64 monsterUID)
         {
-            var selectQuery = $"select MonsterName, Type, Level, HP, Att, Def, StarCount from monsterinfo where MID = {monsterUID}";
-
             try
             {
+                var selectQuery = $"select MonsterName, Type, Level, HP, Att, Def, StarCount from monsterinfo where MID = {monsterUID}";
                 var monsterInfo = await _dbConn.QuerySingleOrDefaultAsync<TableMonsterInfo>(selectQuery);
                 
                 if (monsterInfo is null)
@@ -119,16 +117,15 @@ namespace ApiServer.Services
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(GetMonsterInfoAsync)} Exception : {e}");
-                throw;
+                return null;
             }
         }
 
         public async Task<ErrorCode> SetCatchAsync(TableCatch catchTable)
         {
-            var insertQuery = $"insert catch(UserID, MonsterID, CatchTime) Values(@userId, {catchTable.MonsterID}, @catchTime)";
-
             try
             {
+                var insertQuery = $"insert catch(UserID, MonsterID, CatchTime) Values(@userId, {catchTable.MonsterID}, @catchTime)";
                 var count = await _dbConn.ExecuteAsync(insertQuery, new
                 {
                     userId = catchTable.UserID,
@@ -143,62 +140,59 @@ namespace ApiServer.Services
             return ErrorCode.None;
         }
 
-        public async Task<DailyCheckResponse> TryDailyCheckAsync(string ID)
+        public async Task<ErrorCode> InitDailyCheckAsync(string ID)
         {
-            var response = new DailyCheckResponse();
-            var selectQuery = $"select RewardCount, RewardDate from dailycheck where ID = @userId";
-            var updateQuery =
-                $"UPDATE dailycheck Set RewardCount = RewardCount + 1, RewardDate = CURDATE() WHERE ID = @userId and not RewardDate = CURDATE()";
-            var insertQuery = $"INSERT INTO dailycheck(`ID`, `RewardCount`, `RewardDate`) VALUES (@userId, 1, CURDATE());";
-            
             try
             {
+                var insertQuery = $"INSERT INTO dailycheck(`ID`, `RewardCount`, `RewardDate`) VALUES (@userId, 1, @dateTime)";
+                // 초기 값을 생성해준다.
+                var count = await _dbConn.ExecuteAsync(insertQuery, new
+                {
+                    userId = ID,
+                    dateTime = "0000-00-00"
+                });
+
+                if (count == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(InitDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailInsertQuery}");
+                    return ErrorCode.DailyCheckFailInsertQuery;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(InitDailyCheckAsync)} Exception : {e}");
+                return ErrorCode.InitDailyCheckFailException;
+            }
+
+            return ErrorCode.None;
+        }
+        
+        public async Task<ErrorCode> TryDailyCheckAsync(string ID)
+        {
+            try
+            {
+                var selectQuery = $"select RewardCount, RewardDate from dailycheck where ID = @userId";
                 // 먼저 select해서 RewardCount와 RewardDate를 가져온다.
                 var dailyCheck = await _dbConn.QuerySingleOrDefaultAsync<TableDailyCheck>(selectQuery, new
                 {
                     userId = ID
                 });
+                
+                // 회원 가입할때 생성해줄 것이기 때문에.. 값이 항상 있어야함.
                 if (dailyCheck is null)
                 {
-                    // 초기 값을 생성해준다.
-                    var count = await _dbConn.ExecuteAsync(insertQuery, new
-                    {
-                        userId = ID
-                    });
-
-                    if (count == 0)
-                    {
-                        // 무조건 들어가야하는 상황인데 들어가지 못했다면 문제가 있는 상황임.
-                        response.Result = ErrorCode.DailyCheckFailInsertQuery;
-                        _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Error : {response.Result}");
-                        return response;
-                    }
-
-                    // 보상
-                    var dailyInfoFirst = DataStorage.GetDailyInfo(1);
-                    response.StarCount = dailyInfoFirst.StarCount;
-                    
-                    // 초기 값 넣기 성공
-                    return response;
+                    _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailNoData}");
+                    return ErrorCode.DailyCheckFailNoData;
                 }
 
-                // 날짜 일치 확인
+                // 오늘 이미 받았기 때문에 보상을 받을 수 없다.
                 if (dailyCheck.RewardDate == DateTime.Today)
                 {
-                    // 오늘 이미 받았기 때문에 보상을 받을 수 없다.
-                    response.Result = ErrorCode.DailyCheckFailAlreadyChecked;
-                    return response;
+                    return ErrorCode.DailyCheckFailAlreadyChecked;
                 }
                 
-                // 보상 확인
-                var dailyInfo = DataStorage.GetDailyInfo(dailyCheck.RewardCount + 1);
-                if (dailyInfo is null)
-                {
-                    // 모든 보상을 다 받은 상태
-                    response.Result = ErrorCode.DailyCheckFailMaxReceive;
-                    return response;
-                }
-                
+                // data 갱신
+                var updateQuery = $"UPDATE dailycheck Set RewardCount = RewardCount + 1, RewardDate = CURDATE() WHERE ID = @userId";
                 var updateCount = await _dbConn.ExecuteAsync(updateQuery, new
                 {
                     userId = ID
@@ -206,21 +200,16 @@ namespace ApiServer.Services
 
                 if (updateCount == 0)
                 {
-                    // 무조건 들어가야하는 상황인데 들어가지 못했다면 문제가 있는 상황임.
-                    response.Result = ErrorCode.DailyCheckFailUpdateQuery;
-                    _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Error : {response.Result}");
-                    return response;
+                    _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailUpdateQuery}");
+                    return ErrorCode.DailyCheckFailUpdateQuery;
                 }
-                
-                response.StarCount = dailyInfo.StarCount;
             }
             catch (Exception e)
             {
-                response.Result = ErrorCode.DailyCheckFailException;
-                _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Exception : {response.Result}");
-                return response;
+                _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Exception : {e}");
+                return ErrorCode.TryDailyCheckFailException;
             }
-            return response;
+            return ErrorCode.None;
         }
     }
 }

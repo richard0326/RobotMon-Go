@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"dvoxhy0zn5myyv9mm4ghws77u"
+  "AuthToken":"dbual0es7c92wl5ax9vcltgt6"
 }
 
 ###
@@ -30,7 +30,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"dvoxhy0zn5myyv9mm4ghws77u"
+  "AuthToken":"dbual0es7c92wl5ax9vcltgt6"
 }
 
 ###
@@ -39,7 +39,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"dvoxhy0zn5myyv9mm4ghws77u",
+  "AuthToken":"dbual0es7c92wl5ax9vcltgt6",
   "MonsterID": 1
 }
 
@@ -49,5 +49,5 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"dvoxhy0zn5myyv9mm4ghws77u"
+  "AuthToken":"dbual0es7c92wl5ax9vcltgt6"
 }

@@ -49,10 +49,9 @@ namespace ApiServer.Services
         
         public async Task<ErrorCode> CreateAccountDataAsync(string id, string pw, string salt)
         {
-            var insertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
-            
             try
             {
+                var insertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
                 var count = await _dbConn.ExecuteAsync(insertQuery, new
                 {
                     userId = id,
@@ -77,10 +76,9 @@ namespace ApiServer.Services
         
         public async Task<ErrorCode> TryPasswordAsync(string id, string pw)
         {
-            var selectQuery = $"select PW, Salt from Users where ID = @userId";
-            
             try
             {
+                var selectQuery = $"select PW, Salt from Users where ID = @userId";
                 var loginData = await _dbConn.QuerySingleOrDefaultAsync<TableLoginData>(selectQuery, new
                 {
                     userId = id

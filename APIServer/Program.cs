@@ -19,6 +19,18 @@ namespace ApiServer
         public static IHostBuilder CreateHostBuilder(string[] args)
         {
             var builder = Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, configurationBuilder) =>
+                {
+                    /*
+                    // Development, Staging, Production 중 하나로 설정합시다.
+                    아직 테스트 중.
+                    // launchSettings : "ASPNETCORE_ENVIRONMENT": "Development" 설정 값이
+                    // context.HostingEnvironment.EnvironmentName의 값이 된다.
+                    configurationBuilder.SetBasePath(Directory.GetCurrentDirectory());
+                    configurationBuilder.AddJsonFile("appsettings.json");
+                    configurationBuilder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true);
+                    */
+                })
                 .ConfigureLogging(logging =>
                 {
                     logging.ClearProviders();

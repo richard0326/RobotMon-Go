@@ -46,7 +46,7 @@ namespace ApiServer.Controllers
             }
             
             // GameDB에 유저 기본 초기화 정보 세팅하기
-            if (await _gameDb.SetUserGameInfoAsync(new TableUserGameInfo()
+            var errorCode = await _gameDb.InitUserGameInfoAsync(new TableUserGameInfo()
             {
                 // 유저 초기 정보
                 ID = request.ID,
@@ -54,10 +54,20 @@ namespace ApiServer.Controllers
                 UserExp = 0,
                 StarPoint = 0,
                 RankPoint = 0,
-            }) != ErrorCode.None)
+            });
+            
+            if (errorCode != ErrorCode.None)
             {
-                response.Result = ErrorCode.CreateAccountFailDBFail;
-                _logger.ZLogDebug($"CreateAccountPost ErrorCode : {resultCode}");
+                response.Result = errorCode;
+                _logger.ZLogDebug($"CreateAccountPost ErrorCode 1 : {resultCode}");
+                return response;
+            }
+
+            errorCode = await _gameDb.InitDailyCheckAsync(request.ID);
+            if (errorCode != ErrorCode.None)
+            {
+                response.Result = errorCode;
+                _logger.ZLogDebug($"CreateAccountPost ErrorCode 2 : {resultCode}");
                 return response;
             }
             

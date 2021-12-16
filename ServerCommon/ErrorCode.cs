@@ -16,7 +16,6 @@
         LoginFailWrongPassword = 20203,
         LoginFailRedisError = 20204,
         
-        CreateAccountFailDBFail = 20211,
         CreateAccountFailDuplicate = 20212,
         CreateAccountFailGetTable = 20213,
 
@@ -25,11 +24,12 @@
         CatchFail = 20231,
         CatchFailException = 20232,
         
-        DailyCheckFailException = 20241,
+        InitDailyCheckFailException = 20240,
+        TryDailyCheckFailException = 20241,
         DailyCheckFailAlreadyChecked = 20242,
         DailyCheckFailInsertQuery = 20243,
         DailyCheckFailUpdateQuery = 20244,
-        DailyCheckFailMaxReceive = 20244,
+        DailyCheckFailNoData = 20245,
         
         // PVP Server 20401 ~ 20600
 

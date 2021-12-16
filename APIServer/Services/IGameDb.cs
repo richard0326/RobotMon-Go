@@ -17,12 +17,14 @@ namespace ApiServer.Services
         public Task<TableUserGameInfo> GetUserGameInfoAsync(string id);
         
         // 유저 정보 설정하기
-        public Task<ErrorCode> SetUserGameInfoAsync(TableUserGameInfo table);
+        public Task<ErrorCode> InitUserGameInfoAsync(TableUserGameInfo table);
 
         public Task<FieldMonsterResponse> GetMonsterInfoAsync(Int64 monsterUID);
         
         public Task<ErrorCode> SetCatchAsync(TableCatch catchTable);
 
-        public Task<DailyCheckResponse> TryDailyCheckAsync(string ID);
+        // 출석체크 설정하기
+        public Task<ErrorCode> InitDailyCheckAsync(string ID);
+        public Task<ErrorCode> TryDailyCheckAsync(string ID);
     }
 }
