@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"dbual0es7c92wl5ax9vcltgt6"
+  "AuthToken":"h633cpzrvje645dincs1rv208"
 }
 
 ###
@@ -30,7 +30,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"dbual0es7c92wl5ax9vcltgt6"
+  "AuthToken":"h633cpzrvje645dincs1rv208"
 }
 
 ###
@@ -39,7 +39,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"dbual0es7c92wl5ax9vcltgt6",
+  "AuthToken":"h633cpzrvje645dincs1rv208",
   "MonsterID": 1
 }
 
@@ -49,5 +49,14 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"dbual0es7c92wl5ax9vcltgt6"
+  "AuthToken":"h633cpzrvje645dincs1rv208"
+}
+
+###
+POST http://localhost:5000/CheckPostmail
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":"h633cpzrvje645dincs1rv208"
 }

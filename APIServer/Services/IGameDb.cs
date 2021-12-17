@@ -26,5 +26,6 @@ namespace ApiServer.Services
         // 출석체크 설정하기
         public Task<ErrorCode> InitDailyCheckAsync(string ID);
         public Task<ErrorCode> TryDailyCheckAsync(string ID);
+        public Task<List<Tuple<Int64,Int32>>> CheckPostmailAsync(string ID);
     }
 }

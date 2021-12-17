@@ -211,5 +211,36 @@ namespace ApiServer.Services
             }
             return ErrorCode.None;
         }
+
+        public async Task<List<Tuple<Int64,Int32>>> CheckPostmailAsync(string ID)
+        {
+            try
+            {
+                var selectQuery = $"select postID, StarCount from postmail where ID = @userId";
+                var postmail = await _dbConn.QueryAsync<TablePostmail>(selectQuery, new
+                {
+                    userId = ID
+                });
+                
+                var ret = new List<Tuple<Int64, Int32>>();
+                // 우편함에 값이 없는 상태임.
+                if (postmail.Count() == 0)
+                {
+                    return ret;
+                }
+                
+                foreach (var eachPost in postmail)
+                {
+                    ret.Add(new Tuple<Int64, Int32>(eachPost.postID, eachPost.StarCount));
+                }
+                
+                return ret;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(CheckPostmailAsync)} Exception : {e}");
+                return null;
+            }
+        }
     }
 }
