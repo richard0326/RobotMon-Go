@@ -212,34 +212,100 @@ namespace ApiServer.Services
             return ErrorCode.None;
         }
 
-        public async Task<List<Tuple<Int64,Int32>>> CheckPostmailAsync(string ID)
+        public async Task<Tuple<Int32, List<Tuple<Int64,Int32>>?>> CheckPostmailAsync(string ID, Int32 pageIndex, Int32 pageSize)
         {
             try
             {
-                var selectQuery = $"select postID, StarCount from postmail where ID = @userId";
+                var selectQuery = $"select postID, StarCount from postmail where ID = @userId LIMIT {pageIndex * pageSize}, {pageSize}";
                 var postmail = await _dbConn.QueryAsync<TablePostmail>(selectQuery, new
                 {
                     userId = ID
                 });
-                
-                var ret = new List<Tuple<Int64, Int32>>();
+
                 // 우편함에 값이 없는 상태임.
-                if (postmail.Count() == 0)
+                if (postmail is null)
                 {
-                    return ret;
+                    return new Tuple<int, List<Tuple<long, int>>?>(0, null);
                 }
+
+                // 전체 개수 찾아오기
+                var countQuery = $"select count(*) from postmail where ID = @userId";
+                var count = await _dbConn.QueryFirstAsync<Int32>(countQuery, new
+                {
+                    userId = ID
+                });
                 
+                // 반환할 Tuple
+                var ret = new Tuple<int, List<Tuple<long, int>>?>(count, new List<Tuple<long, int>>());
+                
+                // 쿼리를 돌면서 선물함의 ID와 선물 내용을 보내준다.
                 foreach (var eachPost in postmail)
                 {
-                    ret.Add(new Tuple<Int64, Int32>(eachPost.postID, eachPost.StarCount));
+                    ret.Item2.Add(new Tuple<Int64, Int32>(eachPost.postID, eachPost.StarCount));
                 }
-                
+
                 return ret;
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(CheckPostmailAsync)} Exception : {e}");
                 return null;
+            }
+        }
+
+        public async Task<ErrorCode> SendPostmailAsync(string ID, Int32 starCount)
+        {
+            try
+            {
+                var insertQuery = $"insert into postmail(ID, StarCount, Date) values (@userID, {starCount}, CURDATE())";
+                var insertCount = await _dbConn.ExecuteAsync(insertQuery, new
+                {
+                    userId = ID
+                });
+
+                if (insertCount == 0)
+                {
+                    // 선물을 넣는데 실패한 경우...
+                    return ErrorCode.SendPostmailFailInsert;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(SendPostmailAsync)} Exception : {e}");
+                return ErrorCode.SendPostmailFailException;
+            }
+            
+            return ErrorCode.None;
+        }
+        
+        public async Task<Tuple<ErrorCode, Int32>> RecvPostmailAsync(string ID, Int64 postmailID)
+        {
+            try
+            {
+                var selectQuery = $"select StarCount from postmail where postID = {postmailID} and ID = @userId";
+                var selInfo = await _dbConn.QuerySingleAsync<TablePostmail>(selectQuery, new
+                {
+                    userId = ID
+                });
+
+                if (selInfo is null)
+                {
+                    // 선물이 없다면 문제가 있는 상황
+                    return new Tuple<ErrorCode, Int32>(ErrorCode.RecvPostmailFailNoPostmail, 0);
+                }
+                
+                var delQuery = $"delete from postmail where postID = {postmailID} and ID = @userId";
+                var delCount = await _dbConn.ExecuteAsync(delQuery, new
+                {
+                    userId = ID
+                });
+
+                return new Tuple<ErrorCode, Int32>(ErrorCode.None, selInfo.StarCount);
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(RecvPostmailAsync)} Exception : {e}");
+                return new Tuple<ErrorCode, Int32>(ErrorCode.RecvPostmailFailException, 0);
             }
         }
     }

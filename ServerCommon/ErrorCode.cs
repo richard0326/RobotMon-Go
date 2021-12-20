@@ -31,10 +31,15 @@
         DailyCheckFailUpdateQuery = 20244,
         DailyCheckFailNoData = 20245,
         
-        PostmailFailNoPostmail = 20251,
-        PostmailFailException = 20252,
+        CheckPostmailFailNoPostmail = 20251,
+        CheckPostmailFailException = 20252,
         
-        
+        SendPostmailFailException = 20261,
+        SendPostmailFailInsert = 20262,
+        SendPostmailFailPostmailFull = 20263,
+
+        RecvPostmailFailException = 20271,
+        RecvPostmailFailNoPostmail = 20272,
         // PVP Server 20401 ~ 20600
 
         // Raid Server  20601 ~ 20800

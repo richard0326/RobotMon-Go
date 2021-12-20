@@ -2,13 +2,12 @@
 
 namespace ApiServer.Model
 {
-
-    public class CheckPostmailRequest
+    public class SendPostmailRequest
     {
         [StringLength(45)]
         public string ID { get; set; } = "";
         [StringLength(200)]
         public string AuthToken { get; set; } = "";
-        public Int32 PageIndex { get; set; }
+        public Int32 StarCount { get; set; }
     }
 }

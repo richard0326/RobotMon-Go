@@ -21,7 +21,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"h633cpzrvje645dincs1rv208"
+  "AuthToken":"6clbc9und2qtb2s26szhxxwwr"
 }
 
 ###
@@ -30,7 +30,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"h633cpzrvje645dincs1rv208"
+  "AuthToken":"6clbc9und2qtb2s26szhxxwwr"
 }
 
 ###
@@ -39,7 +39,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"h633cpzrvje645dincs1rv208",
+  "AuthToken":"6clbc9und2qtb2s26szhxxwwr",
   "MonsterID": 1
 }
 
@@ -49,7 +49,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"h633cpzrvje645dincs1rv208"
+  "AuthToken":"6clbc9und2qtb2s26szhxxwwr"
 }
 
 ###
@@ -58,5 +58,26 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"h633cpzrvje645dincs1rv208"
+  "AuthToken":"6clbc9und2qtb2s26szhxxwwr",
+  "PageIndex": 0
+}
+
+###
+POST http://localhost:5000/SendPostmail
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":"6clbc9und2qtb2s26szhxxwwr",
+  "StarCount": 999
+}
+
+###
+POST http://localhost:5000/RecvPostmail
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":"6clbc9und2qtb2s26szhxxwwr",
+  "PostmailID": 3
 }
