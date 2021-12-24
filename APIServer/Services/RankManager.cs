@@ -40,7 +40,7 @@ namespace ApiServer.Services
         public static async Task<ErrorCode> UpdateStarCount(string id, Int32 starCount, IGameDb gameDb)
         {
             // Redis의 랭킹 값을 변경을 시도한다.
-            if (await RedisDB.ZSetIncreamentRankAsync(id, starCount) == false)
+            if (await RedisDB.UpdateRankAsync(id, starCount) == false)
             {
                 // logger
                 return ErrorCode.RankManagerFailUpdateStarCountIncrease;
@@ -51,7 +51,7 @@ namespace ApiServer.Services
             if (result != ErrorCode.None)
             {
                 // rollback
-                if (await RedisDB.ZSetIncreamentRankAsync(id, -starCount) == false)
+                if (await RedisDB.UpdateRankAsync(id, -starCount) == false)
                 {
                     //logger.ZLogDebug($"{nameof(UpdateStarCount)} Rank Rollback Fail!!!");
                     return ErrorCode.RankManagerFailUpdateStarCountNeedRollback;
@@ -61,6 +61,22 @@ namespace ApiServer.Services
             
             return ErrorCode.None;
         }
-        
+
+        public static async Task<Tuple<ErrorCode, Int64, string[]>> CheckRankingInfo(Int32 pageIndex, Int32 range = 10)
+        {
+            var rankList = await RedisDB.GetRangeRankAsync(pageIndex * range, range);
+            if (rankList is null)
+            {
+                return new Tuple<ErrorCode, long, string[]>(ErrorCode.RankManagerFailGetRangeRank, 0, null);
+            }
+
+            var count = await RedisDB.GetRankSizeAsync();
+            if (count == -1)
+            {
+                return new Tuple<ErrorCode, long, string[]>(ErrorCode.RankManagerFailGetRankSize, 0, null);
+            }
+
+            return new Tuple<ErrorCode, long, string[]>(ErrorCode.None, count, rankList);
+        }
     }
 }

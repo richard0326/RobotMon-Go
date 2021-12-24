@@ -138,7 +138,7 @@ namespace ApiServer.Services
                 return false;
             }
         }
-        public static async Task<bool> ZSetIncreamentRankAsync(string member, Int32 score)
+        public static async Task<bool> UpdateRankAsync(string member, Int32 score)
         {
             try
             {
@@ -154,17 +154,31 @@ namespace ApiServer.Services
             return true;
         }
 
-        public static async Task<string[]?> ZSetRangeByScoreAsync(Int32 start, Int32 range)
+        public static async Task<string[]?> GetRangeRankAsync(Int32 start, Int32 range)
         {
             try
             {
                 var redis = new RedisSortedSet<string>(s_connection, "Rank", null);
-                var redisList = await redis.RangeByRankAsync(start, range);
+                var redisList = await redis.RangeByRankAsync(start, range, Order.Descending);
                 return redisList;
             }
             catch (Exception e)
             {
                 return null;
+            }
+        }
+        
+        public static async Task<Int32> GetRankSizeAsync()
+        {
+            try
+            {
+                var redis = new RedisSortedSet<string>(s_connection, "Rank", null);
+                var rankSize = await redis.LengthAsync();
+                return (Int32)rankSize;
+            }
+            catch (Exception e)
+            {
+                return -1;
             }
         }
     }

@@ -101,3 +101,13 @@ Content-Type: application/json
   "AuthToken":"vhfg2vyxjr5f9yh6ba47j2ku0",
   "PostmailID": 4
 }
+
+###
+POST http://localhost:5000/RankingInfo
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":"vhfg2vyxjr5f9yh6ba47j2ku0",
+  "PageIndex": 0
+}

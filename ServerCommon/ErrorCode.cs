@@ -52,6 +52,8 @@
         RankManagerFailUpdateStarCountIncrease = 20281,
         RankManagerFailUpdateStarCountNeedRollback = 20282,
         RankManagerFailUpdateStarCountDbFail = 20283,
+        RankManagerFailGetRangeRank = 20284,
+        RankManagerFailGetRankSize = 20285,
         
         // PVP Server 20401 ~ 20600
 
