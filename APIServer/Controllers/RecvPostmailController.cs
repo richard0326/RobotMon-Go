@@ -25,15 +25,33 @@ namespace ApiServer.Controllers
             var response = new RecvPostmailResponse();
 
             var postmailInfo = await _gameDb.RecvPostmailAsync(request.ID, request.PostmailID);
-
-            if (postmailInfo.Item1 != ErrorCode.None)
+            var errorCode = postmailInfo.Item1;
+            var starCount = postmailInfo.Item2;
+            var date = postmailInfo.Item3;
+            
+            if (errorCode != ErrorCode.None)
             {
-                response.Result = postmailInfo.Item1;
+                response.Result = errorCode;
                 _logger.ZLogDebug($"{nameof(RecvPostmailPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
-            response.StarCount = postmailInfo.Item2;
+            errorCode = await RankManager.UpdateStarCount(request.ID, starCount, _gameDb);
+            if(errorCode != ErrorCode.None)
+            {
+                // Rollback
+                var innerErrorCode = await _gameDb.RollbackRecvPostmailAsync(request.ID, starCount, date);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(RecvPostmailPost)} ErrorCode : {innerErrorCode}");
+                }
+                
+                response.Result = errorCode;
+                _logger.ZLogDebug($"{nameof(RecvPostmailPost)} ErrorCode : {response.Result}");
+                return response;
+            }
+
+            response.StarCount = starCount;
 
             return response;
         }

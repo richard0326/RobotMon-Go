@@ -31,6 +31,7 @@ namespace ApiServer
             services.AddControllers();
             
             DataStorage.Load(Configuration["DbConfig:GameConnStr"]);
+            RankManager.Init(Configuration["DbConfig:GameConnStr"]);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -14,31 +14,33 @@ namespace ApiServer.Services
         public static void Load(string dbConnString)
         {
             using var dBConn = new MySqlConnection(dbConnString);
-            dBConn.Open();
+            {
+                dBConn.Open();
 
-            var monsterList = dBConn.Query<TableMonsterInfo>("select * from monsterinfo");
-            foreach (var value in monsterList)
-            {
-                s_monsterDic.TryAdd(value.MID, new Monster()
+                var monsterList = dBConn.Query<TableMonsterInfo>("select * from monsterinfo");
+                foreach (var value in monsterList)
                 {
-                    Att = value.Att,
-                    Def = value.Def,
-                    HP = value.HP,
-                    Level = value.Level,
-                    MonsterName = value.MonsterName,
-                    StarCount = value.StarCount,
-                    UpgradeCount = value.UpgradeCount,
-                    Type = value.Type
-                });
-            }
-            
-            var dailyCheckList = dBConn.Query<TableDailyInfo>("select * from DailyInfo");
-            foreach (var value in dailyCheckList)
-            {
-                s_dailyCheckDic.TryAdd(value.DayCount, new DailyInfo()
+                    s_monsterDic.TryAdd(value.MID, new Monster()
+                    {
+                        Att = value.Att,
+                        Def = value.Def,
+                        HP = value.HP,
+                        Level = value.Level,
+                        MonsterName = value.MonsterName,
+                        StarCount = value.StarCount,
+                        UpgradeCount = value.UpgradeCount,
+                        Type = value.Type
+                    });
+                }
+
+                var dailyCheckList = dBConn.Query<TableDailyInfo>("select * from DailyInfo");
+                foreach (var value in dailyCheckList)
                 {
-                    StarCount = value.StarCount
-                });
+                    s_dailyCheckDic.TryAdd(value.DayCount, new DailyInfo()
+                    {
+                        StarCount = value.StarCount
+                    });
+                }
             }
         }
         

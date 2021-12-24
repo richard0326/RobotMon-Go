@@ -50,7 +50,7 @@ namespace ApiServer.Services
         {
             try
             {
-                var selectQuery = $"select StarPoint, RankPoint, UserLevel, UserExp from gamedata where ID = @userId";
+                var selectQuery = $"select StarPoint, UserLevel, UserExp from gamedata where ID = @userId";
                 var gameData = await _dbConn.QuerySingleOrDefaultAsync<TableUserGameInfo>(selectQuery, new
                 {
                     userId = id
@@ -75,8 +75,8 @@ namespace ApiServer.Services
         {
             try
             {
-                var insertQuery = $"insert gamedata(ID, StarPoint, RankPoint, UserLevel, UserExp) " +
-                                  $"Values(@userId, {gameInfo.StarPoint}, {gameInfo.RankPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp})";
+                var insertQuery = $"insert gamedata(ID, StarPoint, UserLevel, UserExp) " +
+                                  $"Values(@userId, {gameInfo.StarPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp})";
                 var count = await _dbConn.ExecuteAsync(insertQuery, new
                 {
                     userId = gameInfo.ID
@@ -85,7 +85,32 @@ namespace ApiServer.Services
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(InitUserGameInfoAsync)} Exception : {e}");
-                return ErrorCode.UserGameInfoFailException;
+                return ErrorCode.UserGameInfoFailInitException;
+            }
+            return ErrorCode.None;
+        }
+
+        public async Task<ErrorCode> UpdateUserStarCountAsync(string ID, Int32 starCount)
+        {
+            try
+            {
+                var updateQuery =
+                    $"update gamedata set StarPoint = StarPoint + {starCount} where ID = @userId";
+                var updateCount = await _dbConn.ExecuteAsync(updateQuery, new
+                {
+                    userId = ID
+                });
+
+                if (updateCount == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.UserGameInfoFailStarCountUpdateFail}");
+                    return ErrorCode.UserGameInfoFailStarCountUpdateFail;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(InitUserGameInfoAsync)} Exception : {e}");
+                return ErrorCode.UserGameInfoFailStarCountException;
             }
             return ErrorCode.None;
         }
@@ -121,25 +146,46 @@ namespace ApiServer.Services
             }
         }
 
-        public async Task<ErrorCode> SetCatchAsync(TableCatch catchTable)
+        public async Task<Tuple<ErrorCode, Int32>> SetCatchAsync(TableCatch catchTable)
         {
             try
             {
-                var insertQuery = $"insert catch(UserID, MonsterID, CatchTime) Values(@userId, {catchTable.MonsterID}, @catchTime)";
-                var count = await _dbConn.ExecuteAsync(insertQuery, new
+                var insertQuery = $"insert catch(UserID, MonsterID, CatchTime) Values(@userId, {catchTable.MonsterID}, @catchTime); SELECT LAST_INSERT_ID();";
+                var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
                     userId = catchTable.UserID,
                     catchTime = catchTable.CatchTime.ToString("yyyy-MM-dd")
                 });
+                
+                return new Tuple<ErrorCode, int>(ErrorCode.None, lastInsertId);
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(SetCatchAsync)} Exception : {e}");
-                return ErrorCode.CatchFailException;
+                return new Tuple<ErrorCode, int>(ErrorCode.CatchFailException, 0);
             }
-            return ErrorCode.None;
         }
 
+        public async Task<ErrorCode> DelCatchAsync(Int64 catchID)
+        {
+            try
+            {
+                var deleteQuery = $"delete from catch where CatchID = {catchID}";
+                var count = await _dbConn.ExecuteAsync(deleteQuery);
+                if (count == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(DelCatchAsync)} Error : {ErrorCode.CatchFailDeleteFail}");
+                    return ErrorCode.CatchFailDeleteFail;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(DelCatchAsync)} Exception : {e}");
+                return ErrorCode.CatchFailException;
+            }
+
+            return ErrorCode.None;
+        }
         public async Task<ErrorCode> InitDailyCheckAsync(string ID)
         {
             try
@@ -167,7 +213,7 @@ namespace ApiServer.Services
             return ErrorCode.None;
         }
         
-        public async Task<ErrorCode> TryDailyCheckAsync(string ID)
+        public async Task<Tuple<ErrorCode, DateTime>> TryDailyCheckAsync(string ID)
         {
             try
             {
@@ -177,18 +223,18 @@ namespace ApiServer.Services
                 {
                     userId = ID
                 });
-                
+
                 // 회원 가입할때 생성해줄 것이기 때문에.. 값이 항상 있어야함.
                 if (dailyCheck is null)
                 {
                     _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailNoData}");
-                    return ErrorCode.DailyCheckFailNoData;
+                    return new Tuple<ErrorCode, DateTime>(ErrorCode.DailyCheckFailNoData, new DateTime());
                 }
 
                 // 오늘 이미 받았기 때문에 보상을 받을 수 없다.
                 if (dailyCheck.RewardDate == DateTime.Today)
                 {
-                    return ErrorCode.DailyCheckFailAlreadyChecked;
+                    return new Tuple<ErrorCode, DateTime>(ErrorCode.DailyCheckFailAlreadyChecked, new DateTime());
                 }
                 
                 // data 갱신
@@ -201,17 +247,44 @@ namespace ApiServer.Services
                 if (updateCount == 0)
                 {
                     _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailUpdateQuery}");
-                    return ErrorCode.DailyCheckFailUpdateQuery;
+                    return new Tuple<ErrorCode, DateTime>(ErrorCode.DailyCheckFailUpdateQuery, new DateTime());
                 }
+                
+                return new Tuple<ErrorCode, DateTime>(ErrorCode.None, dailyCheck.RewardDate);
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(TryDailyCheckAsync)} Exception : {e}");
-                return ErrorCode.TryDailyCheckFailException;
+                return new Tuple<ErrorCode, DateTime>(ErrorCode.TryDailyCheckFailException, new DateTime());
             }
-            return ErrorCode.None;
         }
 
+        public async Task<ErrorCode> RollbackDailyCheckAsync(string id, DateTime prevDate)
+        {
+            try
+            {
+                var updateQuery = $"UPDATE dailycheck Set RewardCount = RewardCount - 1, RewardDate = @date WHERE ID = @userId";
+                var updateCount = await _dbConn.ExecuteAsync(updateQuery, new
+                {
+                    userId = id,
+                    date = prevDate.ToString("yy-MM-dd")
+                });
+                
+                if (updateCount == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(RollbackDailyCheckAsync)} Error : {ErrorCode.RollbackDailyCheckFailUpdateQuery}");
+                    return ErrorCode.RollbackDailyCheckFailUpdateQuery;
+                }
+                
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(RollbackDailyCheckAsync)} Exception : {e}");
+                return ErrorCode.RollbackDailyCheckFailException;
+            }
+        }
+        
         public async Task<Tuple<Int32, List<Tuple<Int64,Int32>>?>> CheckPostmailAsync(string ID, Int32 pageIndex, Int32 pageSize)
         {
             try
@@ -253,36 +326,51 @@ namespace ApiServer.Services
             }
         }
 
-        public async Task<ErrorCode> SendPostmailAsync(string ID, Int32 starCount)
+        public async Task<Tuple<ErrorCode, Int64>> SendPostmailAsync(string ID, Int32 starCount)
         {
             try
             {
-                var insertQuery = $"insert into postmail(ID, StarCount, Date) values (@userID, {starCount}, CURDATE())";
-                var insertCount = await _dbConn.ExecuteAsync(insertQuery, new
+                var insertQuery = $"insert into postmail(ID, StarCount, Date) values (@userID, {starCount}, CURDATE()); SELECT LAST_INSERT_ID();";
+                var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
                     userId = ID
                 });
 
-                if (insertCount == 0)
-                {
-                    // 선물을 넣는데 실패한 경우...
-                    return ErrorCode.SendPostmailFailInsert;
-                }
+                return new Tuple<ErrorCode, Int64>(ErrorCode.None, lastInsertId);
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(SendPostmailAsync)} Exception : {e}");
-                return ErrorCode.SendPostmailFailException;
+                return new Tuple<ErrorCode, Int64>(ErrorCode.SendPostmailFailException, 0);
             }
-            
-            return ErrorCode.None;
         }
-        
-        public async Task<Tuple<ErrorCode, Int32>> RecvPostmailAsync(string ID, Int64 postmailID)
+
+        public async Task<ErrorCode> RollbackSendPostmailAsync(Int64 postmailID)
         {
             try
             {
-                var selectQuery = $"select StarCount from postmail where postID = {postmailID} and ID = @userId";
+                var deleteQuery = "delete from postmail where postID = {postmailID}";
+                var count = await _dbConn.ExecuteAsync(deleteQuery);
+                
+                if (count == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(RollbackSendPostmailAsync)} Error : {ErrorCode.RollbackDailyCheckFailUpdateQuery}");
+                    return ErrorCode.RollbackSendPostmailFailDeleteQuery;
+                }
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(RollbackSendPostmailAsync)} Exception : {e}");
+                return ErrorCode.RollbackSendPostmailFailException;
+            }
+        }
+        
+        public async Task<Tuple<ErrorCode, Int32, DateTime>> RecvPostmailAsync(string ID, Int64 postmailID)
+        {
+            try
+            {
+                var selectQuery = $"select ID, StarCount, Date from postmail where postID = {postmailID} and ID = @userId";
                 var selInfo = await _dbConn.QuerySingleAsync<TablePostmail>(selectQuery, new
                 {
                     userId = ID
@@ -291,7 +379,7 @@ namespace ApiServer.Services
                 if (selInfo is null)
                 {
                     // 선물이 없다면 문제가 있는 상황
-                    return new Tuple<ErrorCode, Int32>(ErrorCode.RecvPostmailFailNoPostmail, 0);
+                    return new Tuple<ErrorCode, Int32, DateTime>(ErrorCode.RecvPostmailFailNoPostmail, 0, new DateTime());
                 }
                 
                 var delQuery = $"delete from postmail where postID = {postmailID} and ID = @userId";
@@ -300,12 +388,37 @@ namespace ApiServer.Services
                     userId = ID
                 });
 
-                return new Tuple<ErrorCode, Int32>(ErrorCode.None, selInfo.StarCount);
+                return new Tuple<ErrorCode, Int32, DateTime>(ErrorCode.None, selInfo.StarCount, selInfo.Date);
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(RecvPostmailAsync)} Exception : {e}");
-                return new Tuple<ErrorCode, Int32>(ErrorCode.RecvPostmailFailException, 0);
+                return new Tuple<ErrorCode, Int32, DateTime>(ErrorCode.RecvPostmailFailException, 0, new DateTime());
+            }
+        }
+
+        public async Task<ErrorCode> RollbackRecvPostmailAsync(string id, Int32 startCount, DateTime date)
+        {
+            try
+            {
+                var insertQuery = $"insert into postmail(ID, StarCount, Date) values (@userId, {startCount}, @dateStr)";
+                var count = await _dbConn.ExecuteAsync(insertQuery, new
+                {
+                    userId = id,
+                    dateTime = date.ToString("yy-MM-dd")
+                });
+                
+                if (count == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(RollbackRecvPostmailAsync)} Error : {ErrorCode.RollbackRecvPostmailFailInsertQuery}");
+                    return ErrorCode.RollbackRecvPostmailFailInsertQuery;
+                }
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(RecvPostmailAsync)} Exception : {e}");
+                return ErrorCode.RollbackRecvPostmailFailException;
             }
         }
     }

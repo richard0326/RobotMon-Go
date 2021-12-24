@@ -24,10 +24,28 @@ namespace ApiServer.Controllers
         {
             var response = new SendPostmailResponse();
 
-            var result = await _gameDb.SendPostmailAsync(request.ID, request.StarCount);
-            if (result != ErrorCode.None)
+            var result = await _gameDb.SendPostmailAsync(request.sendID, request.StarCount);
+            var errorCode = result.Item1;
+            var lastInsertId = result.Item2;
+            if (errorCode != ErrorCode.None)
             {
-                response.Result = result;
+                response.Result = errorCode;
+                _logger.ZLogDebug($"{nameof(SendPostmailPost)} ErrorCode : {response.Result}");
+                return response;
+            }
+
+            // 원래 유저의 정보에서 StarCount를 차감합니다.
+            errorCode = await RankManager.UpdateStarCount(request.ID, -request.StarCount, _gameDb);
+            if (errorCode != ErrorCode.None)
+            {
+                // Rollback
+                var innerErrorCode = await _gameDb.RollbackSendPostmailAsync(lastInsertId);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(SendPostmailPost)} ErrorCode : {innerErrorCode}");
+                }
+                
+                response.Result = errorCode;
                 _logger.ZLogDebug($"{nameof(SendPostmailPost)} ErrorCode : {response.Result}");
                 return response;
             }

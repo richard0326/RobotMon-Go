@@ -12,7 +12,6 @@ namespace ApiServer.Services
     public class RedisDB
     {
         private static RedisConnection s_connection;
-        private static RedisConnection s_transaction;
 
         public static void Init(string address)
         {
@@ -22,10 +21,9 @@ namespace ApiServer.Services
         
         public static async Task<bool> SetUserInfo(string key, RedisLoginData redisLoginData)
         {
-            var redis = new RedisString<RedisLoginData>(s_connection, key, TimeSpan.FromDays(1));
-
             try
             {
+                var redis = new RedisString<RedisLoginData>(s_connection, key, TimeSpan.FromDays(1));
                 if (await redis.SetAsync(redisLoginData, TimeSpan.FromDays(1)) == false)
                 {
                     return false;
@@ -40,10 +38,9 @@ namespace ApiServer.Services
 
         public static async Task<RedisLoginData> GetUserInfo(string key)
         {
-            var redis = new RedisString<RedisLoginData>(s_connection, key, null);
-
             try
             {
+                var redis = new RedisString<RedisLoginData>(s_connection, key, null);
                 var redisResult = await redis.GetAsync();
                 if (!redisResult.HasValue)
                 {
@@ -60,10 +57,9 @@ namespace ApiServer.Services
 
         public static async Task<bool> DelUserInfo(string key)
         {
-            var redis = new RedisString<RedisLoginData>(s_connection, key, null);
-
             try
             {
+                var redis = new RedisString<RedisLoginData>(s_connection, key, null);
                 var redisResult = await redis.DeleteAsync();
                 return redisResult;
             }
@@ -75,10 +71,9 @@ namespace ApiServer.Services
 
         public static async Task<RedisLoginData> GetUserAuthToken(string key)
         {
-            var redis = new RedisString<RedisLoginData>(s_connection, key, null);
-            
             try
             {
+                var redis = new RedisString<RedisLoginData>(s_connection, key, null);
                 var redisResult = await redis.GetAsync();
                 if (!redisResult.HasValue)
                 {
@@ -96,10 +91,9 @@ namespace ApiServer.Services
 
         public static async Task<bool> SetNxAsync(string key)
         {
-            var redis = new RedisString<RedisLoginData>(s_connection, key, TimeSpan.FromMinutes(1));
-            
             try
             {
+                var redis = new RedisString<RedisLoginData>(s_connection, key, TimeSpan.FromMinutes(1));
                 if (await redis.SetAsync(new RedisLoginData()
                     {
                         ID = key,
@@ -118,16 +112,59 @@ namespace ApiServer.Services
 
         public static async Task<bool> DelNxAsync(string key)
         {
-            var redis = new RedisString<RedisLoginData>(s_connection, key, TimeSpan.FromMinutes(1));
-            
             try
             {
+                var redis = new RedisString<RedisLoginData>(s_connection, key, TimeSpan.FromMinutes(1));
                 var redisResult = await redis.DeleteAsync();
                 return redisResult;
             }
             catch (Exception e)
             {
                 return false;
+            }
+        }
+
+        public static async Task<bool> ZSetAddAsync(string member, Int32 score)
+        {
+            try
+            {
+                // 기존에 키가 없다면 자동으로 생성된다.
+                var redis = new RedisSortedSet<string>(s_connection, "Rank", null);
+                var success = await redis.AddAsync(member, score, null,When.Always);
+                return success;
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
+        public static async Task<bool> ZSetIncreamentRankAsync(string member, Int32 score)
+        {
+            try
+            {
+                // 기존에 키가 없다면 자동으로 생성된다.
+                var redis = new RedisSortedSet<string>(s_connection, "Rank", null);
+                var diff = await redis.IncrementAsync(member, score, null);
+                // 변화된 마지막 값...이 diff
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<string[]?> ZSetRangeByScoreAsync(Int32 start, Int32 range)
+        {
+            try
+            {
+                var redis = new RedisSortedSet<string>(s_connection, "Rank", null);
+                var redisList = await redis.RangeByRankAsync(start, range);
+                return redisList;
+            }
+            catch (Exception e)
+            {
+                return null;
             }
         }
     }

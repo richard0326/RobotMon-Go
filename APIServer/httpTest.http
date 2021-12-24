@@ -16,12 +16,21 @@ Content-Type: application/json
 }
 
 ###
+POST http://localhost:5000/Login
+Content-Type: application/json
+
+{
+  "ID":"richard0326",
+  "PW":"1234"
+}
+
+###
 POST http://localhost:5000/UserGameInfo
 Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"6clbc9und2qtb2s26szhxxwwr"
+  "AuthToken":"vhfg2vyxjr5f9yh6ba47j2ku0"
 }
 
 ###
@@ -30,7 +39,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"6clbc9und2qtb2s26szhxxwwr"
+  "AuthToken":"vhfg2vyxjr5f9yh6ba47j2ku0"
 }
 
 ###
@@ -39,7 +48,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"6clbc9und2qtb2s26szhxxwwr",
+  "AuthToken": "vhfg2vyxjr5f9yh6ba47j2ku0",
   "MonsterID": 1
 }
 
@@ -49,7 +58,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"6clbc9und2qtb2s26szhxxwwr"
+  "AuthToken":"vhfg2vyxjr5f9yh6ba47j2ku0"
 }
 
 ###
@@ -58,7 +67,17 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"6clbc9und2qtb2s26szhxxwwr",
+  "AuthToken":"vhfg2vyxjr5f9yh6ba47j2ku0",
+  "PageIndex": 0
+}
+
+###
+POST http://localhost:5000/CheckPostmail
+Content-Type: application/json
+
+{
+  "ID":"richard0326",
+  "AuthToken":"ybr4w44przs812oplsggu2s27",
   "PageIndex": 0
 }
 
@@ -68,8 +87,9 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"6clbc9und2qtb2s26szhxxwwr",
-  "StarCount": 999
+  "AuthToken":"vhfg2vyxjr5f9yh6ba47j2ku0",
+  "sendID":"richard0326",
+  "StarCount": 900
 }
 
 ###
@@ -78,6 +98,6 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"6clbc9und2qtb2s26szhxxwwr",
-  "PostmailID": 3
+  "AuthToken":"vhfg2vyxjr5f9yh6ba47j2ku0",
+  "PostmailID": 4
 }

@@ -26,7 +26,9 @@ namespace ApiServer.Controllers
             var response = new DailyCheckResponse();
             
             // DB를 조회헤서 유저의 출석 체크 성공 여부를 알려줍니다.
-            var errorCode = await _gameDb.TryDailyCheckAsync(request.ID);
+            var result = await _gameDb.TryDailyCheckAsync(request.ID);
+            var errorCode = result.Item1;
+            var prevDate = result.Item2;
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
@@ -37,6 +39,27 @@ namespace ApiServer.Controllers
             // 보상 주기 - 월요일부터 일요일까지 요일 별로 보상이 있음.
             // 일요일 0, 월요일 1, 화요일 2, ...
             var dailyInfo = DataStorage.GetDailyInfo((int) DateTime.Today.DayOfWeek + 1);
+            if (dailyInfo is null)
+            {
+                response.Result = ErrorCode.DailyCheckFailNoStoredData;
+                _logger.ZLogDebug($"{nameof(DailyCheckPost)} ErrorCode : {response.Result}");
+                return response;
+            }
+            
+            errorCode = await RankManager.UpdateStarCount(request.ID, dailyInfo.StarCount, _gameDb);
+            if (errorCode != ErrorCode.None)
+            {
+                // Rollback 시도
+                var innerErrorCode = await _gameDb.RollbackDailyCheckAsync(request.ID, prevDate);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(DailyCheckPost)} ErrorCode : {innerErrorCode}");
+                }
+                response.Result = errorCode;
+                _logger.ZLogDebug($"{nameof(DailyCheckPost)} ErrorCode : {response.Result}");
+                return response;
+            }
+            
             response.StarCount = dailyInfo.StarCount;
             
             return response;

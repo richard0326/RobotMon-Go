@@ -47,13 +47,15 @@ namespace ApiServer.Controllers
             response.Date = DateTime.Today;
             
             // DB에 잡은 정보 저장
-            var errorCode = await _gameDb.SetCatchAsync(new TableCatch()
+            var result = await _gameDb.SetCatchAsync(new TableCatch()
             {
                 MonsterID = request.MonsterID,
                 UserID = request.ID,
                 CatchTime = response.Date
             });
 
+            var errorCode = result.Item1;
+            var catchId = result.Item2;
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
@@ -64,7 +66,24 @@ namespace ApiServer.Controllers
 
                 return response;
             }
-
+            
+            // 기획 데이터를 읽어왔지만 사용하지 않고, 랜덤하게 StarCount 주는 방식으로 수정
+            monster.StarCount = rand.Next(100, 1001);
+            
+            // 유저의 잡은 정보 수정
+            errorCode = await RankManager.UpdateStarCount(request.ID, monster.StarCount, _gameDb);
+            if (errorCode != ErrorCode.None)
+            {
+                var insideErrorCode = await _gameDb.DelCatchAsync(catchId);
+                if (insideErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(CatchPost)} ErrorCode : {insideErrorCode}");
+                }
+                response.Result = errorCode;
+                _logger.ZLogDebug($"{nameof(CatchPost)} ErrorCode : {response.Result}");
+                return response;
+            }
+            
             response.StarCount = monster.StarCount;
             response.UpgradeCandy = monster.UpgradeCount;
             response.MonsterID = request.MonsterID;

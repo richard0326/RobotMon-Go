@@ -41,7 +41,7 @@ namespace ApiServer.Controllers
             if (resultCode != ErrorCode.None)
             {
                 response.Result = resultCode;
-                _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {resultCode}");
+                _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;
             }
             
@@ -53,13 +53,12 @@ namespace ApiServer.Controllers
                 UserLevel = 1,
                 UserExp = 0,
                 StarPoint = 0,
-                RankPoint = 0,
             });
             
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"CreateAccountPost ErrorCode 1 : {resultCode}");
+                _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -67,8 +66,16 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"CreateAccountPost ErrorCode 2 : {resultCode}");
+                _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;
+            }
+
+            errorCode = await RankManager.UpdateStarCount(request.ID, 0, _gameDb);
+            if (errorCode != ErrorCode.None)
+            {
+                response.Result = errorCode;
+                _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
+                return response;  
             }
             
             return response;

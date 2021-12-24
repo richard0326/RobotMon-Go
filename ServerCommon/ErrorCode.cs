@@ -19,10 +19,13 @@
         CreateAccountFailDuplicate = 20212,
         CreateAccountFailGetTable = 20213,
 
-        UserGameInfoFailException = 20223,
+        UserGameInfoFailInitException = 20223,
+        UserGameInfoFailStarCountException = 20224,
+        UserGameInfoFailStarCountUpdateFail = 20225,
         
         CatchFail = 20231,
         CatchFailException = 20232,
+        CatchFailDeleteFail = 20233,
         
         InitDailyCheckFailException = 20240,
         TryDailyCheckFailException = 20241,
@@ -30,16 +33,26 @@
         DailyCheckFailInsertQuery = 20243,
         DailyCheckFailUpdateQuery = 20244,
         DailyCheckFailNoData = 20245,
+        DailyCheckFailNoStoredData= 20246,
+        RollbackDailyCheckFailException = 20247,
+        RollbackDailyCheckFailUpdateQuery = 20248,
         
         CheckPostmailFailNoPostmail = 20251,
         CheckPostmailFailException = 20252,
         
         SendPostmailFailException = 20261,
-        SendPostmailFailInsert = 20262,
-        SendPostmailFailPostmailFull = 20263,
+        RollbackSendPostmailFailException = 20262,
+        RollbackSendPostmailFailDeleteQuery = 20263,
+        RollbackRecvPostmailFailInsertQuery = 20264,
 
         RecvPostmailFailException = 20271,
         RecvPostmailFailNoPostmail = 20272,
+        RollbackRecvPostmailFailException = 20273,
+        
+        RankManagerFailUpdateStarCountIncrease = 20281,
+        RankManagerFailUpdateStarCountNeedRollback = 20282,
+        RankManagerFailUpdateStarCountDbFail = 20283,
+        
         // PVP Server 20401 ~ 20600
 
         // Raid Server  20601 ~ 20800

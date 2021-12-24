@@ -34,7 +34,6 @@ namespace ApiServer.Controllers
                 _logger.ZLogDebug($"{nameof(GameInfoPost)} ErrorCode : {response.Result}");
                 return response;
             }
-            response.RankPoint = gameInfo.RankPoint;
             response.StarPoint = gameInfo.StarPoint;
             response.UserLevel = gameInfo.UserLevel;
             response.UserExp = gameInfo.UserExp;
