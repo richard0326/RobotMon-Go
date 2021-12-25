@@ -47,31 +47,46 @@ namespace ApiServer.Services
             _dbConn.Close();
         }
         
-        public async Task<ErrorCode> CreateAccountDataAsync(string id, string pw, string salt)
+        public async Task<Tuple<ErrorCode, Int64>> CreateAccountDataAsync(string id, string pw, string salt)
         {
             try
             {
-                var insertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt)";
-                var count = await _dbConn.ExecuteAsync(insertQuery, new
+                var insertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt); SELECT LAST_INSERT_ID();";
+                var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
                     userId = id,
                     userPw = pw,
                     userSalt = salt
                 });
 
-                // ID를 Unique하게 해놔서... 일로 들어오진 않는다.
-                if (count != 1)
-                {
-                    return ErrorCode.CreateAccountFailDuplicate;
-                }
+                return new Tuple<ErrorCode, long>(ErrorCode.None, lastInsertId);
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(CreateAccountDataAsync)} Exception : {e}");
-                return ErrorCode.CreateAccountFailDuplicate;
+                return new Tuple<ErrorCode, long>(ErrorCode.CreateAccountFailDuplicate, 0);
             }
+        }
 
-            return ErrorCode.None;
+        public async Task<ErrorCode> RollbackCreateAccountDataAsync(Int64 createIdx)
+        {
+            try
+            {
+                var deleteQuery = $"delete from Users where UID = {createIdx}";
+                var count = await _dbConn.ExecuteAsync(deleteQuery);
+                
+                if (count == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(RollbackCreateAccountDataAsync)} Error : {ErrorCode.RollbackCreateAccountFailDeleteQuery}");
+                    return ErrorCode.RollbackCreateAccountFailDeleteQuery;
+                }
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(RollbackCreateAccountDataAsync)} Exception : {e}");
+                return ErrorCode.RollbackSendCreateAccountFailException;
+            }
         }
         
         public async Task<ErrorCode> TryPasswordAsync(string id, string pw)

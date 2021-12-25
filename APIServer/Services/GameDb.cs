@@ -71,23 +71,45 @@ namespace ApiServer.Services
         }
         
         // 게임 정보 설정하기
-        public async Task<ErrorCode> InitUserGameInfoAsync(TableUserGameInfo gameInfo)
+        public async Task<Tuple<ErrorCode, Int64>> InitUserGameInfoAsync(TableUserGameInfo gameInfo)
         {
             try
             {
-                var insertQuery = $"insert gamedata(ID, StarPoint, UserLevel, UserExp) " +
-                                  $"Values(@userId, {gameInfo.StarPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp})";
-                var count = await _dbConn.ExecuteAsync(insertQuery, new
+                var insertQuery = "insert gamedata(ID, StarPoint, UserLevel, UserExp) " +
+                                  $"Values(@userId, {gameInfo.StarPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp}); SELECT LAST_INSERT_ID();";
+                var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
                     userId = gameInfo.ID
                 });
+
+                return new Tuple<ErrorCode, long>(ErrorCode.None, lastInsertId);
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(InitUserGameInfoAsync)} Exception : {e}");
-                return ErrorCode.UserGameInfoFailInitException;
+                return new Tuple<ErrorCode, long>(ErrorCode.UserGameInfoFailInitException, 0);
             }
-            return ErrorCode.None;
+        }
+
+        public async Task<ErrorCode> RollbackInitUserGameInfoAsync(Int64 gamedataId)
+        {
+            try
+            {
+                var deleteQuery = $"delete from gamedata where UID = {gamedataId}";
+                var count = await _dbConn.ExecuteAsync(deleteQuery);
+                
+                if (count == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(RollbackInitUserGameInfoAsync)} Error : {ErrorCode.RollbackInitUserGameIfnoFailDeleteQuery}");
+                    return ErrorCode.RollbackInitUserGameIfnoFailDeleteQuery;
+                }
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(RollbackInitUserGameInfoAsync)} Exception : {e}");
+                return ErrorCode.RollbackInitUserGameInfoFailException;
+            }
         }
 
         public async Task<ErrorCode> UpdateUserStarCountAsync(string ID, Int32 starCount)
@@ -211,6 +233,30 @@ namespace ApiServer.Services
             }
 
             return ErrorCode.None;
+        }
+        
+        public async Task<ErrorCode> RollbackInitDailyCheckAsync(string dailyID)
+        {
+            try
+            {
+                var deleteQuery = $"delete from dailycheck where ID = @userId";
+                var count = await _dbConn.ExecuteAsync(deleteQuery, new
+                {
+                    userId = dailyID
+                });
+                
+                if (count == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(RollbackSendPostmailAsync)} Error : {ErrorCode.RollbackInitDailyCheckFailDeleteQuery}");
+                    return ErrorCode.RollbackInitDailyCheckFailDeleteQuery;
+                }
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(RollbackSendPostmailAsync)} Exception : {e}");
+                return ErrorCode.RollbackInitDailyCheckFailException;
+            }
         }
         
         public async Task<Tuple<ErrorCode, DateTime>> TryDailyCheckAsync(string ID)
@@ -349,12 +395,12 @@ namespace ApiServer.Services
         {
             try
             {
-                var deleteQuery = "delete from postmail where postID = {postmailID}";
+                var deleteQuery = $"delete from postmail where postID = {postmailID}";
                 var count = await _dbConn.ExecuteAsync(deleteQuery);
                 
                 if (count == 0)
                 {
-                    _logger.ZLogDebug($"{nameof(RollbackSendPostmailAsync)} Error : {ErrorCode.RollbackDailyCheckFailUpdateQuery}");
+                    _logger.ZLogDebug($"{nameof(RollbackSendPostmailAsync)} Error : {ErrorCode.RollbackSendPostmailFailDeleteQuery}");
                     return ErrorCode.RollbackSendPostmailFailDeleteQuery;
                 }
                 return ErrorCode.None;

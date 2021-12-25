@@ -18,10 +18,14 @@
         
         CreateAccountFailDuplicate = 20212,
         CreateAccountFailGetTable = 20213,
+        RollbackCreateAccountFailDeleteQuery = 20214,
+        RollbackSendCreateAccountFailException = 20215,
 
         UserGameInfoFailInitException = 20223,
         UserGameInfoFailStarCountException = 20224,
         UserGameInfoFailStarCountUpdateFail = 20225,
+        RollbackInitUserGameIfnoFailDeleteQuery = 20226,
+        RollbackInitUserGameInfoFailException = 20227,
         
         CatchFail = 20231,
         CatchFailException = 20232,
@@ -36,6 +40,8 @@
         DailyCheckFailNoStoredData= 20246,
         RollbackDailyCheckFailException = 20247,
         RollbackDailyCheckFailUpdateQuery = 20248,
+        RollbackInitDailyCheckFailDeleteQuery = 20249,
+        RollbackInitDailyCheckFailException = 20250,
         
         CheckPostmailFailNoPostmail = 20251,
         CheckPostmailFailException = 20252,

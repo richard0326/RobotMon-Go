@@ -37,16 +37,18 @@ namespace ApiServer.Controllers
             var saltValue = Security.SaltString();
             var hashingPassword = Security.MakeHashingPassWord(saltValue, request.PW);
 
-            var resultCode = await _accountDb.CreateAccountDataAsync(request.ID, hashingPassword, saltValue);
-            if (resultCode != ErrorCode.None)
+            var createAccountResult = await _accountDb.CreateAccountDataAsync(request.ID, hashingPassword, saltValue);
+            var errorCode = createAccountResult.Item1;
+            var lastCreateIndex = createAccountResult.Item2;
+            if (errorCode != ErrorCode.None)
             {
-                response.Result = resultCode;
+                response.Result = errorCode;
                 _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;
             }
             
             // GameDB에 유저 기본 초기화 정보 세팅하기
-            var errorCode = await _gameDb.InitUserGameInfoAsync(new TableUserGameInfo()
+            var initUserGameInfoResult = await _gameDb.InitUserGameInfoAsync(new TableUserGameInfo()
             {
                 // 유저 초기 정보
                 ID = request.ID,
@@ -54,9 +56,18 @@ namespace ApiServer.Controllers
                 UserExp = 0,
                 StarPoint = 0,
             });
-            
+
+            errorCode = initUserGameInfoResult.Item1;
+            var lastGameInfoIndex = initUserGameInfoResult.Item2;
             if (errorCode != ErrorCode.None)
             {
+                // Rollback 계정 생성
+                var innerErrorCode = await _accountDb.RollbackCreateAccountDataAsync(lastCreateIndex);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                }
+                
                 response.Result = errorCode;
                 _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;
@@ -65,6 +76,20 @@ namespace ApiServer.Controllers
             errorCode = await _gameDb.InitDailyCheckAsync(request.ID);
             if (errorCode != ErrorCode.None)
             {
+                // Rollback 계정 생성
+                var innerErrorCode = await _accountDb.RollbackCreateAccountDataAsync(lastCreateIndex);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                }
+
+                // Rollback gameInfo 
+                innerErrorCode = await _gameDb.RollbackInitUserGameInfoAsync(lastGameInfoIndex);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                }
+                
                 response.Result = errorCode;
                 _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;
@@ -73,6 +98,27 @@ namespace ApiServer.Controllers
             errorCode = await RankManager.UpdateStarCount(request.ID, 0, _gameDb);
             if (errorCode != ErrorCode.None)
             {
+                // Rollback 계정 생성
+                var innerErrorCode = await _accountDb.RollbackCreateAccountDataAsync(lastCreateIndex);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                }
+
+                // Rollback gameInfo 
+                innerErrorCode = await _gameDb.RollbackInitUserGameInfoAsync(lastGameInfoIndex);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                }
+                
+                // Rollback DailyCheck
+                innerErrorCode = await _gameDb.RollbackInitDailyCheckAsync(request.ID);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                }
+                
                 response.Result = errorCode;
                 _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;  

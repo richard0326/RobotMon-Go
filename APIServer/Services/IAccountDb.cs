@@ -12,8 +12,9 @@ namespace ApiServer
         // DB 닫기.
         public void Close();
 
-        public Task<ErrorCode> CreateAccountDataAsync(string id, string pw, string salt);
-        
+        public Task<Tuple<ErrorCode, Int64>> CreateAccountDataAsync(string id, string pw, string salt);
+
+        public Task<ErrorCode> RollbackCreateAccountDataAsync(Int64 createIdx);
         // 유저의 Password, Salt 값 반환
         public Task<ErrorCode> TryPasswordAsync(string id, string pw);
     }
