@@ -21,7 +21,7 @@ namespace ApiServer.Services
         public Task<ErrorCode> RollbackInitUserGameInfoAsync(Int64 gamedataId);
         public Task<FieldMonsterResponse> GetMonsterInfoAsync(Int64 monsterUID);
         public Task<Tuple<ErrorCode, Int32>> SetCatchAsync(TableCatch catchTable);
-        public Task<ErrorCode> DelCatchAsync(Int64 catchID);
+        public Task<ErrorCode> RollbackSetCatchAsync(Int64 catchID);
         // 출석체크 설정하기
         public Task<ErrorCode> InitDailyCheckAsync(string ID);
         public Task<ErrorCode> RollbackInitDailyCheckAsync(string dailyID);
@@ -32,5 +32,8 @@ namespace ApiServer.Services
         public Task<ErrorCode> RollbackSendPostmailAsync(Int64 postmailID);
         public Task<Tuple<ErrorCode, Int32, DateTime>> RecvPostmailAsync(string ID, Int64 postmailID);
         public Task<ErrorCode> RollbackRecvPostmailAsync(string id, Int32 startCount, DateTime date);
+        public Task<Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime>>>> GetCatchListAsync(string id);
+        public Task<Tuple<ErrorCode, Int64, Int64, DateTime>> DelCatchAsync(Int64 catchID);
+        public Task<ErrorCode> RollbackDelCatchAsync(string id, Int64 monsterID, DateTime catchDate);
     }
 }

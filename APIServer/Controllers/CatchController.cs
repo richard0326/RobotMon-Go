@@ -74,7 +74,7 @@ namespace ApiServer.Controllers
             errorCode = await RankManager.UpdateStarCount(request.ID, monster.StarCount, _gameDb);
             if (errorCode != ErrorCode.None)
             {
-                var insideErrorCode = await _gameDb.DelCatchAsync(catchId);
+                var insideErrorCode = await _gameDb.RollbackSetCatchAsync(catchId);
                 if (insideErrorCode != ErrorCode.None)
                 {
                     _logger.ZLogDebug($"{nameof(CatchPost)} ErrorCode : {insideErrorCode}");
@@ -83,7 +83,8 @@ namespace ApiServer.Controllers
                 _logger.ZLogDebug($"{nameof(CatchPost)} ErrorCode : {response.Result}");
                 return response;
             }
-            
+
+            response.CatchID = catchId;
             response.StarCount = monster.StarCount;
             response.UpgradeCandy = monster.UpgradeCount;
             response.MonsterID = request.MonsterID;

@@ -19,6 +19,7 @@ namespace ApiServer.Services
     {
         private readonly IOptions<DbConfig> _dbConfig;
         private IDbConnection _dbConn;
+        private IDbTransaction _dBTransaction;
         private readonly ILogger<AccountDb> _logger;
 
         public AccountDb(ILogger<AccountDb> logger, IOptions<DbConfig> dbConfig)
@@ -47,10 +48,63 @@ namespace ApiServer.Services
             _dbConn.Close();
         }
         
+        // 트랜잭션 시작.
+        public void StartTransaction()
+        {
+            if (_dbConn == null)
+            {
+                throw new Exception("DB is not opened");
+            }
+            if (_dBTransaction != null)
+            {
+                throw new Exception("DB transaction is not finished");
+            }
+
+            _dBTransaction = _dbConn.BeginTransaction(IsolationLevel.RepeatableRead);
+
+            if (_dBTransaction == null)
+            {
+                throw new Exception("DB transaction error");
+            }
+        }
+
+        // 트랜잭션 롤백.
+        public void Rollback()
+        {
+            if (_dbConn == null)
+            {
+                throw new Exception("DB is not opened");
+            }
+            if (_dBTransaction == null)
+            {
+                throw new Exception("DB transaction is not started");
+            }
+            
+            _dBTransaction.Rollback();
+            _dBTransaction = null;
+        }
+
+        // 트랜잭션 커밋.
+        public void Commit()
+        {
+            if (_dbConn == null)
+            {
+                throw new Exception("DB is not opened");
+            }
+            if (_dBTransaction == null)
+            {
+                throw new Exception("DB transaction is not started");
+            }
+
+            _dBTransaction.Commit();
+            _dBTransaction = null;
+        }
+        
         public async Task<Tuple<ErrorCode, Int64>> CreateAccountDataAsync(string id, string pw, string salt)
         {
             try
             {
+                StartTransaction();
                 var insertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt); SELECT LAST_INSERT_ID();";
                 var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
@@ -58,7 +112,8 @@ namespace ApiServer.Services
                     userPw = pw,
                     userSalt = salt
                 });
-
+                Commit();
+                
                 return new Tuple<ErrorCode, long>(ErrorCode.None, lastInsertId);
             }
             catch (Exception e)

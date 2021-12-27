@@ -39,7 +39,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"yu87tc2anj81u1ltj7p21guf0"
+  "AuthToken":"k7zu5084nqj0edovch2n575ds"
 }
 
 ###
@@ -57,7 +57,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"yu87tc2anj81u1ltj7p21guf0"
+  "AuthToken":"k7zu5084nqj0edovch2n575ds"
 }
 
 ###
@@ -66,7 +66,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken": "yu87tc2anj81u1ltj7p21guf0",
+  "AuthToken": "k7zu5084nqj0edovch2n575ds",
   "MonsterID": 1
 }
 
@@ -76,7 +76,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"yu87tc2anj81u1ltj7p21guf0"
+  "AuthToken":"k7zu5084nqj0edovch2n575ds"
 }
 
 ###
@@ -105,7 +105,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"yu87tc2anj81u1ltj7p21guf0",
+  "AuthToken":"k7zu5084nqj0edovch2n575ds",
   "sendID":"richard0326",
   "StarCount": 900
 }
@@ -116,7 +116,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"yu87tc2anj81u1ltj7p21guf0",
+  "AuthToken":"k7zu5084nqj0edovch2n575ds",
   "PostmailID": 4
 }
 
@@ -126,6 +126,25 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"yu87tc2anj81u1ltj7p21guf0",
+  "AuthToken":"k7zu5084nqj0edovch2n575ds",
   "PageIndex": 0
+}
+
+###
+POST http://localhost:5000/CheckCatch
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":"k7zu5084nqj0edovch2n575ds"
+}
+
+###
+POST http://localhost:5000/ReleaseCatch
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":"k7zu5084nqj0edovch2n575ds",
+  "CatchID": 1
 }

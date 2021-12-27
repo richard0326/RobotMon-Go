@@ -9,7 +9,9 @@ namespace ApiServer.Services
     public class DataStorage
     {
         private static ConcurrentDictionary<Int64, Monster> s_monsterDic = new();
-        private static ConcurrentDictionary<Int64, DailyInfo> s_dailyCheckDic = new();
+        private static ConcurrentDictionary<Int32, DailyInfo> s_dailyCheckDic = new();
+        private static ConcurrentDictionary<Int64, MonsterUpgrade> s_monsterUpgradeDic = new();
+        private static ConcurrentDictionary<Int64, MonsterEvolve> s_monsterEvolveDic = new();
 
         public static void Load(string dbConnString)
         {
@@ -41,6 +43,25 @@ namespace ApiServer.Services
                         StarCount = value.StarCount
                     });
                 }
+                
+                var updgradeList = dBConn.Query<TableMonsterUpgrade>("select * from monsterupgrade");
+                foreach (var value in updgradeList)
+                {
+                    s_monsterUpgradeDic.TryAdd(value.MID, new MonsterUpgrade()
+                    {
+                        UpdateCost = value.UpgradeCost
+                    });
+                }
+                
+                var evolveList = dBConn.Query<TableMonsterEvolve>("select * from monsterevolve");
+                foreach (var value in evolveList)
+                {
+                    s_monsterEvolveDic.TryAdd(value.MID, new MonsterEvolve()
+                    {
+                        EvolveMonsterID = value.EvolveMID,
+                        CandyCount = value.StarCount
+                    });
+                }
             }
         }
         
@@ -62,6 +83,26 @@ namespace ApiServer.Services
             }
 
             return null;
-        }    
+        }
+        
+        public static MonsterUpgrade GetMonsterUpgrade(Int64 monsterIdx)
+        {
+            if(s_monsterUpgradeDic.TryGetValue(monsterIdx, out var value))
+            {
+                return value;
+            }
+
+            return null;
+        }   
+        
+        public static MonsterEvolve GetMonsterEvolve(Int64 monsterIdx)
+        {
+            if(s_monsterEvolveDic.TryGetValue(monsterIdx, out var value))
+            {
+                return value;
+            }
+
+            return null;
+        }   
     }
 }

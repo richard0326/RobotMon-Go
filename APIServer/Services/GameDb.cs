@@ -45,6 +45,58 @@ namespace ApiServer.Services
             _dbConn.Close();
         }
         
+        // 트랜잭션 시작.
+        public void StartTransaction()
+        {
+            if (_dbConn == null)
+            {
+                throw new Exception("DB is not opened");
+            }
+            if (_dBTransaction != null)
+            {
+                throw new Exception("DB transaction is not finished");
+            }
+
+            _dBTransaction = _dbConn.BeginTransaction(IsolationLevel.RepeatableRead);
+
+            if (_dBTransaction == null)
+            {
+                throw new Exception("DB transaction error");
+            }
+        }
+
+        // 트랜잭션 롤백.
+        public void Rollback()
+        {
+            if (_dbConn == null)
+            {
+                throw new Exception("DB is not opened");
+            }
+            if (_dBTransaction == null)
+            {
+                throw new Exception("DB transaction is not started");
+            }
+            
+            _dBTransaction.Rollback();
+            _dBTransaction = null;
+        }
+
+        // 트랜잭션 커밋.
+        public void Commit()
+        {
+            if (_dbConn == null)
+            {
+                throw new Exception("DB is not opened");
+            }
+            if (_dBTransaction == null)
+            {
+                throw new Exception("DB transaction is not started");
+            }
+
+            _dBTransaction.Commit();
+            _dBTransaction = null;
+        }
+        
         // 게임 정보 가져오기
         public async Task<TableUserGameInfo> GetUserGameInfoAsync(string id)
         {
@@ -75,13 +127,15 @@ namespace ApiServer.Services
         {
             try
             {
+                StartTransaction();
                 var insertQuery = "insert gamedata(ID, StarPoint, UserLevel, UserExp) " +
                                   $"Values(@userId, {gameInfo.StarPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp}); SELECT LAST_INSERT_ID();";
                 var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
                     userId = gameInfo.ID
                 });
-
+                Commit();
+                
                 return new Tuple<ErrorCode, long>(ErrorCode.None, lastInsertId);
             }
             catch (Exception e)
@@ -172,12 +226,14 @@ namespace ApiServer.Services
         {
             try
             {
+                StartTransaction();
                 var insertQuery = $"insert catch(UserID, MonsterID, CatchTime) Values(@userId, {catchTable.MonsterID}, @catchTime); SELECT LAST_INSERT_ID();";
                 var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
                     userId = catchTable.UserID,
                     catchTime = catchTable.CatchTime.ToString("yyyy-MM-dd")
                 });
+                Commit();
                 
                 return new Tuple<ErrorCode, int>(ErrorCode.None, lastInsertId);
             }
@@ -188,7 +244,7 @@ namespace ApiServer.Services
             }
         }
 
-        public async Task<ErrorCode> DelCatchAsync(Int64 catchID)
+        public async Task<ErrorCode> RollbackSetCatchAsync(Int64 catchID)
         {
             try
             {
@@ -196,13 +252,13 @@ namespace ApiServer.Services
                 var count = await _dbConn.ExecuteAsync(deleteQuery);
                 if (count == 0)
                 {
-                    _logger.ZLogDebug($"{nameof(DelCatchAsync)} Error : {ErrorCode.CatchFailDeleteFail}");
+                    _logger.ZLogDebug($"{nameof(RollbackSetCatchAsync)} Error : {ErrorCode.CatchFailDeleteFail}");
                     return ErrorCode.CatchFailDeleteFail;
                 }
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"{nameof(DelCatchAsync)} Exception : {e}");
+                _logger.ZLogDebug($"{nameof(RollbackSetCatchAsync)} Exception : {e}");
                 return ErrorCode.CatchFailException;
             }
 
@@ -376,12 +432,14 @@ namespace ApiServer.Services
         {
             try
             {
+                StartTransaction();
                 var insertQuery = $"insert into postmail(ID, StarCount, Date) values (@userID, {starCount}, CURDATE()); SELECT LAST_INSERT_ID();";
                 var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
                     userId = ID
                 });
-
+                Commit();
+                
                 return new Tuple<ErrorCode, Int64>(ErrorCode.None, lastInsertId);
             }
             catch (Exception e)
@@ -465,6 +523,81 @@ namespace ApiServer.Services
             {
                 _logger.ZLogDebug($"{nameof(RecvPostmailAsync)} Exception : {e}");
                 return ErrorCode.RollbackRecvPostmailFailException;
+            }
+        }
+
+        public async Task<Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime>>>> GetCatchListAsync(string id)
+        {
+            try
+            {
+                var selectQuery = $"select * from catch where UserID = @userId";
+                var multiQuery = await _dbConn.QueryAsync<TableCatch>(selectQuery, new
+                {
+                    userId = id
+                });
+
+                if (multiQuery is null)
+                {
+                    return new Tuple<ErrorCode, List<Tuple<long, long, DateTime>>>(ErrorCode.GetCatchListFailNoCatchInfo, null);
+                }
+                
+                var retList = new List<Tuple<Int64, Int64, DateTime>>();
+                foreach (var tableCatch in multiQuery)
+                {
+                    retList.Add(new Tuple<long, long, DateTime>(tableCatch.CatchID, tableCatch.MonsterID, tableCatch.CatchTime));
+                }
+
+                return new Tuple<ErrorCode, List<Tuple<long, long, DateTime>>>(ErrorCode.None, retList);
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(RecvPostmailAsync)} Exception : {e}");
+                return new Tuple<ErrorCode, List<Tuple<long, long, DateTime>>>(ErrorCode.GetCatchListFailException, null);
+            }
+        }
+        
+        public async Task<Tuple<ErrorCode, Int64, Int64, DateTime>> DelCatchAsync(Int64 catchID)
+        {
+            try
+            {
+                var selectQuery = $"select * from catch where CatchID = {catchID}";
+                var selInfo = await _dbConn.QuerySingleAsync<TableCatch>(selectQuery);
+
+                if (selInfo is null)
+                {
+                    // 잡은 정보가 없는 상황
+                    return new Tuple<ErrorCode, Int64, Int64, DateTime>(ErrorCode.DelCatchFailNoCatch, 0, 0, new DateTime());
+                }
+                
+                var delQuery = $"delete from catch where CatchID = {catchID}";
+                var delCount = await _dbConn.ExecuteAsync(delQuery);
+
+                return new Tuple<ErrorCode, Int64, Int64, DateTime>(ErrorCode.None, selInfo.CatchID, selInfo.MonsterID, selInfo.CatchTime);
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(DelCatchAsync)} Exception : {e}");
+                return new Tuple<ErrorCode, Int64, Int64, DateTime>(ErrorCode.DelCatchFailException, 0, 0, new DateTime());
+            }
+        }
+
+        public async Task<ErrorCode> RollbackDelCatchAsync(string id, Int64 monsterID, DateTime catchDate) 
+        {
+            try
+            {
+                var insertQuery = $"insert catch(UserID, MonsterID, CatchTime) Values(@userId, {monsterID}, @catchTime);";
+                var count = await _dbConn.QueryAsync(insertQuery, new
+                {
+                    userId = id,
+                    catchTime = catchDate.ToString("yyyy-MM-dd")
+                });
+                
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(RollbackDelCatchAsync)} Exception : {e}");
+                return ErrorCode.RollbackCatchFailException;
             }
         }
     }

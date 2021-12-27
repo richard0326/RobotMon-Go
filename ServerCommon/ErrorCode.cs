@@ -61,6 +61,14 @@
         RankManagerFailGetRangeRank = 20284,
         RankManagerFailGetRankSize = 20285,
         
+        GetCatchListFailException = 20291,
+        GetCatchListFailNoCatchInfo = 20292,
+        
+        DelCatchFailNoCatch = 20301,
+        DelCatchFailException = 20302,
+        RollbackCatchFailException = 20303,
+
+
         // PVP Server 20401 ~ 20600
 
         // Raid Server  20601 ~ 20800
