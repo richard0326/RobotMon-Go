@@ -35,5 +35,6 @@ namespace ApiServer.Services
         public Task<Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime>>>> GetCatchListAsync(string id);
         public Task<Tuple<ErrorCode, Int64, Int64, DateTime>> DelCatchAsync(Int64 catchID);
         public Task<ErrorCode> RollbackDelCatchAsync(string id, Int64 monsterID, DateTime catchDate);
+        public Task<ErrorCode> UpdateUserExpAsync(string id, Int32 gainExp);
     }
 }

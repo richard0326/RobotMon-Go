@@ -67,6 +67,11 @@
         DelCatchFailNoCatch = 20301,
         DelCatchFailException = 20302,
         RollbackCatchFailException = 20303,
+        
+        CheckUpdateFailNoMonsterExist = 20311,
+        UpdateUserExpFailException = 20312,
+        UpdateUserExpFailNoUserExist = 20313,
+        UpdateUserExpFailUpdateFail = 20314,
 
 
         // PVP Server 20401 ~ 20600

@@ -268,7 +268,7 @@ namespace ApiServer.Services
         {
             try
             {
-                var insertQuery = $"INSERT INTO dailycheck(`ID`, `RewardCount`, `RewardDate`) VALUES (@userId, 1, @dateTime)";
+                var insertQuery = $"INSERT INTO dailycheck(`ID`, `RewardCount`, `RewardDate`) VALUES (@userId, 0, @dateTime)";
                 // 초기 값을 생성해준다.
                 var count = await _dbConn.ExecuteAsync(insertQuery, new
                 {
@@ -598,6 +598,59 @@ namespace ApiServer.Services
             {
                 _logger.ZLogDebug($"{nameof(RollbackDelCatchAsync)} Exception : {e}");
                 return ErrorCode.RollbackCatchFailException;
+            }
+        }
+
+        public async Task<ErrorCode> UpdateUserExpAsync(string id, Int32 gainExp)
+        {
+            try
+            {
+                var selectQuery = $"select * from gamedata where ID = @userId";
+                var selInfo = await _dbConn.QuerySingleAsync<TableUserGameInfo>(selectQuery);
+                if (selInfo is null)
+                {
+                    _logger.ZLogDebug($"{nameof(UpdateUserExpAsync)} Error : {ErrorCode.UpdateUserExpFailNoUserExist}");
+                    return ErrorCode.UpdateUserExpFailNoUserExist;
+                }
+
+                var nowLevel = selInfo.UserLevel;
+                var nowExp = selInfo.UserExp + gainExp;
+
+                while (true)
+                {
+                    var levelUpInfo = DataStorage.GetLevelUpMaxExp(nowLevel);
+                    if (levelUpInfo is null)
+                    {
+                        break;
+                    }
+                    
+                    if (levelUpInfo.MaxExpForLevelUp > nowExp)
+                    {
+                        break;
+                    }
+                    
+                    nowExp = levelUpInfo.MaxExpForLevelUp - nowExp;
+                    nowLevel++;
+                }
+
+                var updateQuery = $"update gamedata Set UserExp = {nowExp}, UserLevel = {nowLevel} WHERE ID = @userId";
+                var updateCount = await _dbConn.ExecuteAsync(updateQuery, new
+                {
+                    userId = id
+                });
+                
+                if (updateCount == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(UpdateUserExpAsync)} Error : {ErrorCode.UpdateUserExpFailUpdateFail}");
+                    return ErrorCode.UpdateUserExpFailUpdateFail;
+                }
+                
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(UpdateUserExpAsync)} Exception : {e}");
+                return ErrorCode.UpdateUserExpFailException;
             }
         }
     }

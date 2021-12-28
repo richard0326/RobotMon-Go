@@ -1,17 +1,18 @@
 ﻿using System.Collections.Concurrent;
+using ApiServer.Data;
 using ApiServer.Model;
 using Dapper;
 using MySqlConnector;
 
 namespace ApiServer.Services
 {
-
     public class DataStorage
     {
         private static ConcurrentDictionary<Int64, Monster> s_monsterDic = new();
         private static ConcurrentDictionary<Int32, DailyInfo> s_dailyCheckDic = new();
         private static ConcurrentDictionary<Int64, MonsterUpgrade> s_monsterUpgradeDic = new();
         private static ConcurrentDictionary<Int64, MonsterEvolve> s_monsterEvolveDic = new();
+        private static ConcurrentDictionary<Int32, LevelUpInfo> s_levelUpInfoDic = new();
 
         public static void Load(string dbConnString)
         {
@@ -49,7 +50,9 @@ namespace ApiServer.Services
                 {
                     s_monsterUpgradeDic.TryAdd(value.MID, new MonsterUpgrade()
                     {
-                        UpdateCost = value.UpgradeCost
+                        UpdateCost = value.UpgradeCost,
+                        StarCost = value.StarCount,
+                        Exp = value.Exp
                     });
                 }
                 
@@ -60,6 +63,15 @@ namespace ApiServer.Services
                     {
                         EvolveMonsterID = value.EvolveMID,
                         CandyCount = value.StarCount
+                    });
+                }
+
+                var levelUpList = dBConn.Query<TableUserLevelInfo>("select * from userlevelinfo");
+                foreach (var value in levelUpList)
+                {
+                    s_levelUpInfoDic.TryAdd(value.Level, new LevelUpInfo()
+                    {
+                        MaxExpForLevelUp = value.LevelUpExp
                     });
                 }
             }
@@ -104,5 +116,15 @@ namespace ApiServer.Services
 
             return null;
         }   
+        
+        public static LevelUpInfo GetLevelUpMaxExp(Int32 level)
+        {
+            if(s_levelUpInfoDic.TryGetValue(level, out var value))
+            {
+                return value;
+            }
+
+            return null;
+        }  
     }
 }
