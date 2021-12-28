@@ -37,6 +37,7 @@ namespace ApiServer.Controllers
             response.StarPoint = gameInfo.StarPoint;
             response.UserLevel = gameInfo.UserLevel;
             response.UserExp = gameInfo.UserExp;
+            response.UpgradeCandy = gameInfo.UpgradeCandy;
             
             return response;
         }

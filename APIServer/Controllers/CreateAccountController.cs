@@ -55,6 +55,7 @@ namespace ApiServer.Controllers
                 UserLevel = 1,
                 UserExp = 0,
                 StarPoint = 0,
+                UpgradeCandy = 0,
             });
 
             errorCode = initUserGameInfoResult.Item1;

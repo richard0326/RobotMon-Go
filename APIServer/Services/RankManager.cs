@@ -42,7 +42,6 @@ namespace ApiServer.Services
             // Redis의 랭킹 값을 변경을 시도한다.
             if (await RedisDB.UpdateRankAsync(id, starCount) == false)
             {
-                // logger
                 return ErrorCode.RankManagerFailUpdateStarCountIncrease;
             }
             
@@ -53,10 +52,32 @@ namespace ApiServer.Services
                 // rollback
                 if (await RedisDB.UpdateRankAsync(id, -starCount) == false)
                 {
-                    //logger.ZLogDebug($"{nameof(UpdateStarCount)} Rank Rollback Fail!!!");
                     return ErrorCode.RankManagerFailUpdateStarCountNeedRollback;
                 }
                 return ErrorCode.RankManagerFailUpdateStarCountDbFail;
+            }
+            
+            return ErrorCode.None;
+        }
+
+        public static async Task<ErrorCode> RollbackUpdateStarCount(string id, Int32 minusStarCount, IGameDb gameDb)
+        {
+            // Redis의 랭킹 값을 변경을 시도한다.
+            if (await RedisDB.UpdateRankAsync(id, -minusStarCount) == false)
+            {
+                return ErrorCode.RollbackRankManagerFailUpdateStarCountIncrease;
+            }
+            
+            // Db의 유저 정보를 변경을 시도한다.
+            var result = await gameDb.UpdateUserStarCountAsync(id, -minusStarCount);
+            if (result != ErrorCode.None)
+            {
+                // rollback
+                if (await RedisDB.UpdateRankAsync(id, minusStarCount) == false)
+                {
+                    return ErrorCode.RollbackRankManagerFailUpdateStarCountNeedRollback;
+                }
+                return ErrorCode.RollbackRankManagerFailUpdateStarCountDbFail;
             }
             
             return ErrorCode.None;

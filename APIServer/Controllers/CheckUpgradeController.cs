@@ -8,21 +8,21 @@ namespace ApiServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CheckUpdateController : ControllerBase
+    public class CheckUpgradeController : ControllerBase
     {
         private readonly IGameDb _gameDb;
-        private readonly ILogger<CheckUpdateController> _logger;
+        private readonly ILogger<CheckUpgradeController> _logger;
 
-        public CheckUpdateController(ILogger<CheckUpdateController> logger, IGameDb gameDb)
+        public CheckUpgradeController(ILogger<CheckUpgradeController> logger, IGameDb gameDb)
         {
             _logger = logger;
             _gameDb = gameDb;
         }
 
         [HttpPost]
-        public async Task<CheckUpdateResponse> CheckUpdatePost(CheckUpdateRequest request)
+        public async Task<CheckUpgradeResponse> CheckUpdatePost(CheckUpgradeRequest request)
         {
-            var response = new CheckUpdateResponse();
+            var response = new CheckUpgradeResponse();
 
             var upgrade = DataStorage.GetMonsterUpgrade(request.UpgradeID);
 

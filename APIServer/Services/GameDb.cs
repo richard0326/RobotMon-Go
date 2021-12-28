@@ -102,7 +102,7 @@ namespace ApiServer.Services
         {
             try
             {
-                var selectQuery = $"select StarPoint, UserLevel, UserExp from gamedata where ID = @userId";
+                var selectQuery = $"select * from gamedata where ID = @userId";
                 var gameData = await _dbConn.QuerySingleOrDefaultAsync<TableUserGameInfo>(selectQuery, new
                 {
                     userId = id
@@ -606,7 +606,10 @@ namespace ApiServer.Services
             try
             {
                 var selectQuery = $"select * from gamedata where ID = @userId";
-                var selInfo = await _dbConn.QuerySingleAsync<TableUserGameInfo>(selectQuery);
+                var selInfo = await _dbConn.QuerySingleAsync<TableUserGameInfo>(selectQuery, new
+                {
+                    userId = id
+                });
                 if (selInfo is null)
                 {
                     _logger.ZLogDebug($"{nameof(UpdateUserExpAsync)} Error : {ErrorCode.UpdateUserExpFailNoUserExist}");
@@ -633,7 +636,7 @@ namespace ApiServer.Services
                     nowLevel++;
                 }
 
-                var updateQuery = $"update gamedata Set UserExp = {nowExp}, UserLevel = {nowLevel} WHERE ID = @userId";
+                var updateQuery = $"update gamedata set UserExp = {nowExp}, UserLevel = {nowLevel} WHERE ID = @userId";
                 var updateCount = await _dbConn.ExecuteAsync(updateQuery, new
                 {
                     userId = id
@@ -651,6 +654,31 @@ namespace ApiServer.Services
             {
                 _logger.ZLogDebug($"{nameof(UpdateUserExpAsync)} Exception : {e}");
                 return ErrorCode.UpdateUserExpFailException;
+            }
+        }
+
+        public async Task<ErrorCode> UpdateUpgradeCostAsync(string id, Int32 updateCost)
+        {
+            try
+            {
+                var updateQuery = $"update gamedata set UpgradeCandy = UpgradeCandy + {updateCost} where ID = @userId";
+                var updateCount = await _dbConn.ExecuteAsync(updateQuery, new
+                {
+                    userId = id
+                });
+                
+                if (updateCount == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(UpdateUserExpAsync)} Error : {ErrorCode.UpdateUpgradeCostExpFailUpdateFail}");
+                    return ErrorCode.UpdateUpgradeCostExpFailUpdateFail;
+                }
+                
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(UpdateUserExpAsync)} Exception : {e}");
+                return ErrorCode.UpdateUpgradeCostFailException;
             }
         }
     }

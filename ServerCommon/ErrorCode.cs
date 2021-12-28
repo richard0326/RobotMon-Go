@@ -60,6 +60,9 @@
         RankManagerFailUpdateStarCountDbFail = 20283,
         RankManagerFailGetRangeRank = 20284,
         RankManagerFailGetRankSize = 20285,
+        RollbackRankManagerFailUpdateStarCountIncrease = 20286,
+        RollbackRankManagerFailUpdateStarCountNeedRollback = 20287,
+        RollbackRankManagerFailUpdateStarCountDbFail = 20288,
         
         GetCatchListFailException = 20291,
         GetCatchListFailNoCatchInfo = 20292,
@@ -72,6 +75,10 @@
         UpdateUserExpFailException = 20312,
         UpdateUserExpFailNoUserExist = 20313,
         UpdateUserExpFailUpdateFail = 20314,
+        UpdateUpgradeCostExpFailUpdateFail = 20315,
+        UpdateUpgradeCostFailException = 20316,
+        
+        UpgradePostFailNoMonsterID = 20321,
 
 
         // PVP Server 20401 ~ 20600

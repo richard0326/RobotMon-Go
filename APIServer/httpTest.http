@@ -39,7 +39,7 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken":"k7zu5084nqj0edovch2n575ds"
+  "AuthToken":"hlc4zmngmvulnmxc7eauyvbel"
 }
 
 ###
@@ -66,8 +66,8 @@ Content-Type: application/json
 
 {
   "ID":"jacking751",
-  "AuthToken": "k7zu5084nqj0edovch2n575ds",
-  "MonsterID": 1
+  "AuthToken": "jtork7uotxptsggfejbvr9kx1",
+  "MonsterID": 2
 }
 
 ###
@@ -147,4 +147,25 @@ Content-Type: application/json
   "ID":"jacking751",
   "AuthToken":"k7zu5084nqj0edovch2n575ds",
   "CatchID": 1
+}
+
+###
+POST http://localhost:5000/CheckUpgrade
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":"jtork7uotxptsggfejbvr9kx1",
+  "UpgradeID": 2
+}
+
+###
+POST http://localhost:5000/Upgrade
+Content-Type: application/json
+
+{
+  "ID":"jacking751",
+  "AuthToken":"jtork7uotxptsggfejbvr9kx1",
+  "UpgradeID": 2,
+  "UpgradeSize": 1
 }

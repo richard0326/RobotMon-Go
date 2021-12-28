@@ -2,7 +2,7 @@
 
 namespace ApiServer.Model
 {
-    public class CheckUpdateRequest
+    public class CheckUpgradeRequest
     {
         [StringLength(45)]
         public string ID { get; set; } = "";
