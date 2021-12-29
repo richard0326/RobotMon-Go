@@ -79,21 +79,21 @@ body를 객체와 일치하여 Json 포맷으로 보내면 됨.
 이 파일 참고 : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/httpTest.http
 
 http://[IP]:[port]/Login   
-요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/LoginRequest.cs   
-응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/LoginResponse.cs   
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/LoginRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/LoginResponse.cs   
   
 http://[IP]:[port]/CreateAccount  
-요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/CreateAccountRequest.cs   
-응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/CreateAccountResponse.cs   
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/CreateAccountRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/CreateAccountResponse.cs   
 
 http://[IP]:[port]/UserGameInfo  
-요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/UserGameInfoRequest.cs   
-응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/UserGameInfoResponse.cs   
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/UserGameInfoRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/UserGameInfoResponse.cs   
 
 http://[IP]:[port]/FieldMonster  
-요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/FieldMonsterRequest.cs   
-응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/FieldMonsterResponse.cs   
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/FieldMonsterRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/FieldMonsterResponse.cs   
 
 http://[IP]:[port]/Catch  
-요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/CatchRequest.cs   
-응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/CatchResponse.cs   
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/CatchRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/CatchResponse.cs   
