@@ -30,7 +30,7 @@ namespace ApiServer.Controllers
             if (monsterUpgrade == null)
             {
                 // 잘못된 몬스터 ID
-                response.Result = ErrorCode.UpgradePostFailNoMonsterID;
+                response.Result = ErrorCode.UpgradePostFailNoMonsterId;
                 _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }

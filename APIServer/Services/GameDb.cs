@@ -681,5 +681,27 @@ namespace ApiServer.Services
                 return ErrorCode.UpdateUpgradeCostFailException;
             }
         }
+
+        public async Task<ErrorCode> EvolveCatchMonsterAsync(Int64 catchId, Int64 evolveMonsterId)
+        {
+            try
+            {
+                var updateQuery = $"update catch set MonsterID = {evolveMonsterId} where CatchID = {catchId}";
+                var updateCount = await _dbConn.ExecuteAsync(updateQuery);
+                
+                if (updateCount == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(EvolveCatchMonsterAsync)} Error : {ErrorCode.EvolveCatchMonsterFailUpdateFail}");
+                    return ErrorCode.EvolveCatchMonsterFailUpdateFail;
+                }
+
+                return ErrorCode.None;
+            }
+            catch (Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(EvolveCatchMonsterAsync)} Exception : {e}");
+                return ErrorCode.EvolveCatchMonsterFailException;
+            }
+        }
     }
 }

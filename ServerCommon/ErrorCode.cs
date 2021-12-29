@@ -78,8 +78,12 @@
         UpdateUpgradeCostExpFailUpdateFail = 20315,
         UpdateUpgradeCostFailException = 20316,
         
-        UpgradePostFailNoMonsterID = 20321,
-
+        UpgradePostFailNoMonsterId = 20321,
+        
+        CheckEvolvePostFailNoMonsterId = 20331,
+        EvolvePostFailNoMonsterId = 20332,
+        EvolveCatchMonsterFailException = 20333,
+        EvolveCatchMonsterFailUpdateFail = 20334,
 
         // PVP Server 20401 ~ 20600
 

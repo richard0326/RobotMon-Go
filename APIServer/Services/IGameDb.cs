@@ -37,5 +37,6 @@ namespace ApiServer.Services
         public Task<ErrorCode> RollbackDelCatchAsync(string id, Int64 monsterID, DateTime catchDate);
         public Task<ErrorCode> UpdateUserExpAsync(string id, Int32 gainExp);
         public Task<ErrorCode> UpdateUpgradeCostAsync(string id, Int32 updateCost);
+        public Task<ErrorCode> EvolveCatchMonsterAsync(Int64 catchId, Int64 evolveMonsterId);
     }
 }
