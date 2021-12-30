@@ -80,7 +80,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/CheckPostmail
+POST http://localhost:5000/MailList
 Content-Type: application/json
 
 {
@@ -90,7 +90,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/CheckPostmail
+POST http://localhost:5000/MailList
 Content-Type: application/json
 
 {
@@ -100,7 +100,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/SendPostmail
+POST http://localhost:5000/SendMail
 Content-Type: application/json
 
 {
@@ -111,7 +111,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/RecvPostmail
+POST http://localhost:5000/RecvMail
 Content-Type: application/json
 
 {
@@ -121,7 +121,7 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/RankingInfo
+POST http://localhost:5000/RankingList
 Content-Type: application/json
 
 {
@@ -131,32 +131,13 @@ Content-Type: application/json
 }
 
 ###
-POST http://localhost:5000/CheckCatch
-Content-Type: application/json
-
-{
-  "ID":"jacking751",
-  "AuthToken":"k7zu5084nqj0edovch2n575ds"
-}
-
-###
-POST http://localhost:5000/ReleaseCatch
+POST http://localhost:5000/RemoveCatch
 Content-Type: application/json
 
 {
   "ID":"jacking751",
   "AuthToken":"k7zu5084nqj0edovch2n575ds",
   "CatchID": 1
-}
-
-###
-POST http://localhost:5000/CheckUpgrade
-Content-Type: application/json
-
-{
-  "ID":"jacking751",
-  "AuthToken":"jtork7uotxptsggfejbvr9kx1",
-  "UpgradeID": 2
 }
 
 ###

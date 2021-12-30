@@ -8,25 +8,23 @@ namespace ApiServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CheckCatchController : ControllerBase
+    public class CatchListController : ControllerBase
     {
         private readonly IGameDb _gameDb;
-        private readonly ILogger<CheckCatchController> _logger;
+        private readonly ILogger<CatchListController> _logger;
 
-        public CheckCatchController(ILogger<CheckCatchController> logger, IGameDb gameDb)
+        public CatchListController(ILogger<CatchListController> logger, IGameDb gameDb)
         {
             _logger = logger;
             _gameDb = gameDb;
         }
 
         [HttpPost]
-        public async Task<CheckCatchResponse> CheckCatchPost(CheckCatchRequest request)
+        public async Task<CatchListResponse> CheckCatchPost(CatchListRequest request)
         {
-            var response = new CheckCatchResponse();
+            var response = new CatchListResponse();
 
-            var result = await _gameDb.GetCatchListAsync(request.ID);
-            var errorCode = result.Item1;
-            var monsterList = result.Item2;
+            var (errorCode, monsterList) = await _gameDb.GetCatchListAsync(request.ID);
 
             if (errorCode != ErrorCode.None)
             {

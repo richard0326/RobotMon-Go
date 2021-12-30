@@ -2,6 +2,7 @@
 using System.Data;
 using System.Threading.Tasks;
 using ApiServer.Model;
+using ApiServer.Model.Data;
 using ApiServer.Options;
 using Dapper;
 using Microsoft.Extensions.Logging;
@@ -98,7 +99,7 @@ namespace ApiServer.Services
         }
         
         // 게임 정보 가져오기
-        public async Task<TableUserGameInfo> GetUserGameInfoAsync(string id)
+        public async Task<Tuple<ErrorCode, UserGameInfo>> GetUserGameInfoAsync(string id)
         {
             try
             {
@@ -110,20 +111,20 @@ namespace ApiServer.Services
                 
                 if(gameData is null)
                 {
-                    return null;
+                    return new Tuple<ErrorCode, UserGameInfo>(ErrorCode.GetUserGameInfoFailNoData , null);
                 }
 
-                return gameData;
+                return new Tuple<ErrorCode, UserGameInfo>(ErrorCode.None, new UserGameInfo(gameData.UserLevel, gameData.UserExp, gameData.StarPoint, gameData.UpgradeCandy));
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(GetUserGameInfoAsync)} Exception : {e}");
-                return null;
+                return new Tuple<ErrorCode, UserGameInfo>(ErrorCode.GetUserGameInfoFailException, null);
             }
         }
         
         // 게임 정보 설정하기
-        public async Task<Tuple<ErrorCode, Int64>> InitUserGameInfoAsync(TableUserGameInfo gameInfo)
+        public async Task<Tuple<ErrorCode, Int64>> InitUserGameInfoAsync(string id, UserGameInfo gameInfo)
         {
             try
             {
@@ -132,7 +133,7 @@ namespace ApiServer.Services
                                   $"Values(@userId, {gameInfo.StarPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp}); SELECT LAST_INSERT_ID();";
                 var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
-                    userId = gameInfo.ID
+                    userId = id
                 });
                 Commit();
                 
@@ -191,7 +192,7 @@ namespace ApiServer.Services
             return ErrorCode.None;
         }
 
-        public async Task<FieldMonsterResponse> GetMonsterInfoAsync(Int64 monsterUID)
+        public async Task<Tuple<ErrorCode, FieldMonsterResponse>> GetMonsterInfoAsync(Int64 monsterUID)
         {
             try
             {
@@ -200,10 +201,10 @@ namespace ApiServer.Services
                 
                 if (monsterInfo is null)
                 {
-                    return null;
+                    return new Tuple<ErrorCode, FieldMonsterResponse>(ErrorCode.MonsterInfoFailNoMonster, null);
                 }
 
-                return new FieldMonsterResponse()
+                return new Tuple<ErrorCode, FieldMonsterResponse>(ErrorCode.None, new FieldMonsterResponse()
                 {
                     MonsterID = monsterUID,
                     Name = monsterInfo.MonsterName,
@@ -213,25 +214,25 @@ namespace ApiServer.Services
                     HP = monsterInfo.HP,
                     Level = monsterInfo.Level,
                     StarCount = monsterInfo.StarCount,
-                };
+                });
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(GetMonsterInfoAsync)} Exception : {e}");
-                return null;
+                return new Tuple<ErrorCode, FieldMonsterResponse>(ErrorCode.MonsterInfoFailException, null);
             }
         }
 
-        public async Task<Tuple<ErrorCode, Int32>> SetCatchAsync(TableCatch catchTable)
+        public async Task<Tuple<ErrorCode, Int32>> SetCatchAsync(string id, Int64 monsterID, DateTime catchTime)
         {
             try
             {
                 StartTransaction();
-                var insertQuery = $"insert catch(UserID, MonsterID, CatchTime) Values(@userId, {catchTable.MonsterID}, @catchTime); SELECT LAST_INSERT_ID();";
+                var insertQuery = $"insert catch(UserID, MonsterID, CatchTime) Values(@userId, {monsterID}, @catchTime); SELECT LAST_INSERT_ID();";
                 var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
-                    userId = catchTable.UserID,
-                    catchTime = catchTable.CatchTime.ToString("yyyy-MM-dd")
+                    userId = id,
+                    catchTime = catchTime.ToString("yyyy-MM-dd")
                 });
                 Commit();
                 
@@ -424,7 +425,7 @@ namespace ApiServer.Services
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(CheckPostmailAsync)} Exception : {e}");
-                return null;
+                return new Tuple<int, List<Tuple<long, int>>?>(0, null);
             }
         }
 

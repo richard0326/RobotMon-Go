@@ -20,13 +20,17 @@
         CreateAccountFailGetTable = 20213,
         RollbackCreateAccountFailDeleteQuery = 20214,
         RollbackSendCreateAccountFailException = 20215,
+        MonsterInfoFailNoMonster = 20216,
+        MonsterInfoFailException = 20217,
 
         UserGameInfoFailInitException = 20223,
         UserGameInfoFailStarCountException = 20224,
         UserGameInfoFailStarCountUpdateFail = 20225,
         RollbackInitUserGameIfnoFailDeleteQuery = 20226,
         RollbackInitUserGameInfoFailException = 20227,
-        
+        GetUserGameInfoFailException = 20228,
+        GetUserGameInfoFailNoData = 20229,
+
         CatchFail = 20231,
         CatchFailException = 20232,
         CatchFailDeleteFail = 20233,

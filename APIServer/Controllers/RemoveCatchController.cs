@@ -8,21 +8,21 @@ namespace ApiServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class ReleaseCatchController : ControllerBase
+    public class RemoveCatchController : ControllerBase
     {
         private readonly IGameDb _gameDb;
-        private readonly ILogger<ReleaseCatchController> _logger;
+        private readonly ILogger<RemoveCatchController> _logger;
 
-        public ReleaseCatchController(ILogger<ReleaseCatchController> logger, IGameDb gameDb)
+        public RemoveCatchController(ILogger<RemoveCatchController> logger, IGameDb gameDb)
         {
             _logger = logger;
             _gameDb = gameDb;
         }
 
         [HttpPost]
-        public async Task<ReleaseCatchResponse> ReleaseCatchPost(ReleaseCatchRequest request)
+        public async Task<RemoveCatchResponse> ReleaseCatchPost(RemoveCatchRequest request)
         {
-            var response = new ReleaseCatchResponse();
+            var response = new RemoveCatchResponse();
 
             var result = await _gameDb.DelCatchAsync(request.ReleaseID);
             var errorCode = result.Item1;

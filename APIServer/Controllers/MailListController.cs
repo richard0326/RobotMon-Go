@@ -7,21 +7,21 @@ namespace ApiServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CheckPostmailController : ControllerBase
+    public class MailListController : ControllerBase
     {
         private readonly IGameDb _gameDb;
-        private readonly ILogger<CheckPostmailController> _logger;
+        private readonly ILogger<MailListController> _logger;
 
-        public CheckPostmailController(ILogger<CheckPostmailController> logger, IGameDb gameDb)
+        public MailListController(ILogger<MailListController> logger, IGameDb gameDb)
         {
             _logger = logger;
             _gameDb = gameDb;
         }
 
         [HttpPost]
-        public async Task<CheckPostmailResponse> CheckPostmailPost(CheckPostmailRequest request)
+        public async Task<MailListResponse> CheckPostmailPost(MailListRequest request)
         {
-            var response = new CheckPostmailResponse();
+            var response = new MailListResponse();
             
             // db에서 Postmail된 정보 긁어오기
             var postmailInfo = await _gameDb.CheckPostmailAsync(request.ID, request.PageIndex);

@@ -8,21 +8,21 @@ namespace ApiServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class RankingInfoController: ControllerBase
+    public class RankingListController: ControllerBase
     {
         private readonly IGameDb _gameDb;
-        private readonly ILogger<RankingInfoController> _logger;
+        private readonly ILogger<RankingListController> _logger;
 
-        public RankingInfoController(ILogger<RankingInfoController> logger, IGameDb gameDb)
+        public RankingListController(ILogger<RankingListController> logger, IGameDb gameDb)
         {
             _logger = logger;
             _gameDb = gameDb;
         }
 
         [HttpPost]
-        public async Task<RankingInfoResponse> RankingInfoPost(RankingInfoRequest request)
+        public async Task<RankingListResponse> RankingInfoPost(RankingListRequest request)
         {
-            var response = new RankingInfoResponse();
+            var response = new RankingListResponse();
 
             var result = await RankManager.CheckRankingInfo(request.PageIndex);
             var errorCode = result.Item1;

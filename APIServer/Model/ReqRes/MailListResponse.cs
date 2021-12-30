@@ -2,10 +2,10 @@
 
 namespace ApiServer.Model
 {
-    public class RankingInfoResponse
+    public class MailListResponse
     {
         public ErrorCode Result { get; set; } = ErrorCode.None;
         public Int32 TotalSize { get; set; }
-        public string[] RankingIdList { get; set; } = null;
+        public List<Tuple<Int64,Int32>> PostmailInfo { get; set; }
     }
 }

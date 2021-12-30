@@ -8,21 +8,21 @@ namespace ApiServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class SendPostmailController : ControllerBase
+    public class SendMailController : ControllerBase
     {
         private readonly IGameDb _gameDb;
-        private readonly ILogger<SendPostmailController> _logger;
+        private readonly ILogger<SendMailController> _logger;
 
-        public SendPostmailController(ILogger<SendPostmailController> logger, IGameDb gameDb)
+        public SendMailController(ILogger<SendMailController> logger, IGameDb gameDb)
         {
             _logger = logger;
             _gameDb = gameDb;
         }
 
         [HttpPost]
-        public async Task<SendPostmailResponse> SendPostmailPost(SendPostmailRequest request)
+        public async Task<SendMailResponse> SendPostmailPost(SendMailRequest request)
         {
-            var response = new SendPostmailResponse();
+            var response = new SendMailResponse();
 
             var result = await _gameDb.SendPostmailAsync(request.sendID, request.StarCount);
             var errorCode = result.Item1;

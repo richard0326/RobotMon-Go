@@ -2,14 +2,12 @@
 
 namespace ApiServer.Model
 {
-    public class SendPostmailRequest
+    public class RankingListRequest
     {
         [StringLength(45)]
         public string ID { get; set; } = "";
         [StringLength(200)]
         public string AuthToken { get; set; } = "";
-        [StringLength(45)]
-        public string sendID { get; set; } = "";
-        public Int32 StarCount { get; set; }
+        public Int32 PageIndex { get; set; }
     }
 }

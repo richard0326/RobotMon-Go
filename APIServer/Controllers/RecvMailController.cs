@@ -8,21 +8,21 @@ namespace ApiServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class RecvPostmailController : ControllerBase
+    public class RecvMailController : ControllerBase
     {
         private readonly IGameDb _gameDb;
-        private readonly ILogger<RecvPostmailController> _logger;
+        private readonly ILogger<RecvMailController> _logger;
 
-        public RecvPostmailController(ILogger<RecvPostmailController> logger, IGameDb gameDb)
+        public RecvMailController(ILogger<RecvMailController> logger, IGameDb gameDb)
         {
             _logger = logger;
             _gameDb = gameDb;
         }
 
         [HttpPost]
-        public async Task<RecvPostmailResponse> RecvPostmailPost(RecvPostmailRequest request)
+        public async Task<RecvMailResponse> RecvPostmailPost(RecvMailRequest request)
         {
-            var response = new RecvPostmailResponse();
+            var response = new RecvMailResponse();
 
             var postmailInfo = await _gameDb.RecvPostmailAsync(request.ID, request.PostmailID);
             var errorCode = postmailInfo.Item1;

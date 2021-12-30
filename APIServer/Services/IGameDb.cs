@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ApiServer.Model;
 using ServerCommon;
+using ApiServer.Model.Data;
 
 namespace ApiServer.Services
 {
@@ -14,13 +15,13 @@ namespace ApiServer.Services
         public void Close();
 
         // 유저 정보 가져오기
-        public Task<TableUserGameInfo> GetUserGameInfoAsync(string id);
+        public Task<Tuple<ErrorCode, UserGameInfo>> GetUserGameInfoAsync(string id);
         public Task<ErrorCode> UpdateUserStarCountAsync(string ID, Int32 starCount);
         // 유저 정보 설정하기
-        public Task<Tuple<ErrorCode, Int64>> InitUserGameInfoAsync(TableUserGameInfo table);
+        public Task<Tuple<ErrorCode, Int64>> InitUserGameInfoAsync(string id, UserGameInfo table);
         public Task<ErrorCode> RollbackInitUserGameInfoAsync(Int64 gamedataId);
-        public Task<FieldMonsterResponse> GetMonsterInfoAsync(Int64 monsterUID);
-        public Task<Tuple<ErrorCode, Int32>> SetCatchAsync(TableCatch catchTable);
+        public Task<Tuple<ErrorCode, FieldMonsterResponse>> GetMonsterInfoAsync(Int64 monsterUID);
+        public Task<Tuple<ErrorCode, Int32>> SetCatchAsync(string id, Int64 monsterID, DateTime catchTime);
         public Task<ErrorCode> RollbackSetCatchAsync(Int64 catchID);
         // 출석체크 설정하기
         public Task<ErrorCode> InitDailyCheckAsync(string ID);

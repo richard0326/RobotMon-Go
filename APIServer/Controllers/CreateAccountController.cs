@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServerCommon;
 using ZLogger;
+using ApiServer.Model.Data;
 
 namespace ApiServer.Controllers
 {
@@ -46,20 +47,10 @@ namespace ApiServer.Controllers
                 _logger.ZLogDebug($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;
             }
-            
-            // GameDB에 유저 기본 초기화 정보 세팅하기
-            var initUserGameInfoResult = await _gameDb.InitUserGameInfoAsync(new TableUserGameInfo()
-            {
-                // 유저 초기 정보
-                ID = request.ID,
-                UserLevel = 1,
-                UserExp = 0,
-                StarPoint = 0,
-                UpgradeCandy = 0,
-            });
 
-            errorCode = initUserGameInfoResult.Item1;
-            var lastGameInfoIndex = initUserGameInfoResult.Item2;
+            // GameDB에 유저 기본 초기화 정보 세팅하기
+            (errorCode, var lastGameInfoIndex) = await _gameDb.InitUserGameInfoAsync(request.ID, new UserGameInfo(1, 0, 0, 0));
+
             if (errorCode != ErrorCode.None)
             {
                 // Rollback 계정 생성

@@ -27,10 +27,10 @@ namespace ApiServer.Controllers
             var response = new UserGameInfoResponse();
             
             // 유저의 게임 정보 가져오기
-            var gameInfo = await _gameDb.GetUserGameInfoAsync(request.ID);
-            if (gameInfo == null)
+            var (errorCode, gameInfo) = await _gameDb.GetUserGameInfoAsync(request.ID);
+            if (errorCode != ErrorCode.None)
             {
-                response.Result = ErrorCode.CreateAccountFailGetTable;
+                response.Result = errorCode;
                 _logger.ZLogDebug($"{nameof(GameInfoPost)} ErrorCode : {response.Result}");
                 return response;
             }
