@@ -1,9 +1,86 @@
-## AccountDB
-![](./images/UsersTable.PNG)      
+## AccountDB  
+CREATE TABLE `users` (  
+  `UID` bigint NOT NULL AUTO_INCREMENT, 
+  `ID` varchar(45) NOT NULL, 
+  `PW` varchar(200) NOT NULL,  
+  `Salt` varchar(200) NOT NULL,  
+  PRIMARY KEY (`UID`),  
+  UNIQUE KEY `ID_UNIQUE` (`ID`)  
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
 
 ## GameDB
-![](./images/GameInfoTable.PNG)  
-![](./images/MonsterInfoTable.PNG)  
-![](./images/MonsterEvolveTable.PNG)  
-![](./images/MonsterUpgradeTable.PNG)  
-![](./images/CatchTable.PNG)  
+CREATE TABLE `catch` (   
+  `CatchID` bigint NOT NULL AUTO_INCREMENT,  
+  `UserID` varchar(45) NOT NULL,  
+  `MonsterID` bigint NOT NULL,  
+  `CatchTime` date NOT NULL,  
+  `CombatPoint` int NOT NULL,  
+  PRIMARY KEY (`CatchID`)  
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+
+CREATE TABLE `dailycheck` (  
+  `ID` varchar(45) NOT NULL,  
+  `RewardCount` int NOT NULL,  
+  `RewardDate` date NOT NULL,  
+  PRIMARY KEY (`ID`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+  
+CREATE TABLE `dailyinfo` (  
+  `DayCount` int NOT NULL,  
+  `StarCount` int NOT NULL,  
+  PRIMARY KEY (`DayCount`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+
+CREATE TABLE `gamedata` (  
+  `ID` varchar(45) NOT NULL,  
+  `StarPoint` int NOT NULL,  
+  `UserLevel` int NOT NULL,  
+  `UserExp` int NOT NULL,  
+  `UpgradeCandy` int NOT NULL,  
+  PRIMARY KEY (`ID`),  
+  UNIQUE KEY `ID_UNIQUE` (`ID`),  
+  CONSTRAINT `constraint_StarPoint` CHECK ((`StarPoint` >= 0)),  
+  CONSTRAINT `constraint_UpgradeCandy` CHECK ((`UpgradeCandy` >= 0))  
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+
+CREATE TABLE `mail` (  
+  `postID` bigint NOT NULL AUTO_INCREMENT,  
+  `ID` varchar(45) NOT NULL,  
+  `StarCount` int NOT NULL,  
+  `Date` date NOT NULL,  
+  PRIMARY KEY (`postID`)  
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+
+CREATE TABLE `monsterevolve` (  
+  `MID` bigint NOT NULL,  
+  `StarCount` int NOT NULL,  
+  `EvolveMID` bigint NOT NULL,  
+  PRIMARY KEY (`MID`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+
+CREATE TABLE `monsterinfo` (  
+  `MID` bigint NOT NULL,  
+  `MonsterName` varchar(100) NOT NULL,  
+  `Type` varchar(100) NOT NULL,  
+  `Level` int NOT NULL,  
+  `HP` int NOT NULL,  
+  `Att` int NOT NULL,  
+  `Def` int NOT NULL,  
+  `StarCount` int NOT NULL,  
+  `UpgradeCount` int NOT NULL,  
+  PRIMARY KEY (`MID`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+
+CREATE TABLE `monsterupgrade` (  
+  `MID` bigint NOT NULL,  
+  `UpgradeCost` int NOT NULL,  
+  `StarCount` int NOT NULL,  
+  `Exp` int NOT NULL,  
+  PRIMARY KEY (`MID`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+
+CREATE TABLE `userlevelinfo` (  
+  `Level` int NOT NULL,  
+  `LevelUpExp` int NOT NULL,  
+  PRIMARY KEY (`Level`)   
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
