@@ -2,6 +2,7 @@
 using ApiServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using ServerCommon;
+using ZLogger;
 
 namespace ApiServer.Controllers
 {
@@ -19,28 +20,23 @@ namespace ApiServer.Controllers
         }
 
         [HttpPost]
-        public async Task<MailListResponse> CheckPostmailPost(MailListRequest request)
+        public async Task<MailListResponse> CheckMailPost(MailListRequest request)
         {
             var response = new MailListResponse();
             
-            // db에서 Postmail된 정보 긁어오기
-            var postmailInfo = await _gameDb.CheckPostmailAsync(request.ID, request.PageIndex);
+            // db에서 Mail된 정보 긁어오기
+            var (errorCode, totalMailSize, MailList) = await _gameDb.CheckMailAsync(request.ID, request.PageIndex);
             
             // 예외 상황이 발생한 경우
-            if(postmailInfo is null)
+            if(errorCode != ErrorCode.None)
             {
-                response.Result = ErrorCode.CheckPostmailFailException;
-                return response;
-            }
-            
-            if (postmailInfo.Item1 == 0)
-            {
-                response.Result = ErrorCode.CheckPostmailFailNoPostmail;
+                response.Result = errorCode;
+                _logger.ZLogDebug($"{nameof(CheckMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
-            response.TotalSize = postmailInfo.Item1;
-            response.PostmailInfo = postmailInfo.Item2;
+            response.TotalSize = totalMailSize;
+            response.MailInfo = MailList;
             return response;
         }
     }

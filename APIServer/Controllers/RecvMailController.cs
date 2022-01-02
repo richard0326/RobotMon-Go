@@ -20,40 +20,47 @@ namespace ApiServer.Controllers
         }
 
         [HttpPost]
-        public async Task<RecvMailResponse> RecvPostmailPost(RecvMailRequest request)
+        public async Task<RecvMailResponse> RecvMailPost(RecvMailRequest request)
         {
             var response = new RecvMailResponse();
 
-            var postmailInfo = await _gameDb.RecvPostmailAsync(request.ID, request.PostmailID);
-            var errorCode = postmailInfo.Item1;
-            var starCount = postmailInfo.Item2;
-            var date = postmailInfo.Item3;
+            var (errorCode, starCount, date) = await _gameDb.RecvMailAsync(request.ID, request.MailID);
             
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(RecvPostmailPost)} ErrorCode : {response.Result}");
+                _logger.ZLogDebug($"{nameof(RecvMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
-            errorCode = await RankManager.UpdateStarCount(request.ID, starCount, _gameDb);
+            errorCode = await UpdateStarCountAsync(request, starCount, date);
             if(errorCode != ErrorCode.None)
-            {
-                // Rollback
-                var innerErrorCode = await _gameDb.RollbackRecvPostmailAsync(request.ID, starCount, date);
-                if (innerErrorCode != ErrorCode.None)
-                {
-                    _logger.ZLogDebug($"{nameof(RecvPostmailPost)} ErrorCode : {innerErrorCode}");
-                }
-                
+            {                
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(RecvPostmailPost)} ErrorCode : {response.Result}");
+                _logger.ZLogDebug($"{nameof(RecvMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
             response.StarCount = starCount;
 
             return response;
+        }
+
+        private async Task<ErrorCode> UpdateStarCountAsync(RecvMailRequest request, Int32 starCount, DateTime rollbackDate)
+        {
+            var errorCode = await RankManager.UpdateStarCount(request.ID, starCount, _gameDb);
+            if (errorCode != ErrorCode.None)
+            {
+                // Rollback
+                var innerErrorCode = await _gameDb.RollbackRecvMailAsync(request.ID, starCount, rollbackDate);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(RecvMailPost)} ErrorCode : {innerErrorCode}");
+                }
+
+                return errorCode;
+            }
+            return ErrorCode.None;
         }
     }
 }

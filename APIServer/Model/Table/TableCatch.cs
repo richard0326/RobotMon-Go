@@ -9,5 +9,6 @@ namespace ApiServer.Model
         public string UserID { get; set; }
         public Int64 MonsterID { get; set; }
         public DateTime CatchTime { get; set; }
+        public Int32 CombatPoint { get; set; }
     }
 }

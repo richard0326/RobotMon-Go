@@ -2,7 +2,7 @@
 
 namespace ApiServer.Model
 {
-    public class TablePostmail
+    public class TableMail
     {
         public Int64 postID { get; set; }
         [StringLength(45)]

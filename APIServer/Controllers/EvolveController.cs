@@ -44,16 +44,9 @@ namespace ApiServer.Controllers
             }
             
             // 기존의 Catch의 MonsterID를 update 시켜야함.
-            errorCode = await _gameDb.EvolveCatchMonsterAsync(request.CatchID, result.EvolveMonsterID);
+            errorCode = await EvolveCatchMonsterAsync(request, result.EvolveMonsterID, result.CandyCount);
             if(errorCode != ErrorCode.None)
-            {
-                // Rollback
-                var innerErrorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, result.CandyCount);
-                if (innerErrorCode != ErrorCode.None)
-                {
-                    _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {innerErrorCode}");
-                }
-                
+            {                
                 response.Result = errorCode;
                 _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
                 return response;
@@ -61,6 +54,24 @@ namespace ApiServer.Controllers
 
             response.EvolveMonsterID = result.EvolveMonsterID;
             return response;
+        }
+
+        private async Task<ErrorCode> EvolveCatchMonsterAsync(EvolveRequest request, Int64 evolveID, Int32 rollbackCandyCount)
+        {
+            // 기존의 Catch의 MonsterID를 update 시켜야함.
+            var errorCode = await _gameDb.EvolveCatchMonsterAsync(request.CatchID, evolveID);
+            if (errorCode != ErrorCode.None)
+            {
+                // Rollback
+                var innerErrorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, rollbackCandyCount);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {innerErrorCode}");
+                }
+
+                return errorCode;
+            }
+            return ErrorCode.None;
         }
     }
 }

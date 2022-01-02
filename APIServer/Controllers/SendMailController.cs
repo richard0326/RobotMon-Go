@@ -20,36 +20,47 @@ namespace ApiServer.Controllers
         }
 
         [HttpPost]
-        public async Task<SendMailResponse> SendPostmailPost(SendMailRequest request)
+        public async Task<SendMailResponse> SendMailPost(SendMailRequest request)
         {
             var response = new SendMailResponse();
 
-            var result = await _gameDb.SendPostmailAsync(request.sendID, request.StarCount);
+            var result = await _gameDb.SendMailAsync(request.sendID, request.StarCount);
             var errorCode = result.Item1;
             var lastInsertId = result.Item2;
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(SendPostmailPost)} ErrorCode : {response.Result}");
+                _logger.ZLogDebug($"{nameof(SendMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
             // 원래 유저의 정보에서 StarCount를 차감합니다.
-            errorCode = await RankManager.UpdateStarCount(request.ID, -request.StarCount, _gameDb);
+            errorCode = await UpdateStarCountAsync(request, lastInsertId);
             if (errorCode != ErrorCode.None)
-            {
-                // Rollback
-                var innerErrorCode = await _gameDb.RollbackSendPostmailAsync(lastInsertId);
-                if (innerErrorCode != ErrorCode.None)
-                {
-                    _logger.ZLogDebug($"{nameof(SendPostmailPost)} ErrorCode : {innerErrorCode}");
-                }
-                
+            {                
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(SendPostmailPost)} ErrorCode : {response.Result}");
+                _logger.ZLogDebug($"{nameof(SendMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
             return response;
+        }
+
+        private async Task<ErrorCode> UpdateStarCountAsync(SendMailRequest request, Int64 lastInsertId)
+        {
+            // 원래 유저의 정보에서 StarCount를 차감합니다.
+            var errorCode = await RankManager.UpdateStarCount(request.ID, -request.StarCount, _gameDb);
+            if (errorCode != ErrorCode.None)
+            {
+                // Rollback
+                var innerErrorCode = await _gameDb.RollbackSendMailAsync(lastInsertId);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(SendMailPost)} ErrorCode : {innerErrorCode}");
+                }
+
+                return errorCode;
+            }
+            return ErrorCode.None;
         }
     }
 }

@@ -20,35 +20,47 @@ namespace ApiServer.Controllers
         }
 
         [HttpPost]
-        public async Task<RemoveCatchResponse> ReleaseCatchPost(RemoveCatchRequest request)
+        public async Task<RemoveCatchResponse> RemoveCatchPost(RemoveCatchRequest request)
         {
             var response = new RemoveCatchResponse();
 
-            var result = await _gameDb.DelCatchAsync(request.ReleaseID);
-            var errorCode = result.Item1;
-            var catchID = result.Item2;
-            var monsterID = result.Item3;
-            var catchDate = result.Item4;
+            var (errorCode, catchID, monsterID, catchDate, combatPoint) = await _gameDb.DelCatchAsync(request.ReleaseID);
 
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(ReleaseCatchPost)} ErrorCode : {response.Result}");
+                _logger.ZLogDebug($"{nameof(RemoveCatchPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
-            var monster = DataStorage.GetMonsterInfo(monsterID);
-            if (monster is null)
+            // monsterID를 받아서 찾는다.
+            (errorCode, var monster) = await GetMonsterInfoAsync(monsterID, request.ID, catchDate);
+            if (errorCode != ErrorCode.None)
             {
-                _gameDb.RollbackDelCatchAsync(request.ID, monsterID, catchDate);
-                
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(ReleaseCatchPost)} ErrorCode : {response.Result}");
+                _logger.ZLogDebug($"{nameof(RemoveCatchPost)} ErrorCode : {response.Result}");
                 return response;
             }
             
             response.UpgradeCandy = monster.UpgradeCount;
             return response;
+        }
+
+        private async Task<Tuple<ErrorCode, Monster>> GetMonsterInfoAsync(Int64 monsterID, string rollbackID, DateTime rollbackDate)
+        {
+            // monsterID를 받아서 찾는다.
+            var monster = DataStorage.GetMonsterInfo(monsterID);
+            if (monster is null)
+            {
+                var innerErrorCode = await _gameDb.RollbackDelCatchAsync(rollbackID, monsterID, rollbackDate);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(RemoveCatchPost)} ErrorCode : {innerErrorCode}");
+                }
+
+                return new Tuple<ErrorCode, Monster>(ErrorCode.RemoveCatchFailNoMonster, null);
+            }
+            return new Tuple<ErrorCode, Monster>(ErrorCode.None, monster);
         }
     }
 }

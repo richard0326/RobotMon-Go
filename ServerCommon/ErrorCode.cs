@@ -1,6 +1,6 @@
 ﻿namespace ServerCommon
 {
-    public enum ErrorCode : int
+    public enum ErrorCode : Int32
     {
         None = 0,
         
@@ -47,18 +47,20 @@
         RollbackInitDailyCheckFailDeleteQuery = 20249,
         RollbackInitDailyCheckFailException = 20250,
         
-        CheckPostmailFailNoPostmail = 20251,
-        CheckPostmailFailException = 20252,
+        CheckMailFailNoMail = 20251,
+        CheckMailFailException = 20252,
         
-        SendPostmailFailException = 20261,
-        RollbackSendPostmailFailException = 20262,
-        RollbackSendPostmailFailDeleteQuery = 20263,
-        RollbackRecvPostmailFailInsertQuery = 20264,
+        SendMailFailException = 20261,
+        RollbackSendMailFailException = 20262,
+        RollbackSendMailFailDeleteQuery = 20263,
+        RollbackRecvMailFailInsertQuery = 20264,
 
-        RecvPostmailFailException = 20271,
-        RecvPostmailFailNoPostmail = 20272,
-        RollbackRecvPostmailFailException = 20273,
-        
+        RecvMailFailException = 20271,
+        RecvMailFailNoMail = 20272,
+        RollbackRecvMailFailException = 20273,
+        RemoveCatchFailNoMonster = 20274,
+
+
         RankManagerFailUpdateStarCountIncrease = 20281,
         RankManagerFailUpdateStarCountNeedRollback = 20282,
         RankManagerFailUpdateStarCountDbFail = 20283,
@@ -83,17 +85,21 @@
         UpdateUpgradeCostFailException = 20316,
         
         UpgradePostFailNoMonsterId = 20321,
-        
+        UpgradePostFailNoUpgradeCost = 20322,
+        UpgradePostFailNoStarPoint = 20323,
+
         CheckEvolvePostFailNoMonsterId = 20331,
         EvolvePostFailNoMonsterId = 20332,
         EvolveCatchMonsterFailException = 20333,
         EvolveCatchMonsterFailUpdateFail = 20334,
+        UpdateCatchCombatPointFailUpdateFail = 20335,
+        UpdateCatchCombatPointFailException = 20336,
 
         // PVP Server 20401 ~ 20600
 
         // Raid Server  20601 ~ 20800
-        
-        
+
+
         // 기타
         DataStorageReadMonsterFail = 21001,
     }

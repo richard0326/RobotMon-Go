@@ -128,6 +128,8 @@ namespace ApiServer.Services
         {
             try
             {
+                // StartTransaction과 Commit을 넣는 이유
+                // 멀티스레드 환경에서 insert를 한뒤 select last_insert_id를 진행할때, 다른 스레드에서 insert를 진행한다면 엉뚱한 인덱스를 가져올 수 있습니다. 
                 StartTransaction();
                 var insertQuery = "insert gamedata(ID, StarPoint, UserLevel, UserExp) " +
                                   $"Values(@userId, {gameInfo.StarPoint}, {gameInfo.UserLevel}, {gameInfo.UserExp}); SELECT LAST_INSERT_ID();";
@@ -137,12 +139,12 @@ namespace ApiServer.Services
                 });
                 Commit();
                 
-                return new Tuple<ErrorCode, long>(ErrorCode.None, lastInsertId);
+                return new Tuple<ErrorCode, Int64>(ErrorCode.None, lastInsertId);
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(InitUserGameInfoAsync)} Exception : {e}");
-                return new Tuple<ErrorCode, long>(ErrorCode.UserGameInfoFailInitException, 0);
+                return new Tuple<ErrorCode, Int64>(ErrorCode.UserGameInfoFailInitException, 0);
             }
         }
 
@@ -227,6 +229,8 @@ namespace ApiServer.Services
         {
             try
             {
+                // StartTransaction과 Commit을 넣는 이유
+                // 멀티스레드 환경에서 insert를 한뒤 select last_insert_id를 진행할때, 다른 스레드에서 insert를 진행한다면 엉뚱한 인덱스를 가져올 수 있습니다. 
                 StartTransaction();
                 var insertQuery = $"insert catch(UserID, MonsterID, CatchTime) Values(@userId, {monsterID}, @catchTime); SELECT LAST_INSERT_ID();";
                 var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
@@ -236,12 +240,12 @@ namespace ApiServer.Services
                 });
                 Commit();
                 
-                return new Tuple<ErrorCode, int>(ErrorCode.None, lastInsertId);
+                return new Tuple<ErrorCode, Int32>(ErrorCode.None, lastInsertId);
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(SetCatchAsync)} Exception : {e}");
-                return new Tuple<ErrorCode, int>(ErrorCode.CatchFailException, 0);
+                return new Tuple<ErrorCode, Int32>(ErrorCode.CatchFailException, 0);
             }
         }
 
@@ -304,14 +308,14 @@ namespace ApiServer.Services
                 
                 if (count == 0)
                 {
-                    _logger.ZLogDebug($"{nameof(RollbackSendPostmailAsync)} Error : {ErrorCode.RollbackInitDailyCheckFailDeleteQuery}");
+                    _logger.ZLogDebug($"{nameof(RollbackSendMailAsync)} Error : {ErrorCode.RollbackInitDailyCheckFailDeleteQuery}");
                     return ErrorCode.RollbackInitDailyCheckFailDeleteQuery;
                 }
                 return ErrorCode.None;
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"{nameof(RollbackSendPostmailAsync)} Exception : {e}");
+                _logger.ZLogDebug($"{nameof(RollbackSendMailAsync)} Exception : {e}");
                 return ErrorCode.RollbackInitDailyCheckFailException;
             }
         }
@@ -388,53 +392,55 @@ namespace ApiServer.Services
             }
         }
         
-        public async Task<Tuple<Int32, List<Tuple<Int64,Int32>>?>> CheckPostmailAsync(string ID, Int32 pageIndex, Int32 pageSize)
+        public async Task<Tuple<ErrorCode, Int32, List<Tuple<Int64,Int32>>?>> CheckMailAsync(string ID, Int32 pageIndex, Int32 pageSize)
         {
             try
             {
-                var selectQuery = $"select postID, StarCount from postmail where ID = @userId LIMIT {pageIndex * pageSize}, {pageSize}";
-                var postmail = await _dbConn.QueryAsync<TablePostmail>(selectQuery, new
+                var selectQuery = $"select postID, StarCount from Mail where ID = @userId LIMIT {pageIndex * pageSize}, {pageSize}";
+                var Mail = await _dbConn.QueryAsync<TableMail>(selectQuery, new
                 {
                     userId = ID
                 });
 
                 // 우편함에 값이 없는 상태임.
-                if (postmail is null)
+                if (Mail is null)
                 {
-                    return new Tuple<int, List<Tuple<long, int>>?>(0, null);
+                    return new Tuple<ErrorCode, Int32, List<Tuple<Int64, Int32>>?>(ErrorCode.CheckMailFailNoMail, 0, null);
                 }
 
                 // 전체 개수 찾아오기
-                var countQuery = $"select count(*) from postmail where ID = @userId";
+                var countQuery = $"select count(*) from Mail where ID = @userId";
                 var count = await _dbConn.QueryFirstAsync<Int32>(countQuery, new
                 {
                     userId = ID
                 });
                 
                 // 반환할 Tuple
-                var ret = new Tuple<int, List<Tuple<long, int>>?>(count, new List<Tuple<long, int>>());
+                var ret = new Tuple<ErrorCode, Int32, List<Tuple<Int64, Int32>>?>(ErrorCode.None, count, new List<Tuple<Int64, Int32>>());
                 
                 // 쿼리를 돌면서 선물함의 ID와 선물 내용을 보내준다.
-                foreach (var eachPost in postmail)
+                foreach (var eachMail in Mail)
                 {
-                    ret.Item2.Add(new Tuple<Int64, Int32>(eachPost.postID, eachPost.StarCount));
+                    ret.Item3.Add(new Tuple<Int64, Int32>(eachMail.postID, eachMail.StarCount));
                 }
 
                 return ret;
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"{nameof(CheckPostmailAsync)} Exception : {e}");
-                return new Tuple<int, List<Tuple<long, int>>?>(0, null);
+                _logger.ZLogDebug($"{nameof(CheckMailAsync)} Exception : {e}");
+                return new Tuple<ErrorCode, Int32, List<Tuple<Int64, Int32>>?>(ErrorCode.CheckMailFailException, 0, null);
             }
         }
 
-        public async Task<Tuple<ErrorCode, Int64>> SendPostmailAsync(string ID, Int32 starCount)
+        public async Task<Tuple<ErrorCode, Int64>> SendMailAsync(string ID, Int32 starCount)
         {
             try
             {
+                // StartTransaction과 Commit을 넣는 이유
+                // 멀티스레드 환경에서 insert를 한뒤 select last_insert_id를 진행할때, 다른 스레드에서 insert를 진행한다면 엉뚱한 인덱스를 가져올 수 있습니다. 
                 StartTransaction();
-                var insertQuery = $"insert into postmail(ID, StarCount, Date) values (@userID, {starCount}, CURDATE()); SELECT LAST_INSERT_ID();";
+                var insertQuery = $"insert into Mail(ID, StarCount, Date) values (@userID, {starCount}, CURDATE()); SELECT LAST_INSERT_ID();";
                 var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
                 {
                     userId = ID
@@ -445,38 +451,38 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"{nameof(SendPostmailAsync)} Exception : {e}");
-                return new Tuple<ErrorCode, Int64>(ErrorCode.SendPostmailFailException, 0);
+                _logger.ZLogDebug($"{nameof(SendMailAsync)} Exception : {e}");
+                return new Tuple<ErrorCode, Int64>(ErrorCode.SendMailFailException, 0);
             }
         }
 
-        public async Task<ErrorCode> RollbackSendPostmailAsync(Int64 postmailID)
+        public async Task<ErrorCode> RollbackSendMailAsync(Int64 MailID)
         {
             try
             {
-                var deleteQuery = $"delete from postmail where postID = {postmailID}";
+                var deleteQuery = $"delete from Mail where postID = {MailID}";
                 var count = await _dbConn.ExecuteAsync(deleteQuery);
                 
                 if (count == 0)
                 {
-                    _logger.ZLogDebug($"{nameof(RollbackSendPostmailAsync)} Error : {ErrorCode.RollbackSendPostmailFailDeleteQuery}");
-                    return ErrorCode.RollbackSendPostmailFailDeleteQuery;
+                    _logger.ZLogDebug($"{nameof(RollbackSendMailAsync)} Error : {ErrorCode.RollbackSendMailFailDeleteQuery}");
+                    return ErrorCode.RollbackSendMailFailDeleteQuery;
                 }
                 return ErrorCode.None;
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"{nameof(RollbackSendPostmailAsync)} Exception : {e}");
-                return ErrorCode.RollbackSendPostmailFailException;
+                _logger.ZLogDebug($"{nameof(RollbackSendMailAsync)} Exception : {e}");
+                return ErrorCode.RollbackSendMailFailException;
             }
         }
         
-        public async Task<Tuple<ErrorCode, Int32, DateTime>> RecvPostmailAsync(string ID, Int64 postmailID)
+        public async Task<Tuple<ErrorCode, Int32, DateTime>> RecvMailAsync(string ID, Int64 MailID)
         {
             try
             {
-                var selectQuery = $"select ID, StarCount, Date from postmail where postID = {postmailID} and ID = @userId";
-                var selInfo = await _dbConn.QuerySingleAsync<TablePostmail>(selectQuery, new
+                var selectQuery = $"select ID, StarCount, Date from Mail where postID = {MailID} and ID = @userId";
+                var selInfo = await _dbConn.QuerySingleAsync<TableMail>(selectQuery, new
                 {
                     userId = ID
                 });
@@ -484,10 +490,10 @@ namespace ApiServer.Services
                 if (selInfo is null)
                 {
                     // 선물이 없다면 문제가 있는 상황
-                    return new Tuple<ErrorCode, Int32, DateTime>(ErrorCode.RecvPostmailFailNoPostmail, 0, new DateTime());
+                    return new Tuple<ErrorCode, Int32, DateTime>(ErrorCode.RecvMailFailNoMail, 0, new DateTime());
                 }
                 
-                var delQuery = $"delete from postmail where postID = {postmailID} and ID = @userId";
+                var delQuery = $"delete from Mail where postID = {MailID} and ID = @userId";
                 var delCount = await _dbConn.ExecuteAsync(delQuery, new
                 {
                     userId = ID
@@ -497,16 +503,16 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"{nameof(RecvPostmailAsync)} Exception : {e}");
-                return new Tuple<ErrorCode, Int32, DateTime>(ErrorCode.RecvPostmailFailException, 0, new DateTime());
+                _logger.ZLogDebug($"{nameof(RecvMailAsync)} Exception : {e}");
+                return new Tuple<ErrorCode, Int32, DateTime>(ErrorCode.RecvMailFailException, 0, new DateTime());
             }
         }
 
-        public async Task<ErrorCode> RollbackRecvPostmailAsync(string id, Int32 startCount, DateTime date)
+        public async Task<ErrorCode> RollbackRecvMailAsync(string id, Int32 startCount, DateTime date)
         {
             try
             {
-                var insertQuery = $"insert into postmail(ID, StarCount, Date) values (@userId, {startCount}, @dateStr)";
+                var insertQuery = $"insert into Mail(ID, StarCount, Date) values (@userId, {startCount}, @dateStr)";
                 var count = await _dbConn.ExecuteAsync(insertQuery, new
                 {
                     userId = id,
@@ -515,19 +521,19 @@ namespace ApiServer.Services
                 
                 if (count == 0)
                 {
-                    _logger.ZLogDebug($"{nameof(RollbackRecvPostmailAsync)} Error : {ErrorCode.RollbackRecvPostmailFailInsertQuery}");
-                    return ErrorCode.RollbackRecvPostmailFailInsertQuery;
+                    _logger.ZLogDebug($"{nameof(RollbackRecvMailAsync)} Error : {ErrorCode.RollbackRecvMailFailInsertQuery}");
+                    return ErrorCode.RollbackRecvMailFailInsertQuery;
                 }
                 return ErrorCode.None;
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"{nameof(RecvPostmailAsync)} Exception : {e}");
-                return ErrorCode.RollbackRecvPostmailFailException;
+                _logger.ZLogDebug($"{nameof(RecvMailAsync)} Exception : {e}");
+                return ErrorCode.RollbackRecvMailFailException;
             }
         }
 
-        public async Task<Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime>>>> GetCatchListAsync(string id)
+        public async Task<Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime, Int32>>>> GetCatchListAsync(string id)
         {
             try
             {
@@ -539,25 +545,25 @@ namespace ApiServer.Services
 
                 if (multiQuery is null)
                 {
-                    return new Tuple<ErrorCode, List<Tuple<long, long, DateTime>>>(ErrorCode.GetCatchListFailNoCatchInfo, null);
+                    return new Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime, Int32>>>(ErrorCode.GetCatchListFailNoCatchInfo, null);
                 }
                 
-                var retList = new List<Tuple<Int64, Int64, DateTime>>();
+                var retList = new List<Tuple<Int64, Int64, DateTime, Int32>>();
                 foreach (var tableCatch in multiQuery)
                 {
-                    retList.Add(new Tuple<long, long, DateTime>(tableCatch.CatchID, tableCatch.MonsterID, tableCatch.CatchTime));
+                    retList.Add(new Tuple<Int64, Int64, DateTime, Int32>(tableCatch.CatchID, tableCatch.MonsterID, tableCatch.CatchTime, tableCatch.CombatPoint));
                 }
 
-                return new Tuple<ErrorCode, List<Tuple<long, long, DateTime>>>(ErrorCode.None, retList);
+                return new Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime, Int32>>>(ErrorCode.None, retList);
             }
             catch (Exception e)
             {
-                _logger.ZLogDebug($"{nameof(RecvPostmailAsync)} Exception : {e}");
-                return new Tuple<ErrorCode, List<Tuple<long, long, DateTime>>>(ErrorCode.GetCatchListFailException, null);
+                _logger.ZLogDebug($"{nameof(RecvMailAsync)} Exception : {e}");
+                return new Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime, Int32>>>(ErrorCode.GetCatchListFailException, null);
             }
         }
         
-        public async Task<Tuple<ErrorCode, Int64, Int64, DateTime>> DelCatchAsync(Int64 catchID)
+        public async Task<Tuple<ErrorCode, Int64, Int64, DateTime, Int32>> DelCatchAsync(Int64 catchID)
         {
             try
             {
@@ -567,18 +573,18 @@ namespace ApiServer.Services
                 if (selInfo is null)
                 {
                     // 잡은 정보가 없는 상황
-                    return new Tuple<ErrorCode, Int64, Int64, DateTime>(ErrorCode.DelCatchFailNoCatch, 0, 0, new DateTime());
+                    return new Tuple<ErrorCode, Int64, Int64, DateTime, Int32>(ErrorCode.DelCatchFailNoCatch, 0, 0, new DateTime(), 0);
                 }
                 
                 var delQuery = $"delete from catch where CatchID = {catchID}";
                 var delCount = await _dbConn.ExecuteAsync(delQuery);
 
-                return new Tuple<ErrorCode, Int64, Int64, DateTime>(ErrorCode.None, selInfo.CatchID, selInfo.MonsterID, selInfo.CatchTime);
+                return new Tuple<ErrorCode, Int64, Int64, DateTime, Int32>(ErrorCode.None, selInfo.CatchID, selInfo.MonsterID, selInfo.CatchTime, selInfo.CombatPoint);
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(DelCatchAsync)} Exception : {e}");
-                return new Tuple<ErrorCode, Int64, Int64, DateTime>(ErrorCode.DelCatchFailException, 0, 0, new DateTime());
+                return new Tuple<ErrorCode, Int64, Int64, DateTime, Int32>(ErrorCode.DelCatchFailException, 0, 0, new DateTime(), 0);
             }
         }
 
@@ -702,6 +708,28 @@ namespace ApiServer.Services
             {
                 _logger.ZLogDebug($"{nameof(EvolveCatchMonsterAsync)} Exception : {e}");
                 return ErrorCode.EvolveCatchMonsterFailException;
+            }
+        }
+
+        public async Task<ErrorCode> UpdateCatchCombatPointAsync(Int64 catchId, Int32 combatPoint)
+        {
+            try
+            {
+                var updateQuery = $"update catch set CombatPoint = CombatPoint + {combatPoint} where CatchID = {catchId}";
+                var updateCount = await _dbConn.ExecuteAsync(updateQuery);
+
+                if (updateCount == 0)
+                {
+                    _logger.ZLogDebug($"{nameof(EvolveCatchMonsterAsync)} Error : {ErrorCode.UpdateCatchCombatPointFailUpdateFail}");
+                    return ErrorCode.UpdateCatchCombatPointFailUpdateFail;
+                }
+
+                return ErrorCode.None;
+            }
+            catch(Exception e)
+            {
+                _logger.ZLogDebug($"{nameof(UpdateCatchCombatPointAsync)} Exception : {e}");
+                return ErrorCode.UpdateCatchCombatPointFailException;
             }
         }
     }

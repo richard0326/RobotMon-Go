@@ -28,16 +28,17 @@ namespace ApiServer.Services
         public Task<ErrorCode> RollbackInitDailyCheckAsync(string dailyID);
         public Task<Tuple<ErrorCode, DateTime>> TryDailyCheckAsync(string ID);
         public Task<ErrorCode> RollbackDailyCheckAsync(string id, DateTime prevDate);
-        public Task<Tuple<Int32, List<Tuple<Int64,Int32>>?>> CheckPostmailAsync(string ID, Int32 pageIndex, Int32 pageSize = 10);
-        public Task<Tuple<ErrorCode, Int64>> SendPostmailAsync(string ID, Int32 starCount);
-        public Task<ErrorCode> RollbackSendPostmailAsync(Int64 postmailID);
-        public Task<Tuple<ErrorCode, Int32, DateTime>> RecvPostmailAsync(string ID, Int64 postmailID);
-        public Task<ErrorCode> RollbackRecvPostmailAsync(string id, Int32 startCount, DateTime date);
-        public Task<Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime>>>> GetCatchListAsync(string id);
-        public Task<Tuple<ErrorCode, Int64, Int64, DateTime>> DelCatchAsync(Int64 catchID);
+        public Task<Tuple<ErrorCode, Int32, List<Tuple<Int64,Int32>>?>> CheckMailAsync(string ID, Int32 pageIndex, Int32 pageSize = 10);
+        public Task<Tuple<ErrorCode, Int64>> SendMailAsync(string ID, Int32 starCount);
+        public Task<ErrorCode> RollbackSendMailAsync(Int64 MailID);
+        public Task<Tuple<ErrorCode, Int32, DateTime>> RecvMailAsync(string ID, Int64 MailID);
+        public Task<ErrorCode> RollbackRecvMailAsync(string id, Int32 startCount, DateTime date);
+        public Task<Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime, Int32>>>> GetCatchListAsync(string id);
+        public Task<Tuple<ErrorCode, Int64, Int64, DateTime, Int32>> DelCatchAsync(Int64 catchID);
         public Task<ErrorCode> RollbackDelCatchAsync(string id, Int64 monsterID, DateTime catchDate);
         public Task<ErrorCode> UpdateUserExpAsync(string id, Int32 gainExp);
         public Task<ErrorCode> UpdateUpgradeCostAsync(string id, Int32 updateCost);
         public Task<ErrorCode> EvolveCatchMonsterAsync(Int64 catchId, Int64 evolveMonsterId);
+        public Task<ErrorCode> UpdateCatchCombatPointAsync(Int64 catchId, Int32 combatPoint);
     }
 }

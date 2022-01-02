@@ -25,8 +25,17 @@ namespace ApiServer.Controllers
         {
             var response = new UpgradeResponse();
 
+            // 유저의 정보를 가져옵니다.
+            var (errorCode, userGameInfo) = await _gameDb.GetUserGameInfoAsync(request.ID);
+            if(errorCode != 0)
+            {
+                response.Result = errorCode;
+                _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                return response;
+            }
+
             // 몬스터에 대한 기획 데이터를 가져온다.
-            var monsterUpgrade = DataStorage.GetMonsterUpgrade(request.UpgradeID);
+            var monsterUpgrade = DataStorage.GetMonsterUpgrade(request.MonsterID);
             if (monsterUpgrade == null)
             {
                 // 잘못된 몬스터 ID
@@ -37,37 +46,94 @@ namespace ApiServer.Controllers
 
             // 유저가 'UpgradeCandy'에 대한 값을 지불 가능한지 확인한다.
             var totalUpgradeCost = monsterUpgrade.UpdateCost * request.UpgradeSize;
-            var errorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, totalUpgradeCost);
-            if (errorCode != ErrorCode.None)
+            if(userGameInfo.UpgradeCandy < totalUpgradeCost)
             {
-                response.Result = errorCode;
+                response.Result = ErrorCode.UpgradePostFailNoUpgradeCost;
                 _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }
 
             // 유저가 '별의모래'에 대한 값을 지불 가능한지 확인한다.
             var totalStarCount = monsterUpgrade.StarCost * request.UpgradeSize;
-            errorCode = await RankManager.UpdateStarCount(request.ID, -totalStarCount, _gameDb);
+            if(userGameInfo.StarPoint < totalStarCount)
+            {
+                response.Result = ErrorCode.UpgradePostFailNoStarPoint;
+                _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                return response;
+            }
+
+            // 실제로 db에 UpgradeCost를 지불합니다.
+            errorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, -totalUpgradeCost);
             if (errorCode != ErrorCode.None)
             {
-                var innerErrorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, -totalUpgradeCost);
-                if (innerErrorCode != ErrorCode.None)
-                {
-                    _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
-                }
+                response.Result = errorCode;
+                _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                return response;
+            }
 
+            // 실제로 db에 StarCount를 지불합니다.
+            errorCode = await UpdateStarCountAsync(request, -totalStarCount, totalUpgradeCost);
+            if (errorCode != ErrorCode.None)
+            {
                 // 업데이트 실패
                 response.Result = errorCode;
                 _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }
-            
-            // 몬스터 cp 증가하기!
 
-            //
-            
+            // 몬스터 cp 증가하기!
+            errorCode = await UpdateCatchCombatPointAsync(request, monsterUpgrade.Exp, totalUpgradeCost, totalStarCount);
+            if(errorCode != ErrorCode.None)
+            {
+                // 업데이트 실패
+                response.Result = errorCode;
+                _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                return response;
+            }            
             
             return response;
+        }
+
+        private async Task<ErrorCode> UpdateStarCountAsync(UpgradeRequest request, Int32 minusStarCount, Int32 totalUpgradeCost)
+        {
+            // 실제로 db에 StarCount를 지불합니다.
+            var errorCode = await RankManager.UpdateStarCount(request.ID, minusStarCount, _gameDb);
+            if (errorCode != ErrorCode.None)
+            {
+                // Rollback
+                var innerErrorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, totalUpgradeCost);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
+                }
+
+                return errorCode;
+            }
+            return ErrorCode.None;
+        }
+
+        private async Task<ErrorCode> UpdateCatchCombatPointAsync(UpgradeRequest request, Int32 combatPoint, Int32 totalUpgradeCost, Int32 totalStarCount)
+        {
+            // 몬스터 cp 증가하기!
+            var errorCode = await _gameDb.UpdateCatchCombatPointAsync(request.CatchID, combatPoint);
+            if (errorCode != ErrorCode.None)
+            {
+                // Rollback
+                var innerErrorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, totalUpgradeCost);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
+                }
+
+                innerErrorCode = await RankManager.UpdateStarCount(request.ID, totalStarCount, _gameDb);
+                if (innerErrorCode != ErrorCode.None)
+                {
+                    _logger.ZLogDebug($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
+                }
+
+                return errorCode;
+            }
+            return ErrorCode.None;
         }
     }
 }

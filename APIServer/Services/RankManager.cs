@@ -88,16 +88,16 @@ namespace ApiServer.Services
             var rankList = await RedisDB.GetRangeRankAsync(pageIndex * range, range);
             if (rankList is null)
             {
-                return new Tuple<ErrorCode, long, string[]>(ErrorCode.RankManagerFailGetRangeRank, 0, null);
+                return new Tuple<ErrorCode, Int64, string[]>(ErrorCode.RankManagerFailGetRangeRank, 0, null);
             }
 
             var count = await RedisDB.GetRankSizeAsync();
             if (count == -1)
             {
-                return new Tuple<ErrorCode, long, string[]>(ErrorCode.RankManagerFailGetRankSize, 0, null);
+                return new Tuple<ErrorCode, Int64, string[]>(ErrorCode.RankManagerFailGetRankSize, 0, null);
             }
 
-            return new Tuple<ErrorCode, long, string[]>(ErrorCode.None, count, rankList);
+            return new Tuple<ErrorCode, Int64, string[]>(ErrorCode.None, count, rankList);
         }
     }
 }

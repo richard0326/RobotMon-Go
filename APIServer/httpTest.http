@@ -117,7 +117,7 @@ Content-Type: application/json
 {
   "ID":"jacking751",
   "AuthToken":"k7zu5084nqj0edovch2n575ds",
-  "PostmailID": 4
+  "MailID": 4
 }
 
 ###

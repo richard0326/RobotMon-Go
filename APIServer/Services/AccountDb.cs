@@ -104,6 +104,8 @@ namespace ApiServer.Services
         {
             try
             {
+                // StartTransaction과 Commit을 넣는 이유
+                // 멀티스레드 환경에서 insert를 한뒤 select last_insert_id를 진행할때, 다른 스레드에서 insert를 진행한다면 엉뚱한 인덱스를 가져올 수 있습니다. 
                 StartTransaction();
                 var insertQuery = $"insert Users(ID, PW, Salt) Values(@userId, @userPw, @userSalt); SELECT LAST_INSERT_ID();";
                 var lastInsertId = await _dbConn.QueryFirstAsync<Int32>(insertQuery, new
@@ -114,12 +116,12 @@ namespace ApiServer.Services
                 });
                 Commit();
                 
-                return new Tuple<ErrorCode, long>(ErrorCode.None, lastInsertId);
+                return new Tuple<ErrorCode, Int64>(ErrorCode.None, lastInsertId);
             }
             catch (Exception e)
             {
                 _logger.ZLogDebug($"{nameof(CreateAccountDataAsync)} Exception : {e}");
-                return new Tuple<ErrorCode, long>(ErrorCode.CreateAccountFailDuplicate, 0);
+                return new Tuple<ErrorCode, Int64>(ErrorCode.CreateAccountFailDuplicate, 0);
             }
         }
 
