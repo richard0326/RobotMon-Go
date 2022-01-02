@@ -43,12 +43,14 @@
 	- 우편 받기	
 - 서버 테스트
     - VirtualBox에 Rocky Linux 설치하기(12/20)
-    - Rocky Linux 사용법 숙지하기(?)
+    - Rocky Linux 사용법 숙지하기(1/2)
     - 2대의 다른 머신에서 테스트(12/20)
 - 랭킹(12/23~25)
 - 연구실 보내기(12/27)
-- 진화(12/27~29)
-- 강화(12/27~28)
+- 진화(12/27~29)  
+- 강화(12/27~1/2)  
+
+- 아래 계획은 수정될 예정임.
 - 레이드, 클라 소켓서버 개발일정, 기획서 작성(12/23~24)
 - 레이드, 클라 구현하기( 세부 개발일정 추가 예정 ) 
 - 시간 여유되면 구현할 것
@@ -85,15 +87,51 @@ http://[IP]:[port]/Login
 http://[IP]:[port]/CreateAccount  
 요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/CreateAccountRequest.cs   
 응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/CreateAccountResponse.cs   
-
+  
 http://[IP]:[port]/UserGameInfo  
 요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/UserGameInfoRequest.cs   
 응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/UserGameInfoResponse.cs   
-
+  
 http://[IP]:[port]/FieldMonster  
 요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/FieldMonsterRequest.cs   
 응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/FieldMonsterResponse.cs   
-
+  
 http://[IP]:[port]/Catch  
 요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/CatchRequest.cs   
 응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/CatchResponse.cs   
+  
+http://[IP]:[port]/CatchList  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/CatchListRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/CatchListResponse.cs   
+
+http://[IP]:[port]/RemoveCatch  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/RemoveCatchRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/RemoveCatchResponse.cs   
+
+http://[IP]:[port]/DailyCheck  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/DailyCheckRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/DailyCheckResponse.cs   
+  
+http://[IP]:[port]/Evolve  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/EvolveRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/EvolveResponse.cs   
+  
+http://[IP]:[port]/Upgrade  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/UpgradeRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/UpgradeResponse.cs   
+
+http://[IP]:[port]/MailList  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/MailListRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/MailListResponse.cs   
+
+http://[IP]:[port]/RankingList  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/RankingListRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/RankingListResponse.cs   
+
+http://[IP]:[port]/RecvMail  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/RecvMailRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/RecvMailResponse.cs   
+
+http://[IP]:[port]/SendMail  
+요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/SendMailRequest.cs   
+응답 Res : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/SendMailResponse.cs   
