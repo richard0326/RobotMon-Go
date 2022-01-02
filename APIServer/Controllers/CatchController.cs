@@ -35,8 +35,10 @@ namespace ApiServer.Controllers
 
             // 현재 날짜 - 시간 정보를 원하는 경우 DateTime.Now를 사용할 것. 
             // 잡은 정보 저장
+            var rand = new Random();
+            var randomCombatPoint = rand.Next(100, 1501);
             response.Date = DateTime.Today;
-            (errorCode, var catchId) = await _gameDb.SetCatchAsync(request.ID, request.MonsterID, response.Date);
+            (errorCode, var catchId) = await _gameDb.SetCatchAsync(request.ID, request.MonsterID, response.Date, randomCombatPoint);
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
@@ -49,7 +51,6 @@ namespace ApiServer.Controllers
             }
 
             // 기획데이터에 있지만, 테스르틀 위해서 랜덤하게 강화 캔디를 준다.
-            var rand = new Random();
             var randomUpgradeCandy = rand.Next(100, 1001);
             errorCode = await RaiseUpgradeCandyAsync(request, randomUpgradeCandy, catchId);
             if (errorCode != ErrorCode.None)
@@ -73,6 +74,7 @@ namespace ApiServer.Controllers
             response.StarCount = randomStarCount;
             response.UpgradeCandy = randomUpgradeCandy;
             response.MonsterID = request.MonsterID;
+            response.CombatPoint = randomCombatPoint;
             return response;
         }
 

@@ -43,9 +43,18 @@ namespace ApiServer.Services
 
                 var document = JsonDocument.Parse(bodyStr);
 
-                var userId = document.RootElement.GetProperty("ID").GetString();
-                userAuthToken = document.RootElement.GetProperty("AuthToken").GetString();
-
+                string userId;
+                try
+                {
+                    userId = document.RootElement.GetProperty("ID").GetString();
+                    userAuthToken = document.RootElement.GetProperty("AuthToken").GetString();
+                }
+                catch (Exception ex)
+                {
+                    context.Response.StatusCode = (int)ErrorCode.AuthTokenFailWrongKeyword;
+                    return;
+                }
+                
                 // redis에서 로그인 유저 정보 받아오기... 없으면 로그인 성공한 유저가 아님.
                 var userInfo = await RedisDB.GetUserInfo(userId);
                 if (userInfo == null)

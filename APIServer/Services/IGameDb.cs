@@ -21,7 +21,7 @@ namespace ApiServer.Services
         public Task<Tuple<ErrorCode, Int64>> InitUserGameInfoAsync(string id, UserGameInfo table);
         public Task<ErrorCode> RollbackInitUserGameInfoAsync(Int64 gamedataId);
         public Task<Tuple<ErrorCode, FieldMonsterResponse>> GetMonsterInfoAsync(Int64 monsterUID);
-        public Task<Tuple<ErrorCode, Int32>> SetCatchAsync(string id, Int64 monsterID, DateTime catchTime);
+        public Task<Tuple<ErrorCode, Int32>> SetCatchAsync(string id, Int64 monsterID, DateTime catchTime, Int32 combatPoint);
         public Task<ErrorCode> RollbackSetCatchAsync(Int64 catchID);
         // 출석체크 설정하기
         public Task<ErrorCode> InitDailyCheckAsync(string ID);

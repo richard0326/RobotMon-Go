@@ -10,5 +10,6 @@ namespace ApiServer.Model
         public Int64 StarCount { get; set; }
         public Int64 UpgradeCandy { get; set; }
         public DateTime Date { get; set; }
+        public Int32 CombatPoint { get; set; }
     }
 }

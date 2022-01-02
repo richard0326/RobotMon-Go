@@ -9,6 +9,7 @@
         AuthTokenFailNoUser = 513,
         AuthTokenFailWrongAuthToken = 514,
         AuthTokenFailSetNx = 515,
+        AuthTokenFailWrongKeyword = 516,
 
         // API Server 전용  20201 ~ 20400
         LoginFailException = 20201,

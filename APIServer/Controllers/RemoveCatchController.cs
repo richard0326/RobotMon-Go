@@ -24,7 +24,7 @@ namespace ApiServer.Controllers
         {
             var response = new RemoveCatchResponse();
 
-            var (errorCode, catchID, monsterID, catchDate, combatPoint) = await _gameDb.DelCatchAsync(request.ReleaseID);
+            var (errorCode, catchID, monsterID, catchDate, combatPoint) = await _gameDb.DelCatchAsync(request.RemoveID);
 
             if (errorCode != ErrorCode.None)
             {
