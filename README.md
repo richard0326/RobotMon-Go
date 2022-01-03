@@ -7,7 +7,6 @@
 - Redis  
 - C#
 - ASP.NET Core WebAPI
-- SuperSocketLite
 - Git
   
   
