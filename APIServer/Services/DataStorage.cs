@@ -36,7 +36,7 @@ namespace ApiServer.Services
                     });
                 }
 
-                var dailyCheckList = dBConn.Query<TableDailyInfo>("select * from DailyInfo");
+                var dailyCheckList = dBConn.Query<TableDailyInfo>("select * from dailyinfo");
                 foreach (var value in dailyCheckList)
                 {
                     s_dailyCheckDic.TryAdd(value.DayCount, new DailyInfo()
