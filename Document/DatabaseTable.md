@@ -1,4 +1,8 @@
-## AccountDB  
+# schema, database
+CREATE SCHEMA `account` ;
+CREATE SCHEMA `game` ;
+
+## account DB  
 CREATE TABLE `users` (  
   `UID` bigint NOT NULL AUTO_INCREMENT, 
   `ID` varchar(45) NOT NULL, 
@@ -8,7 +12,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `ID_UNIQUE` (`ID`)  
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
 
-## GameDB
+## game DB
 CREATE TABLE `catch` (   
   `CatchID` bigint NOT NULL AUTO_INCREMENT,  
   `UserID` varchar(45) NOT NULL,  
