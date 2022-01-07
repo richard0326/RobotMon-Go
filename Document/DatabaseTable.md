@@ -1,6 +1,6 @@
 # schema, database
-CREATE SCHEMA `account` ;
-CREATE SCHEMA `game` ;
+CREATE SCHEMA `account` ;  
+CREATE SCHEMA `game` ;  
 
 ## account DB  
 CREATE TABLE `users` (  
