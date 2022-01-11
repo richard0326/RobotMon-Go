@@ -278,7 +278,7 @@ namespace ApiServer.Services
                 var count = await _dbConn.ExecuteAsync(insertQuery, new
                 {
                     userId = ID,
-                    dateTime = "0000-00-00"
+                    dateTime = "1000-01-01"
                 });
 
                 if (count == 0)
