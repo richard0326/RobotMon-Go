@@ -58,7 +58,7 @@
 로그(fluentd)(1/11~1/15)  
 - 웹서버에 남기는 로그 파일을 fluentd로 로그 서버 모으기
 - fluentd forward로 원격 fluentd로 보내고, 여기서 DB 로그 저장
-- docker에서 콘솔로 로그를 출력하게 하고,  이 로그를 fluentd를 토앻서 DB에 저장  
+- docker에서 콘솔로 로그를 출력하게 하고,  이 로그를 fluentd를 통해서 DB에 저장  
 
 마무리(1/17~28)
 - dotnet 6 버전으로 변경
