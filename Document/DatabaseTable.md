@@ -1,3 +1,7 @@
+# MySQL8.0 -> 5.6.36
+"utf8mb4" -> "utf8"  
+"utf8_0900_ai_ci" (또는 비슷한 것) -> "utf8_general_ci"  
+  
 # schema, database
 CREATE SCHEMA `account` ;  
 CREATE SCHEMA `game` ;  
@@ -112,6 +116,14 @@ CREATE TABLE `evolve_log` (
 CREATE TABLE `login_log` (  
   `UID` bigint NOT NULL AUTO_INCREMENT,  
   `ID` varchar(45) NOT NULL,  
+  `time` datetime NOT NULL,  
+  PRIMARY KEY (`UID`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+
+
+CREATE TABLE `error_log` (  
+  `UID` bigint NOT NULL AUTO_INCREMENT,  
+  `errorStr` varchar(1024) NOT NULL,  
   `time` datetime NOT NULL,  
   PRIMARY KEY (`UID`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
