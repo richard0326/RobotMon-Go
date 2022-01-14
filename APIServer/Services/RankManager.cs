@@ -23,7 +23,7 @@ namespace ApiServer.Services
                     {
                         if (await RedisDB.ZSetAddAsync(gameinfo.ID, gameinfo.StarPoint) == false)
                         {
-                            Console.WriteLine($"Init fail {gameinfo.ID} {gameinfo.StarPoint}");
+                            Console.WriteLine($"{nameof(RankManager)} {nameof(Init)}: Init fail {gameinfo.ID} {gameinfo.StarPoint}");
                             break;
                         }
                     }
