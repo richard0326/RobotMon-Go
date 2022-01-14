@@ -32,7 +32,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(RankingInfoPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(RankingInfoPost)} ErrorCode : {response.Result}");
                 return response;
             }
 

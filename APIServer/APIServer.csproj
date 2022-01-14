@@ -6,6 +6,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <Optimize>False</Optimize>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="CloudStructures" Version="3.2.0" />
         <PackageReference Include="Dapper" Version="2.0.123" />

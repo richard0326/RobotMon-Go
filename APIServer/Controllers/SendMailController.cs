@@ -30,7 +30,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(SendMailPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(SendMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -39,7 +39,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {                
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(SendMailPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(SendMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
             return response;
@@ -55,7 +55,7 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _gameDb.RollbackSendMailAsync(lastInsertId);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogDebug($"{nameof(SendMailPost)} ErrorCode : {innerErrorCode}");
+                    _logger.ZLogError($"{nameof(SendMailPost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return errorCode;

@@ -31,7 +31,7 @@ namespace ApiServer.Controllers
             if (monster == null)
             {
                 response.Result = ErrorCode.DataStorageReadMonsterFail;
-                _logger.ZLogDebug($"{nameof(FieldMonsterPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(FieldMonsterPost)} ErrorCode : {response.Result}");
                 return response;
             }
             

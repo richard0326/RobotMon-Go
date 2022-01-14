@@ -29,7 +29,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(CheckCatchPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(CheckCatchPost)} ErrorCode : {response.Result}");
                 return response;
             }
 

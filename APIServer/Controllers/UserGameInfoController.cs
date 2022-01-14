@@ -31,7 +31,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(GameInfoPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(GameInfoPost)} ErrorCode : {response.Result}");
                 return response;
             }
             response.StarPoint = gameInfo.StarPoint;

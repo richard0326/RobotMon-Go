@@ -30,7 +30,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(DailyCheckPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(DailyCheckPost)} ErrorCode : {response.Result}");
                 return response;
             }
             
@@ -40,7 +40,7 @@ namespace ApiServer.Controllers
             if (dailyInfo is null)
             {
                 response.Result = ErrorCode.DailyCheckFailNoStoredData;
-                _logger.ZLogDebug($"{nameof(DailyCheckPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(DailyCheckPost)} ErrorCode : {response.Result}");
                 return response;
             }
             
@@ -48,7 +48,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(DailyCheckPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(DailyCheckPost)} ErrorCode : {response.Result}");
                 return response;
             }
             
@@ -66,7 +66,7 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _gameDb.RollbackDailyCheckAsync(request.ID, rollbackPrevDate);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogDebug($"{nameof(DailyCheckPost)} ErrorCode : {innerErrorCode}");
+                    _logger.ZLogError($"{nameof(DailyCheckPost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return errorCode;

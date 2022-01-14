@@ -31,7 +31,7 @@ namespace ApiServer.Controllers
             if(errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(CheckMailPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(CheckMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
 

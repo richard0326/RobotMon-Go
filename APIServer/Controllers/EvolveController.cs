@@ -30,7 +30,7 @@ namespace ApiServer.Controllers
             {
                 // 잘못된 몬스터 ID
                 response.Result = ErrorCode.EvolvePostFailNoMonsterId;
-                _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
                 return response;
             }
             
@@ -39,7 +39,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
                 return response;
             }
             
@@ -48,7 +48,7 @@ namespace ApiServer.Controllers
             if(errorCode != ErrorCode.None)
             {                
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -66,7 +66,7 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, rollbackCandyCount);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {innerErrorCode}");
+                    _logger.ZLogError($"{nameof(EvolvePost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return errorCode;
