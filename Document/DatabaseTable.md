@@ -1,4 +1,5 @@
 # MySQL8.0 -> 5.6.36
+MySQL5.6.36 버전에서도 호환 가능하게 생성하는 방법    
 "utf8mb4" -> "utf8"  
 "utf8_0900_ai_ci" (또는 비슷한 것) -> "utf8_general_ci"  
   
