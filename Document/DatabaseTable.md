@@ -1,6 +1,7 @@
 # schema, database
 CREATE SCHEMA `account` ;  
 CREATE SCHEMA `game` ;  
+CREATE SCHEMA `log`;
 
 ## account DB  
 CREATE TABLE `users` (  
@@ -87,4 +88,30 @@ CREATE TABLE `userlevelinfo` (
   `Level` int NOT NULL,  
   `LevelUpExp` int NOT NULL,  
   PRIMARY KEY (`Level`)   
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+  
+## log DB  
+CREATE TABLE `catch_log` (  
+  `CatchID` bigint NOT NULL AUTO_INCREMENT,  
+  `UserID` varchar(45) NOT NULL,  
+  `MonsterID` bigint NOT NULL,  
+  `CatchTime` datetime NOT NULL,  
+  `CombatPoint` int NOT NULL,  
+  PRIMARY KEY (`CatchID`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+  
+CREATE TABLE `evolve_log` (  
+  `UID` bigint NOT NULL,  
+  `MID` bigint NOT NULL,  
+  `EvolveMID` bigint NOT NULL,  
+  `StarCount` int NOT NULL,  
+  `time` datetime NOT NULL,  
+  PRIMARY KEY (`UID`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+  
+CREATE TABLE `login_log` (  
+  `UID` bigint NOT NULL AUTO_INCREMENT,  
+  `ID` varchar(45) NOT NULL,  
+  `time` datetime NOT NULL,  
+  PRIMARY KEY (`UID`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
