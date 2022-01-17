@@ -53,6 +53,7 @@ namespace ApiServer.Controllers
             }
 
             response.EvolveMonsterID = result.EvolveMonsterID;
+            _logger.ZLogError($"Evolve Success : {request.CatchID} {request.MonsterID} {response.EvolveMonsterID} {result.CandyCount}");
             return response;
         }
 

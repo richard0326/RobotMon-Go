@@ -35,7 +35,7 @@ namespace ApiServer
                 {
                     logging.ClearProviders();
                     //logging.SetMinimumLevel(LogLevel.Debug); // appsettings.json 파일에 의해서 Information으로 오버라이드됨.
-                    logging.AddZLoggerFile("apiserver.log");
+                    logging.AddZLoggerFile("logs/apiserver.log");
                     logging.AddZLoggerConsole();
                     /*
                     logging.AddZLoggerConsole(options =>

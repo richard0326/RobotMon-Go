@@ -75,6 +75,8 @@ namespace ApiServer.Controllers
             response.UpgradeCandy = randomUpgradeCandy;
             response.MonsterID = request.MonsterID;
             response.CombatPoint = randomCombatPoint;
+
+            _logger.ZLogError($"Catch Success : {request.ID} {response.CatchID} {response.MonsterID} {response.CombatPoint}");
             return response;
         }
 

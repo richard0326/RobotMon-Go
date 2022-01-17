@@ -20,6 +20,7 @@ namespace ApiServer.Services
             if (String.CompareOrdinal(formString, "/Login") == 0 ||
                 String.CompareOrdinal(formString, "/CreateAccount") == 0)
             {
+                context.Request.EnableBuffering();
                 using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8, true, 4096, true))
                 {
                     var bodyStr = await reader.ReadToEndAsync();

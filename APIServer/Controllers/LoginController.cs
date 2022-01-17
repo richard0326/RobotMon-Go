@@ -54,7 +54,8 @@ namespace ApiServer.Controllers
                 _logger.ZLogError($"{nameof(LoginPost)} ErrorCode : {response.Result}");
                 return response;
             }
-            
+
+            _logger.ZLogError($"Login Success : {request.ID}");
             return response;
         }
     }
