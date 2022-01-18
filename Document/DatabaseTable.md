@@ -1,6 +1,12 @@
+# MySQL8.0 -> 5.6.36
+MySQL5.6.36 버전에서도 호환 가능하게 생성하는 방법    
+"utf8mb4" -> "utf8"  
+"utf8_0900_ai_ci" (또는 비슷한 것) -> "utf8_general_ci"  
+  
 # schema, database
 CREATE SCHEMA `account` ;  
 CREATE SCHEMA `game` ;  
+CREATE SCHEMA `log`;
 
 ## account DB  
 CREATE TABLE `users` (  
@@ -87,4 +93,38 @@ CREATE TABLE `userlevelinfo` (
   `Level` int NOT NULL,  
   `LevelUpExp` int NOT NULL,  
   PRIMARY KEY (`Level`)   
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+  
+## log DB  
+CREATE TABLE `catch_log` (  
+  `CatchID` bigint NOT NULL AUTO_INCREMENT,  
+  `UserID` varchar(45) NOT NULL,  
+  `MonsterID` bigint NOT NULL,  
+  `CatchTime` datetime NOT NULL,  
+  `CombatPoint` int NOT NULL,  
+  PRIMARY KEY (`CatchID`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+  
+CREATE TABLE `evolve_log` (  
+  `UID` bigint NOT NULL,  
+  `MID` bigint NOT NULL,  
+  `EvolveMID` bigint NOT NULL,  
+  `StarCount` int NOT NULL,  
+  `time` datetime NOT NULL,  
+  PRIMARY KEY (`UID`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+  
+CREATE TABLE `login_log` (  
+  `UID` bigint NOT NULL AUTO_INCREMENT,  
+  `ID` varchar(45) NOT NULL,  
+  `time` datetime NOT NULL,  
+  PRIMARY KEY (`UID`)  
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
+
+
+CREATE TABLE `error_log` (  
+  `UID` bigint NOT NULL AUTO_INCREMENT,  
+  `errorStr` varchar(1024) NOT NULL,  
+  `time` datetime NOT NULL,  
+  PRIMARY KEY (`UID`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  

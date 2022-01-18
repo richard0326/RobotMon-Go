@@ -20,6 +20,34 @@ namespace ApiServer.Services
             if (String.CompareOrdinal(formString, "/Login") == 0 ||
                 String.CompareOrdinal(formString, "/CreateAccount") == 0)
             {
+                context.Request.EnableBuffering();
+                using (var reader = new StreamReader(context.Request.Body, Encoding.UTF8, true, 4096, true))
+                {
+                    var bodyStr = await reader.ReadToEndAsync();
+
+                    // body String에 어떤 문자열도 없다면...
+                    if (string.IsNullOrEmpty(bodyStr))
+                    {
+                        // http Response Code
+                        context.Response.StatusCode = (int)ErrorCode.AuthTokenFailNoBody;
+                        return;
+                    }
+
+                    var document = JsonDocument.Parse(bodyStr);
+
+                    try
+                    {
+                        document.RootElement.GetProperty("ID").GetString();
+                        document.RootElement.GetProperty("PW").GetString();
+                    }
+                    catch
+                    {
+                        context.Response.StatusCode = (int)ErrorCode.AuthTokenFailWrongKeyword;
+                        return;
+                    }
+                }
+                context.Request.Body.Position = 0;
+
                 // Call the next delegate/middleware in the pipeline
                 await _next(context);
                 return;
@@ -49,7 +77,7 @@ namespace ApiServer.Services
                     userId = document.RootElement.GetProperty("ID").GetString();
                     userAuthToken = document.RootElement.GetProperty("AuthToken").GetString();
                 }
-                catch (Exception ex)
+                catch
                 {
                     context.Response.StatusCode = (int)ErrorCode.AuthTokenFailWrongKeyword;
                     return;

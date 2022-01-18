@@ -2,13 +2,12 @@
 using ApiServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using ServerCommon;
-using ZLogger;
 
 namespace ApiServer.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    class EvolveController : ControllerBase
+    public class EvolveController : ControllerBase
     {
         private readonly IGameDb _gameDb;
         private readonly ILogger<EvolveController> _logger;
@@ -30,7 +29,7 @@ namespace ApiServer.Controllers
             {
                 // 잘못된 몬스터 ID
                 response.Result = ErrorCode.EvolvePostFailNoMonsterId;
-                _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
                 return response;
             }
             
@@ -39,7 +38,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
                 return response;
             }
             
@@ -48,11 +47,12 @@ namespace ApiServer.Controllers
             if(errorCode != ErrorCode.None)
             {                
                 response.Result = errorCode;
-                _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(EvolvePost)} ErrorCode : {response.Result}");
                 return response;
             }
 
             response.EvolveMonsterID = result.EvolveMonsterID;
+            _logger.LogError($"Evolve Success : {request.CatchID} {request.MonsterID} {response.EvolveMonsterID} {result.CandyCount}");
             return response;
         }
 
@@ -66,7 +66,7 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, rollbackCandyCount);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogDebug($"{nameof(EvolvePost)} ErrorCode : {innerErrorCode}");
+                    _logger.LogError($"{nameof(EvolvePost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return errorCode;
