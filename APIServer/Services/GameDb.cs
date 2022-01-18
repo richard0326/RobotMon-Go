@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
 using ServerCommon;
-using ZLogger;
+
 
 namespace ApiServer.Services
 {
@@ -25,13 +25,13 @@ namespace ApiServer.Services
             _dbConfig = dbConfig;
             _logger = logger;
             Open();
-            //_logger.ZLogError($"Open");
+            //_logger.LogError($"Open");
         }
 
         public void Dispose()
         {
             Close();
-            //_logger.ZLogError($"Dispose");
+            //_logger.LogError($"Dispose");
         }
         
         public void Open()
@@ -118,7 +118,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(GetUserGameInfoAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(GetUserGameInfoAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, UserGameInfo>(ErrorCode.GetUserGameInfoFailException, null);
             }
         }
@@ -143,7 +143,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(InitUserGameInfoAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(InitUserGameInfoAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, Int64>(ErrorCode.UserGameInfoFailInitException, 0);
             }
         }
@@ -157,14 +157,14 @@ namespace ApiServer.Services
                 
                 if (count == 0)
                 {
-                    _logger.ZLogError($"{nameof(RollbackInitUserGameInfoAsync)} Error : {ErrorCode.RollbackInitUserGameIfnoFailDeleteQuery}");
+                    _logger.LogError($"{nameof(RollbackInitUserGameInfoAsync)} Error : {ErrorCode.RollbackInitUserGameIfnoFailDeleteQuery}");
                     return ErrorCode.RollbackInitUserGameIfnoFailDeleteQuery;
                 }
                 return ErrorCode.None;
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(RollbackInitUserGameInfoAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(RollbackInitUserGameInfoAsync)} Exception : {e}");
                 return ErrorCode.RollbackInitUserGameInfoFailException;
             }
         }
@@ -182,13 +182,13 @@ namespace ApiServer.Services
 
                 if (updateCount == 0)
                 {
-                    _logger.ZLogError($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.UserGameInfoFailStarCountUpdateFail}");
+                    _logger.LogError($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.UserGameInfoFailStarCountUpdateFail}");
                     return ErrorCode.UserGameInfoFailStarCountUpdateFail;
                 }
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(InitUserGameInfoAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(InitUserGameInfoAsync)} Exception : {e}");
                 return ErrorCode.UserGameInfoFailStarCountException;
             }
             return ErrorCode.None;
@@ -220,7 +220,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(GetMonsterInfoAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(GetMonsterInfoAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, FieldMonsterResponse>(ErrorCode.MonsterInfoFailException, null);
             }
         }
@@ -244,7 +244,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(SetCatchAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(SetCatchAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, Int32>(ErrorCode.CatchFailException, 0);
             }
         }
@@ -257,13 +257,13 @@ namespace ApiServer.Services
                 var count = await _dbConn.ExecuteAsync(deleteQuery);
                 if (count == 0)
                 {
-                    _logger.ZLogError($"{nameof(RollbackSetCatchAsync)} Error : {ErrorCode.CatchFailDeleteFail}");
+                    _logger.LogError($"{nameof(RollbackSetCatchAsync)} Error : {ErrorCode.CatchFailDeleteFail}");
                     return ErrorCode.CatchFailDeleteFail;
                 }
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(RollbackSetCatchAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(RollbackSetCatchAsync)} Exception : {e}");
                 return ErrorCode.CatchFailException;
             }
 
@@ -283,13 +283,13 @@ namespace ApiServer.Services
 
                 if (count == 0)
                 {
-                    _logger.ZLogError($"{nameof(InitDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailInsertQuery}");
+                    _logger.LogError($"{nameof(InitDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailInsertQuery}");
                     return ErrorCode.DailyCheckFailInsertQuery;
                 }
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(InitDailyCheckAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(InitDailyCheckAsync)} Exception : {e}");
                 return ErrorCode.InitDailyCheckFailException;
             }
 
@@ -308,14 +308,14 @@ namespace ApiServer.Services
                 
                 if (count == 0)
                 {
-                    _logger.ZLogError($"{nameof(RollbackSendMailAsync)} Error : {ErrorCode.RollbackInitDailyCheckFailDeleteQuery}");
+                    _logger.LogError($"{nameof(RollbackSendMailAsync)} Error : {ErrorCode.RollbackInitDailyCheckFailDeleteQuery}");
                     return ErrorCode.RollbackInitDailyCheckFailDeleteQuery;
                 }
                 return ErrorCode.None;
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(RollbackSendMailAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(RollbackSendMailAsync)} Exception : {e}");
                 return ErrorCode.RollbackInitDailyCheckFailException;
             }
         }
@@ -334,7 +334,7 @@ namespace ApiServer.Services
                 // 회원 가입할때 생성해줄 것이기 때문에.. 값이 항상 있어야함.
                 if (dailyCheck is null)
                 {
-                    _logger.ZLogError($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailNoData}");
+                    _logger.LogError($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailNoData}");
                     return new Tuple<ErrorCode, DateTime>(ErrorCode.DailyCheckFailNoData, new DateTime());
                 }
 
@@ -353,7 +353,7 @@ namespace ApiServer.Services
 
                 if (updateCount == 0)
                 {
-                    _logger.ZLogError($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailUpdateQuery}");
+                    _logger.LogError($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.DailyCheckFailUpdateQuery}");
                     return new Tuple<ErrorCode, DateTime>(ErrorCode.DailyCheckFailUpdateQuery, new DateTime());
                 }
                 
@@ -361,7 +361,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(TryDailyCheckAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(TryDailyCheckAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, DateTime>(ErrorCode.TryDailyCheckFailException, new DateTime());
             }
         }
@@ -379,7 +379,7 @@ namespace ApiServer.Services
                 
                 if (updateCount == 0)
                 {
-                    _logger.ZLogError($"{nameof(RollbackDailyCheckAsync)} Error : {ErrorCode.RollbackDailyCheckFailUpdateQuery}");
+                    _logger.LogError($"{nameof(RollbackDailyCheckAsync)} Error : {ErrorCode.RollbackDailyCheckFailUpdateQuery}");
                     return ErrorCode.RollbackDailyCheckFailUpdateQuery;
                 }
                 
@@ -387,7 +387,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(RollbackDailyCheckAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(RollbackDailyCheckAsync)} Exception : {e}");
                 return ErrorCode.RollbackDailyCheckFailException;
             }
         }
@@ -428,7 +428,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(CheckMailAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(CheckMailAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, Int32, List<Tuple<Int64, Int32>>?>(ErrorCode.CheckMailFailException, 0, null);
             }
         }
@@ -451,7 +451,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(SendMailAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(SendMailAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, Int64>(ErrorCode.SendMailFailException, 0);
             }
         }
@@ -465,14 +465,14 @@ namespace ApiServer.Services
                 
                 if (count == 0)
                 {
-                    _logger.ZLogError($"{nameof(RollbackSendMailAsync)} Error : {ErrorCode.RollbackSendMailFailDeleteQuery}");
+                    _logger.LogError($"{nameof(RollbackSendMailAsync)} Error : {ErrorCode.RollbackSendMailFailDeleteQuery}");
                     return ErrorCode.RollbackSendMailFailDeleteQuery;
                 }
                 return ErrorCode.None;
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(RollbackSendMailAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(RollbackSendMailAsync)} Exception : {e}");
                 return ErrorCode.RollbackSendMailFailException;
             }
         }
@@ -503,7 +503,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(RecvMailAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(RecvMailAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, Int32, DateTime>(ErrorCode.RecvMailFailException, 0, new DateTime());
             }
         }
@@ -521,14 +521,14 @@ namespace ApiServer.Services
                 
                 if (count == 0)
                 {
-                    _logger.ZLogError($"{nameof(RollbackRecvMailAsync)} Error : {ErrorCode.RollbackRecvMailFailInsertQuery}");
+                    _logger.LogError($"{nameof(RollbackRecvMailAsync)} Error : {ErrorCode.RollbackRecvMailFailInsertQuery}");
                     return ErrorCode.RollbackRecvMailFailInsertQuery;
                 }
                 return ErrorCode.None;
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(RecvMailAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(RecvMailAsync)} Exception : {e}");
                 return ErrorCode.RollbackRecvMailFailException;
             }
         }
@@ -558,7 +558,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(RecvMailAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(RecvMailAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, List<Tuple<Int64, Int64, DateTime, Int32>>>(ErrorCode.GetCatchListFailException, null);
             }
         }
@@ -583,7 +583,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(DelCatchAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(DelCatchAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, Int64, Int64, DateTime, Int32>(ErrorCode.DelCatchFailException, 0, 0, new DateTime(), 0);
             }
         }
@@ -603,7 +603,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(RollbackDelCatchAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(RollbackDelCatchAsync)} Exception : {e}");
                 return ErrorCode.RollbackCatchFailException;
             }
         }
@@ -619,7 +619,7 @@ namespace ApiServer.Services
                 });
                 if (selInfo is null)
                 {
-                    _logger.ZLogError($"{nameof(UpdateUserExpAsync)} Error : {ErrorCode.UpdateUserExpFailNoUserExist}");
+                    _logger.LogError($"{nameof(UpdateUserExpAsync)} Error : {ErrorCode.UpdateUserExpFailNoUserExist}");
                     return ErrorCode.UpdateUserExpFailNoUserExist;
                 }
 
@@ -651,7 +651,7 @@ namespace ApiServer.Services
                 
                 if (updateCount == 0)
                 {
-                    _logger.ZLogError($"{nameof(UpdateUserExpAsync)} Error : {ErrorCode.UpdateUserExpFailUpdateFail}");
+                    _logger.LogError($"{nameof(UpdateUserExpAsync)} Error : {ErrorCode.UpdateUserExpFailUpdateFail}");
                     return ErrorCode.UpdateUserExpFailUpdateFail;
                 }
                 
@@ -659,7 +659,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(UpdateUserExpAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(UpdateUserExpAsync)} Exception : {e}");
                 return ErrorCode.UpdateUserExpFailException;
             }
         }
@@ -676,7 +676,7 @@ namespace ApiServer.Services
                 
                 if (updateCount == 0)
                 {
-                    _logger.ZLogError($"{nameof(UpdateUserExpAsync)} Error : {ErrorCode.UpdateUpgradeCostExpFailUpdateFail}");
+                    _logger.LogError($"{nameof(UpdateUserExpAsync)} Error : {ErrorCode.UpdateUpgradeCostExpFailUpdateFail}");
                     return ErrorCode.UpdateUpgradeCostExpFailUpdateFail;
                 }
                 
@@ -684,7 +684,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(UpdateUserExpAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(UpdateUserExpAsync)} Exception : {e}");
                 return ErrorCode.UpdateUpgradeCostFailException;
             }
         }
@@ -698,7 +698,7 @@ namespace ApiServer.Services
                 
                 if (updateCount == 0)
                 {
-                    _logger.ZLogError($"{nameof(EvolveCatchMonsterAsync)} Error : {ErrorCode.EvolveCatchMonsterFailUpdateFail}");
+                    _logger.LogError($"{nameof(EvolveCatchMonsterAsync)} Error : {ErrorCode.EvolveCatchMonsterFailUpdateFail}");
                     return ErrorCode.EvolveCatchMonsterFailUpdateFail;
                 }
 
@@ -706,7 +706,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(EvolveCatchMonsterAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(EvolveCatchMonsterAsync)} Exception : {e}");
                 return ErrorCode.EvolveCatchMonsterFailException;
             }
         }
@@ -720,7 +720,7 @@ namespace ApiServer.Services
 
                 if (updateCount == 0)
                 {
-                    _logger.ZLogError($"{nameof(EvolveCatchMonsterAsync)} Error : {ErrorCode.UpdateCatchCombatPointFailUpdateFail}");
+                    _logger.LogError($"{nameof(EvolveCatchMonsterAsync)} Error : {ErrorCode.UpdateCatchCombatPointFailUpdateFail}");
                     return ErrorCode.UpdateCatchCombatPointFailUpdateFail;
                 }
 
@@ -728,7 +728,7 @@ namespace ApiServer.Services
             }
             catch(Exception e)
             {
-                _logger.ZLogError($"{nameof(UpdateCatchCombatPointAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(UpdateCatchCombatPointAsync)} Exception : {e}");
                 return ErrorCode.UpdateCatchCombatPointFailException;
             }
         }

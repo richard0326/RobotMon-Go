@@ -2,7 +2,7 @@
 using ApiServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using ServerCommon;
-using ZLogger;
+
 
 namespace ApiServer.Controllers
 {
@@ -31,7 +31,7 @@ namespace ApiServer.Controllers
             if (monster == null)
             {
                 response.Result = ErrorCode.DataStorageReadMonsterFail;
-                _logger.ZLogError($"{nameof(FieldMonsterPost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(FieldMonsterPost)} ErrorCode : {response.Result}");
                 return response;
             }
             

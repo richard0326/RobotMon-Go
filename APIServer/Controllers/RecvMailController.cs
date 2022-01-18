@@ -2,7 +2,7 @@
 using ApiServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using ServerCommon;
-using ZLogger;
+
 
 namespace ApiServer.Controllers
 {
@@ -29,7 +29,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogError($"{nameof(RecvMailPost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(RecvMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -37,7 +37,7 @@ namespace ApiServer.Controllers
             if(errorCode != ErrorCode.None)
             {                
                 response.Result = errorCode;
-                _logger.ZLogError($"{nameof(RecvMailPost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(RecvMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -55,7 +55,7 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _gameDb.RollbackRecvMailAsync(request.ID, starCount, rollbackDate);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogError($"{nameof(RecvMailPost)} ErrorCode : {innerErrorCode}");
+                    _logger.LogError($"{nameof(RecvMailPost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return errorCode;

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MySqlConnector;
 using ServerCommon;
-using ZLogger;
+
 
 namespace ApiServer.Services
 {
@@ -27,13 +27,13 @@ namespace ApiServer.Services
             _dbConfig = dbConfig;
             _logger = logger;
             Open();
-            //_logger.ZLogError($"Open");
+            //_logger.LogError($"Open");
         }
 
         public void Dispose()
         {
             Close();
-            //_logger.ZLogError($"Dispose");
+            //_logger.LogError($"Dispose");
         }
         
         public void Open()
@@ -120,7 +120,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(CreateAccountDataAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(CreateAccountDataAsync)} Exception : {e}");
                 return new Tuple<ErrorCode, Int64>(ErrorCode.CreateAccountFailDuplicate, 0);
             }
         }
@@ -134,14 +134,14 @@ namespace ApiServer.Services
                 
                 if (count == 0)
                 {
-                    _logger.ZLogError($"{nameof(RollbackCreateAccountDataAsync)} Error : {ErrorCode.RollbackCreateAccountFailDeleteQuery}");
+                    _logger.LogError($"{nameof(RollbackCreateAccountDataAsync)} Error : {ErrorCode.RollbackCreateAccountFailDeleteQuery}");
                     return ErrorCode.RollbackCreateAccountFailDeleteQuery;
                 }
                 return ErrorCode.None;
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(RollbackCreateAccountDataAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(RollbackCreateAccountDataAsync)} Exception : {e}");
                 return ErrorCode.RollbackSendCreateAccountFailException;
             }
         }
@@ -175,7 +175,7 @@ namespace ApiServer.Services
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(TryPasswordAsync)} Exception : {e}");
+                _logger.LogError($"{nameof(TryPasswordAsync)} Exception : {e}");
                 return ErrorCode.LoginFailException;
             }
 

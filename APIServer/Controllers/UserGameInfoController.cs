@@ -4,7 +4,7 @@ using ApiServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServerCommon;
-using ZLogger;
+
 
 namespace ApiServer.Controllers
 {
@@ -31,7 +31,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogError($"{nameof(GameInfoPost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(GameInfoPost)} ErrorCode : {response.Result}");
                 return response;
             }
             response.StarPoint = gameInfo.StarPoint;

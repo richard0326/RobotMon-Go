@@ -6,7 +6,6 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServerCommon;
-using ZLogger;
 using ApiServer.Model.Data;
 
 namespace ApiServer.Controllers
@@ -42,7 +41,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogError($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -51,7 +50,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {                
                 response.Result = errorCode;
-                _logger.ZLogError($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -60,7 +59,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogError($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -69,7 +68,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {                
                 response.Result = errorCode;
-                _logger.ZLogError($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(CreateAccountPost)} ErrorCode : {response.Result}");
                 return response;  
             }
             
@@ -86,7 +85,7 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _accountDb.RollbackCreateAccountDataAsync(lastCreateIndex);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                    _logger.LogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return new Tuple<ErrorCode, Int64>(errorCode, 0);
@@ -103,14 +102,14 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _accountDb.RollbackCreateAccountDataAsync(lastCreateIndex);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                    _logger.LogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
                 }
 
                 // Rollback gameInfo 
                 innerErrorCode = await _gameDb.RollbackInitUserGameInfoAsync(lastGameInfoIndex);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                    _logger.LogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return errorCode;
@@ -127,21 +126,21 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _accountDb.RollbackCreateAccountDataAsync(lastCreateIndex);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                    _logger.LogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
                 }
 
                 // Rollback gameInfo 
                 innerErrorCode = await _gameDb.RollbackInitUserGameInfoAsync(lastGameInfoIndex);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                    _logger.LogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
                 }
 
                 // Rollback DailyCheck
                 innerErrorCode = await _gameDb.RollbackInitDailyCheckAsync(request.ID);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
+                    _logger.LogError($"{nameof(CreateAccountPost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return errorCode;

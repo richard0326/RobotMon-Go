@@ -2,7 +2,7 @@
 using ApiServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using ServerCommon;
-using ZLogger;
+
 
 namespace ApiServer.Controllers
 {
@@ -29,7 +29,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogError($"{nameof(RemoveCatchPost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(RemoveCatchPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -38,7 +38,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.ZLogError($"{nameof(RemoveCatchPost)} ErrorCode : {response.Result}");
+                _logger.LogError($"{nameof(RemoveCatchPost)} ErrorCode : {response.Result}");
                 return response;
             }
             
@@ -55,7 +55,7 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _gameDb.RollbackDelCatchAsync(rollbackID, monsterID, rollbackDate);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.ZLogError($"{nameof(RemoveCatchPost)} ErrorCode : {innerErrorCode}");
+                    _logger.LogError($"{nameof(RemoveCatchPost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return new Tuple<ErrorCode, Monster>(ErrorCode.RemoveCatchFailNoMonster, null);
