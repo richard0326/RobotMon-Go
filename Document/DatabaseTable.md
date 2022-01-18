@@ -97,19 +97,21 @@ CREATE TABLE `userlevelinfo` (
   
 ## log DB  
 CREATE TABLE `catch_log` (  
-  `CatchID` bigint NOT NULL AUTO_INCREMENT,  
+  `UID` bigint NOT NULL AUTO_INCREMENT,  
+  `CatchID` bigint NOT NULL,  
   `UserID` varchar(45) NOT NULL,  
   `MonsterID` bigint NOT NULL,  
-  `CatchTime` datetime NOT NULL,  
+  `time` datetime NOT NULL,  
   `CombatPoint` int NOT NULL,  
-  PRIMARY KEY (`CatchID`)  
+  PRIMARY KEY (`UID`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
   
 CREATE TABLE `evolve_log` (  
-  `UID` bigint NOT NULL,  
-  `MID` bigint NOT NULL,  
+  `UID` bigint NOT NULL AUTO_INCREMENT,  
+  `CatchID` bigint NOT NULL,  
+  `BeforeMID` bigint NOT NULL,  
   `EvolveMID` bigint NOT NULL,  
-  `StarCount` int NOT NULL,  
+  `CandyCount` int NOT NULL,  
   `time` datetime NOT NULL,  
   PRIMARY KEY (`UID`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
@@ -120,8 +122,7 @@ CREATE TABLE `login_log` (
   `time` datetime NOT NULL,  
   PRIMARY KEY (`UID`)  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;  
-
-
+  
 CREATE TABLE `error_log` (  
   `UID` bigint NOT NULL AUTO_INCREMENT,  
   `errorStr` varchar(1024) NOT NULL,  
