@@ -3,9 +3,9 @@
 
 ![](./images/FluentdFlow.PNG)  
 
-![](./images/Tail.PNG)  
+![](./images/tail.PNG)  
 
-![](./images/Filter.PNG)  
+![](./images/filter.PNG)  
 
 # docker 설치, 켜기
 sudo wget -qO- http://get.docker.com/ | sh  
