@@ -85,7 +85,7 @@ vi MyConfig.json
 (https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/MyConfig.json)  
 "Environment": "Development" -> "Production"  
 appsettings.production.json 파일에 Redis, DB ip가 클라우드 환경에 맞게 세팅되어 있음.   
-(https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/appsettings.production.json)
+(https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/appsettings.production.json)  
 "urls": "http://localhost:5000" -> 자유롭게 변경      
 - dotnet APIServer.dll   
 - dotnet APIServer.dll --urls "http://*:5000" (urls를 인자로 사용하면 기존의 conf가 오버라이드)  
