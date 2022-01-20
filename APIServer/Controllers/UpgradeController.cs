@@ -2,7 +2,7 @@
 using ApiServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using ServerCommon;
-
+using ZLogger;
 
 namespace ApiServer.Controllers
 {
@@ -30,7 +30,7 @@ namespace ApiServer.Controllers
             if(errorCode != 0)
             {
                 response.Result = errorCode;
-                _logger.LogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -40,7 +40,7 @@ namespace ApiServer.Controllers
             {
                 // 잘못된 몬스터 ID
                 response.Result = ErrorCode.UpgradePostFailNoMonsterId;
-                _logger.LogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -49,7 +49,7 @@ namespace ApiServer.Controllers
             if(userGameInfo.UpgradeCandy < totalUpgradeCost)
             {
                 response.Result = ErrorCode.UpgradePostFailNoUpgradeCost;
-                _logger.LogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -58,7 +58,7 @@ namespace ApiServer.Controllers
             if(userGameInfo.StarPoint < totalStarCount)
             {
                 response.Result = ErrorCode.UpgradePostFailNoStarPoint;
-                _logger.LogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -67,7 +67,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.LogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -77,7 +77,7 @@ namespace ApiServer.Controllers
             {
                 // 업데이트 실패
                 response.Result = errorCode;
-                _logger.LogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -87,7 +87,7 @@ namespace ApiServer.Controllers
             {
                 // 업데이트 실패
                 response.Result = errorCode;
-                _logger.LogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }            
             
@@ -104,7 +104,7 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, totalUpgradeCost);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.LogError($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
+                    _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return errorCode;
@@ -122,13 +122,13 @@ namespace ApiServer.Controllers
                 var innerErrorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, totalUpgradeCost);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.LogError($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
+                    _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
                 }
 
                 innerErrorCode = await RankManager.UpdateStarCount(request.ID, totalStarCount, _gameDb);
                 if (innerErrorCode != ErrorCode.None)
                 {
-                    _logger.LogError($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
+                    _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
                 }
 
                 return errorCode;

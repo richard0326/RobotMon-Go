@@ -2,6 +2,7 @@
 using ApiServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using ServerCommon;
+using ZLogger;
 
 namespace ApiServer.Controllers
 {
@@ -28,7 +29,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.LogError($"{nameof(CatchPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(CatchPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -43,7 +44,7 @@ namespace ApiServer.Controllers
                 response.Result = errorCode;
                 if (errorCode != ErrorCode.CatchFail)
                 {
-                    _logger.LogError($"{nameof(CatchPost)} ErrorCode : {response.Result}");
+                    _logger.ZLogError($"{nameof(CatchPost)} ErrorCode : {response.Result}");
                 }
 
                 return response;
@@ -55,7 +56,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.LogError($"{nameof(CatchPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(CatchPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -65,7 +66,7 @@ namespace ApiServer.Controllers
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.LogError($"{nameof(CatchPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(CatchPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
@@ -75,7 +76,7 @@ namespace ApiServer.Controllers
             response.MonsterID = request.MonsterID;
             response.CombatPoint = randomCombatPoint;
 
-            _logger.LogError($"Catch Success : {request.ID} {response.CatchID} {response.MonsterID} {response.CombatPoint}");
+            _logger.ZLogError($"Catch Success : {request.ID} {response.CatchID} {response.MonsterID} {response.CombatPoint}");
             return response;
         }
 
@@ -107,7 +108,7 @@ namespace ApiServer.Controllers
                 var insideErrorCode = await _gameDb.RollbackSetCatchAsync(rollbackCatchId);
                 if (insideErrorCode != ErrorCode.None)
                 {
-                    _logger.LogError($"{nameof(CatchPost)} ErrorCode : {insideErrorCode}");
+                    _logger.ZLogError($"{nameof(CatchPost)} ErrorCode : {insideErrorCode}");
                 }
 
                 return errorCode;
@@ -123,13 +124,13 @@ namespace ApiServer.Controllers
                 var insideErrorCode = await _gameDb.RollbackSetCatchAsync(rollbackCatchId);
                 if (insideErrorCode != ErrorCode.None)
                 {
-                    _logger.LogError($"{nameof(CatchPost)} ErrorCode : {insideErrorCode}");
+                    _logger.ZLogError($"{nameof(CatchPost)} ErrorCode : {insideErrorCode}");
                 }
 
                 insideErrorCode = await _gameDb.UpdateUpgradeCostAsync(request.ID, -rollbackUpgradeCandy);
                 if (insideErrorCode != ErrorCode.None)
                 {
-                    _logger.LogError($"{nameof(CatchPost)} ErrorCode : {insideErrorCode}");
+                    _logger.ZLogError($"{nameof(CatchPost)} ErrorCode : {insideErrorCode}");
                 }
 
                 return errorCode;

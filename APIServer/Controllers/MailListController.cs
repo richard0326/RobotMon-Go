@@ -2,7 +2,7 @@
 using ApiServer.Services;
 using Microsoft.AspNetCore.Mvc;
 using ServerCommon;
-
+using ZLogger;
 
 namespace ApiServer.Controllers
 {
@@ -31,7 +31,7 @@ namespace ApiServer.Controllers
             if(errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;
-                _logger.LogError($"{nameof(CheckMailPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(CheckMailPost)} ErrorCode : {response.Result}");
                 return response;
             }
 

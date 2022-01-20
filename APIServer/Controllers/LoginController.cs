@@ -8,6 +8,7 @@ using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ServerCommon;
+using ZLogger;
 
 namespace ApiServer.Controllers
 {
@@ -35,7 +36,7 @@ namespace ApiServer.Controllers
             if(result != ErrorCode.None)
             {
                 response.Result = result;
-                _logger.LogError($"{nameof(LoginPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(LoginPost)} ErrorCode : {response.Result}");
                 return response;
             }
             
@@ -50,11 +51,11 @@ namespace ApiServer.Controllers
             }))
             {
                 response.Result = ErrorCode.LoginFailRedisError;
-                _logger.LogError($"{nameof(LoginPost)} ErrorCode : {response.Result}");
+                _logger.ZLogError($"{nameof(LoginPost)} ErrorCode : {response.Result}");
                 return response;
             }
 
-            _logger.LogError($"Login Success : {request.ID}");
+            _logger.ZLogError($"Login Success : {request.ID}");
             return response;
         }
     }
