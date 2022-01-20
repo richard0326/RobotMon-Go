@@ -1,4 +1,4 @@
-# 테스트 환경 구조
+# 테스트 환경 구조 및 흐름
 ![](./images/Network.PNG)    
 
 ![](./images/FluentdFlow.PNG)  
