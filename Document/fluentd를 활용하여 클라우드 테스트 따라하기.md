@@ -3,6 +3,10 @@
 
 ![](./images/FluentdFlow.PNG)  
 
+![](./images/Tail.PNG)  
+
+![](./images/Filter.PNG)  
+
 # docker 설치, 켜기
 sudo wget -qO- http://get.docker.com/ | sh  
 sudo systemctl start docker  
