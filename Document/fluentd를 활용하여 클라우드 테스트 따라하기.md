@@ -1,7 +1,7 @@
 # 테스트 환경 구조
 ![](./images/Network.PNG)    
 
-
+![](./images/FluentdFlow.PNG)  
 
 # docker 설치, 켜기
 sudo wget -qO- http://get.docker.com/ | sh  
