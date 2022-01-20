@@ -47,7 +47,7 @@ docker inspect <container>를 통해 LogPath의 경로를 알 수 있다.
 apiserver 컨테이너의 fluentd.conf 파일  
 (https://github.com/richard0326/RobotMon-Go/tree/main/Setting/fluentdSettings/fluent.conf)  
 forward 기능만 있는 fluentd 컨테이너의 fluentd.conf 파일  
-(https://github.com/richard0326/RobotMon-Go/tree/main/Setting/fluentdSettings/fluentFoward.conf)  
+(https://github.com/richard0326/RobotMon-Go/blob/main/Setting/fluentdSettings/fluentForward.conf)  
 
 # mysql 실행하기
 1. 컨테이너 실행 명령어  
