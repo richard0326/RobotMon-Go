@@ -1,4 +1,3 @@
-
 # Dockerfile
 mysql plugin이 포함된 fluentd - 만들 때 사용된 dockerfile 파일  
 
