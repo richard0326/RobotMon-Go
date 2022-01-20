@@ -1,4 +1,4 @@
 {
   "Environment": "Development",
-  "IPPort": "http://localhost:5000"
+  "urls": "http://localhost:5000"
 }

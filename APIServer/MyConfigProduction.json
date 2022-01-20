@@ -1,4 +1,4 @@
 {
   "Environment": "Production",
-  "IPPort": "http://*:5000"
+  "urls": "http://*:5000"
 }

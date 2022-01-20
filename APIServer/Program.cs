@@ -80,7 +80,8 @@ else
     // 현재 모드 확인하기
     Console.WriteLine($"Program env Mode : {app.Environment.EnvironmentName}");
     Console.WriteLine($"My appsetting Mode : {Configuration["Mode"]}");
+    Console.WriteLine($"urls : {Configuration["urls"]}");
 
     // 앱 실행 - IP Port 설정
-    app.Run(Configuration["IPPort"]);
+    app.Run(Configuration["urls"]);
 }
