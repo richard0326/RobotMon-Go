@@ -40,7 +40,6 @@ mysql의 dump 파일을 미리 세팅해둔다.
   
 3. fluentd 사전 작업  
 fluentd conf 파일을 미리 volume될 경로에 세팅해둔다.  
-나는 /home/richard0326 위치에 넣어두었음.   
 /etc/docker/daemon.json 파일이 없다면 콘솔 출력을 읽을 수 없음.  
 (https://github.com/richard0326/RobotMon-Go/tree/main/Setting/fluentdSettings/daemon.json)  
 /var/lib/docker/containers/... 안쪽에 콘솔 출력에 대한 로그가 생긴다.  
