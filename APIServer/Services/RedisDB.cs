@@ -9,17 +9,17 @@ using StackExchange.Redis;
 
 namespace ApiServer.Services
 {
-    public class RedisDB
+    public class RedisDb : IRedisDb
     {
-        private static RedisConnection s_connection;
+        private RedisConnection s_connection;
 
-        public static void Init(string address)
+        public void Init(string address)
         {
             var config = new RedisConfig("redisDb", address);
             s_connection = new RedisConnection(config);
         }
-        
-        public static async Task<bool> SetUserInfo(string key, RedisLoginData redisLoginData)
+
+        public async Task<bool> SetUserInfo(string key, RedisLoginData redisLoginData)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace ApiServer.Services
             return true;
         }
 
-        public static async Task<RedisLoginData> GetUserInfo(string key)
+        public async Task<RedisLoginData> GetUserInfo(string key)
         {
             try
             {
@@ -55,7 +55,7 @@ namespace ApiServer.Services
             }
         }
 
-        public static async Task<bool> DelUserInfo(string key)
+        public async Task<bool> DelUserInfo(string key)
         {
             try
             {
@@ -69,7 +69,7 @@ namespace ApiServer.Services
             }
         }
 
-        public static async Task<RedisLoginData> GetUserAuthToken(string key)
+        public async Task<RedisLoginData> GetUserAuthToken(string key)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace ApiServer.Services
             }
         }
 
-        public static async Task<bool> SetNxAsync(string key)
+        public async Task<bool> SetNxAsync(string key)
         {
             try
             {
@@ -103,14 +103,14 @@ namespace ApiServer.Services
                     return false;
                 }
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
             return true;
         }
 
-        public static async Task<bool> DelNxAsync(string key)
+        public async Task<bool> DelNxAsync(string key)
         {
             try
             {
@@ -118,13 +118,13 @@ namespace ApiServer.Services
                 var redisResult = await redis.DeleteAsync();
                 return redisResult;
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
         }
 
-        public static async Task<bool> ZSetAddAsync(string member, Int32 score)
+        public async Task<bool> ZSetAddAsync(string member, Int32 score)
         {
             try
             {
@@ -133,12 +133,12 @@ namespace ApiServer.Services
                 var success = await redis.AddAsync(member, score, null,When.Always);
                 return success;
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
         }
-        public static async Task<bool> UpdateRankAsync(string member, Int32 score)
+        public async Task<bool> UpdateRankAsync(string member, Int32 score)
         {
             try
             {
@@ -147,14 +147,14 @@ namespace ApiServer.Services
                 var diff = await redis.IncrementAsync(member, score, null);
                 // 변화된 마지막 값...이 diff
             }
-            catch (Exception e)
+            catch
             {
                 return false;
             }
             return true;
         }
 
-        public static async Task<string[]?> GetRangeRankAsync(Int32 start, Int32 range)
+        public async Task<string[]?> GetRangeRankAsync(Int32 start, Int32 range)
         {
             try
             {
@@ -162,13 +162,13 @@ namespace ApiServer.Services
                 var redisList = await redis.RangeByRankAsync(start, range, Order.Descending);
                 return redisList;
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }
         }
         
-        public static async Task<Int32> GetRankSizeAsync()
+        public async Task<Int32> GetRankSizeAsync()
         {
             try
             {
@@ -176,7 +176,7 @@ namespace ApiServer.Services
                 var rankSize = await redis.LengthAsync();
                 return (Int32)rankSize;
             }
-            catch (Exception e)
+            catch
             {
                 return -1;
             }

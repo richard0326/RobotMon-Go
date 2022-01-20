@@ -42,6 +42,9 @@ builder.Services.Configure<DbConfig>(Configuration.GetSection(nameof(DbConfig)))
 // 서비스 등록
 builder.Services.AddTransient<IAccountDb, AccountDb>();
 builder.Services.AddTransient<IGameDb, GameDb>();
+builder.Services.AddSingleton<IRedisDb, RedisDb>();
+builder.Services.AddSingleton<IDataStorage, DataStorage>();
+builder.Services.AddSingleton<IRankingManager, RankManager>();
 builder.Services.AddControllers();
 
 // Add services to the container.
@@ -54,24 +57,30 @@ builder.Logging.AddZLoggerConsole();
 // app build
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    Console.WriteLine("is Develope Mode");
-}
-
 // 미들웨어 추가
 app.UseMiddleware<AuthTokenCheckMiddleware>();
 app.UseRouting();
 app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-// 사용자 초기화
-RedisDB.Init(Configuration["SessionConfig:SessionCacheRedisIp"]);
-DataStorage.Load(Configuration["DbConfig:GameConnStr"]);
-RankManager.Init(Configuration["DbConfig:GameConnStr"]);
+// Redis Singleton 가져오기
+var redisDb = app.Services.GetService<IRedisDb>();
+var datastorage = app.Services.GetService<IDataStorage>();
+var rankingManager = app.Services.GetService<IRankingManager>();
+if (redisDb is null || datastorage is null || rankingManager is null)
+{
+    Console.WriteLine("singleton is null");
+}
+else
+{
+    // 사용자 초기화
+    redisDb.Init(Configuration["SessionConfig:SessionCacheRedisIp"]);
+    datastorage.Load(Configuration["DbConfig:GameConnStr"]);
+    rankingManager.Init(Configuration["DbConfig:GameConnStr"], redisDb);
 
-// 현재 모드 확인하기
-Console.WriteLine($"Program env Mode : {app.Environment.EnvironmentName}");
-Console.WriteLine($"My appsetting Mode : {Configuration["Mode"]}");
+    // 현재 모드 확인하기
+    Console.WriteLine($"Program env Mode : {app.Environment.EnvironmentName}");
+    Console.WriteLine($"My appsetting Mode : {Configuration["Mode"]}");
 
-// 앱 실행 - IP Port 설정
-app.Run(Configuration["IPPort"]);
+    // 앱 실행 - IP Port 설정
+    app.Run(Configuration["IPPort"]);
+}

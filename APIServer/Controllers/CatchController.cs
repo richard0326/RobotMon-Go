@@ -11,12 +11,18 @@ namespace ApiServer.Controllers
     public class CatchController : ControllerBase
     {
         private readonly IGameDb _gameDb;
+        private readonly IRedisDb _redisDb;
+        private readonly IDataStorage _dataStorage;
         private readonly ILogger<CatchController> _logger;
+        private readonly IRankingManager _rankingManager;
 
-        public CatchController(ILogger<CatchController> logger, IGameDb gameDb)
+        public CatchController(ILogger<CatchController> logger, IGameDb gameDb, IRedisDb redisDb, IDataStorage dataStorage, IRankingManager ranking)
         {
             _logger = logger;
             _gameDb = gameDb;
+            _redisDb = redisDb;
+            _dataStorage = dataStorage;
+            _rankingManager = ranking;
         }
 
         // 수습 기간 프로젝트임으로 기능이 간단하게 구현되었습니다.
@@ -25,6 +31,7 @@ namespace ApiServer.Controllers
         {
             var response = new CatchResponse();
 
+            // 랜덤으로 몬스터 잡을 확률 - 테스트 중에는 100%.
             var (errorCode, monster) = GetRandomMonsterAsync(request);
             if (errorCode != ErrorCode.None)
             {
@@ -91,7 +98,7 @@ namespace ApiServer.Controllers
                 return new Tuple<ErrorCode, Monster>(ErrorCode.CatchFail, null);
             }
 
-            var monster = DataStorage.GetMonsterInfo(request.MonsterID);
+            var monster = _dataStorage.GetMonsterInfo(request.MonsterID);
             if (monster == null)
             {
                 return new Tuple<ErrorCode, Monster>(ErrorCode.DataStorageReadMonsterFail, null); ;
@@ -118,7 +125,7 @@ namespace ApiServer.Controllers
         
         private async Task<ErrorCode> RaiseStarCountAsync(CatchRequest request, Int32 starCount, Int64 rollbackCatchId, Int32 rollbackUpgradeCandy)
         {
-            var errorCode = await RankManager.UpdateStarCount(request.ID, starCount, _gameDb);
+            var errorCode = await _rankingManager.UpdateStarCount(request.ID, starCount, _gameDb, _redisDb);
             if (errorCode != ErrorCode.None)
             {
                 var insideErrorCode = await _gameDb.RollbackSetCatchAsync(rollbackCatchId);

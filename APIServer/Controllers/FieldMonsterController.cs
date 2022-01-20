@@ -11,12 +11,14 @@ namespace ApiServer.Controllers
     public class FieldMonsterController : ControllerBase
     {
         private readonly IGameDb _gameDb;
+        private readonly IDataStorage _dataStorage;
         private readonly ILogger<FieldMonsterController> _logger;
         
-        public FieldMonsterController(ILogger<FieldMonsterController> logger, IGameDb gameDb)
+        public FieldMonsterController(ILogger<FieldMonsterController> logger, IGameDb gameDb, IDataStorage dataStorage)
         {
             _logger = logger;
             _gameDb = gameDb;
+            _dataStorage = dataStorage;
         }
         
         // 수습 기간 프로젝트임으로기능이 간단하게 구현되었습니다.
@@ -27,7 +29,7 @@ namespace ApiServer.Controllers
             
             var rand = new Random();
             var randValue = rand.Next(1, 7); // 기획 데이터 UID 1~6까지 존재함.
-            var monster = DataStorage.GetMonsterInfo(randValue);
+            var monster = _dataStorage.GetMonsterInfo(randValue);
             if (monster == null)
             {
                 response.Result = ErrorCode.DataStorageReadMonsterFail;

@@ -6,15 +6,15 @@ using MySqlConnector;
 
 namespace ApiServer.Services
 {
-    public class DataStorage
+    public class DataStorage : IDataStorage
     {
-        private static ConcurrentDictionary<Int64, Monster> s_monsterDic = new();
-        private static ConcurrentDictionary<Int32, DailyInfo> s_dailyCheckDic = new();
-        private static ConcurrentDictionary<Int64, MonsterUpgrade> s_monsterUpgradeDic = new();
-        private static ConcurrentDictionary<Int64, MonsterEvolve> s_monsterEvolveDic = new();
-        private static ConcurrentDictionary<Int32, LevelUpInfo> s_levelUpInfoDic = new();
+        private ConcurrentDictionary<Int64, Monster> s_monsterDic = new();
+        private ConcurrentDictionary<Int32, DailyInfo> s_dailyCheckDic = new();
+        private ConcurrentDictionary<Int64, MonsterUpgrade> s_monsterUpgradeDic = new();
+        private ConcurrentDictionary<Int64, MonsterEvolve> s_monsterEvolveDic = new();
+        private ConcurrentDictionary<Int32, LevelUpInfo> s_levelUpInfoDic = new();
 
-        public static void Load(string dbConnString)
+        public void Load(string dbConnString)
         {
             using var dBConn = new MySqlConnection(dbConnString);
             {
@@ -77,7 +77,7 @@ namespace ApiServer.Services
             }
         }
         
-        public static Monster GetMonsterInfo(Int64 monsterID)
+        public Monster GetMonsterInfo(Int64 monsterID)
         {
             if(s_monsterDic.TryGetValue(monsterID, out var value))
             {
@@ -87,7 +87,7 @@ namespace ApiServer.Services
             return null;
         }
         
-        public static DailyInfo GetDailyInfo(Int32 dailyIdx)
+        public DailyInfo GetDailyInfo(Int32 dailyIdx)
         {
             if(s_dailyCheckDic.TryGetValue(dailyIdx, out var value))
             {
@@ -97,7 +97,7 @@ namespace ApiServer.Services
             return null;
         }
         
-        public static MonsterUpgrade GetMonsterUpgrade(Int64 monsterIdx)
+        public MonsterUpgrade GetMonsterUpgrade(Int64 monsterIdx)
         {
             if(s_monsterUpgradeDic.TryGetValue(monsterIdx, out var value))
             {
@@ -107,7 +107,7 @@ namespace ApiServer.Services
             return null;
         }   
         
-        public static MonsterEvolve GetMonsterEvolve(Int64 monsterIdx)
+        public MonsterEvolve GetMonsterEvolve(Int64 monsterIdx)
         {
             if(s_monsterEvolveDic.TryGetValue(monsterIdx, out var value))
             {
@@ -117,7 +117,7 @@ namespace ApiServer.Services
             return null;
         }   
         
-        public static LevelUpInfo GetLevelUpMaxExp(Int32 level)
+        public LevelUpInfo GetLevelUpMaxExp(Int32 level)
         {
             if(s_levelUpInfoDic.TryGetValue(level, out var value))
             {

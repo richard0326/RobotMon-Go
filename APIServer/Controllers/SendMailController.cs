@@ -11,12 +11,16 @@ namespace ApiServer.Controllers
     public class SendMailController : ControllerBase
     {
         private readonly IGameDb _gameDb;
+        private readonly IRedisDb _redisDb;
+        private readonly IRankingManager _rankingManager;
         private readonly ILogger<SendMailController> _logger;
 
-        public SendMailController(ILogger<SendMailController> logger, IGameDb gameDb)
+        public SendMailController(ILogger<SendMailController> logger, IGameDb gameDb, IRedisDb redisDb, IRankingManager ranking)
         {
             _logger = logger;
             _gameDb = gameDb;
+            _redisDb = redisDb;
+            _rankingManager = ranking;
         }
 
         [HttpPost]
@@ -48,7 +52,7 @@ namespace ApiServer.Controllers
         private async Task<ErrorCode> UpdateStarCountAsync(SendMailRequest request, Int64 lastInsertId)
         {
             // 원래 유저의 정보에서 StarCount를 차감합니다.
-            var errorCode = await RankManager.UpdateStarCount(request.ID, -request.StarCount, _gameDb);
+            var errorCode = await _rankingManager.UpdateStarCount(request.ID, -request.StarCount, _gameDb, _redisDb);
             if (errorCode != ErrorCode.None)
             {
                 // Rollback

@@ -18,13 +18,15 @@ namespace ApiServer.Controllers
     {
         private readonly IAccountDb _accountDb;
         private readonly ILogger<LoginController> _logger;
+        private readonly IRedisDb _redisDb;
         
-        public LoginController(ILogger<LoginController> logger, IAccountDb accountDb)
+        public LoginController(ILogger<LoginController> logger, IAccountDb accountDb, IRedisDb redisDb)
         {
             _accountDb = accountDb;
             _logger = logger;
+            _redisDb = redisDb;
         }
-        
+
         [HttpPost]
         public async Task<LoginResponse> LoginPost(LoginRequest request)
         {
@@ -44,7 +46,7 @@ namespace ApiServer.Controllers
             response.Authtoken = Security.AuthToken();
 
             // redis에 id, salt, AuthToken 값 저장
-            if (!await RedisDB.SetUserInfo(request.ID, new RedisLoginData()
+            if (!await _redisDb.SetUserInfo(request.ID, new RedisLoginData()
             {
                 ID = request.ID,
                 AuthToken = response.Authtoken

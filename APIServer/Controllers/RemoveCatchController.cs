@@ -11,12 +11,14 @@ namespace ApiServer.Controllers
     public class RemoveCatchController : ControllerBase
     {
         private readonly IGameDb _gameDb;
+        private readonly IDataStorage _dataStorage;
         private readonly ILogger<RemoveCatchController> _logger;
 
-        public RemoveCatchController(ILogger<RemoveCatchController> logger, IGameDb gameDb)
+        public RemoveCatchController(ILogger<RemoveCatchController> logger, IGameDb gameDb, IDataStorage dataStorage)
         {
             _logger = logger;
             _gameDb = gameDb;
+            _dataStorage = dataStorage;
         }
 
         [HttpPost]
@@ -49,7 +51,7 @@ namespace ApiServer.Controllers
         private async Task<Tuple<ErrorCode, Monster>> GetMonsterInfoAsync(Int64 monsterID, string rollbackID, DateTime rollbackDate)
         {
             // monsterID를 받아서 찾는다.
-            var monster = DataStorage.GetMonsterInfo(monsterID);
+            var monster = _dataStorage.GetMonsterInfo(monsterID);
             if (monster is null)
             {
                 var innerErrorCode = await _gameDb.RollbackDelCatchAsync(rollbackID, monsterID, rollbackDate);

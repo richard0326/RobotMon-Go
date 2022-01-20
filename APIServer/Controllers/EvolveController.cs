@@ -11,12 +11,14 @@ namespace ApiServer.Controllers
     public class EvolveController : ControllerBase
     {
         private readonly IGameDb _gameDb;
+        private readonly IDataStorage _dataStorage;
         private readonly ILogger<EvolveController> _logger;
 
-        public EvolveController(ILogger<EvolveController> logger, IGameDb gameDb)
+        public EvolveController(ILogger<EvolveController> logger, IGameDb gameDb, IDataStorage dataStorage)
         {
             _logger = logger;
             _gameDb = gameDb;
+            _dataStorage = dataStorage;
         }
 
         [HttpPost]
@@ -25,7 +27,7 @@ namespace ApiServer.Controllers
             var response = new EvolveResponse();
 
             // 비용이 충분한지 알아야함.
-            var result = DataStorage.GetMonsterEvolve(request.MonsterID);
+            var result = _dataStorage.GetMonsterEvolve(request.MonsterID);
             if (result is null)
             {
                 // 잘못된 몬스터 ID

@@ -11,12 +11,16 @@ namespace ApiServer.Controllers
     public class RankingListController: ControllerBase
     {
         private readonly IGameDb _gameDb;
+        private readonly IRedisDb _redisDb;
+        private readonly IRankingManager _rankingManager;
         private readonly ILogger<RankingListController> _logger;
 
-        public RankingListController(ILogger<RankingListController> logger, IGameDb gameDb)
+        public RankingListController(ILogger<RankingListController> logger, IGameDb gameDb, IRedisDb redisDb, IRankingManager ranking)
         {
             _logger = logger;
             _gameDb = gameDb;
+            _redisDb = redisDb;
+            _rankingManager = ranking;
         }
 
         [HttpPost]
@@ -24,7 +28,7 @@ namespace ApiServer.Controllers
         {
             var response = new RankingListResponse();
 
-            var result = await RankManager.CheckRankingInfo(request.PageIndex);
+            var result = await _rankingManager.CheckRankingInfo(request.PageIndex, _redisDb);
             var errorCode = result.Item1;
             var count = (Int32)result.Item2;
             var rankList = result.Item3;

@@ -11,12 +11,16 @@ namespace ApiServer.Controllers
     public class RecvMailController : ControllerBase
     {
         private readonly IGameDb _gameDb;
+        private readonly IRedisDb _redisDb;
+        private readonly IRankingManager _rankingManager;
         private readonly ILogger<RecvMailController> _logger;
 
-        public RecvMailController(ILogger<RecvMailController> logger, IGameDb gameDb)
+        public RecvMailController(ILogger<RecvMailController> logger, IGameDb gameDb, IRedisDb redisDb, IRankingManager ranking)
         {
             _logger = logger;
             _gameDb = gameDb;
+            _redisDb = redisDb;
+            _rankingManager = ranking;
         }
 
         [HttpPost]
@@ -48,7 +52,7 @@ namespace ApiServer.Controllers
 
         private async Task<ErrorCode> UpdateStarCountAsync(RecvMailRequest request, Int32 starCount, DateTime rollbackDate)
         {
-            var errorCode = await RankManager.UpdateStarCount(request.ID, starCount, _gameDb);
+            var errorCode = await _rankingManager.UpdateStarCount(request.ID, starCount, _gameDb, _redisDb);
             if (errorCode != ErrorCode.None)
             {
                 // Rollback

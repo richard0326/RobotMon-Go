@@ -11,12 +11,18 @@ namespace ApiServer.Controllers
     public class UpgradeController : ControllerBase
     {
         private readonly IGameDb _gameDb;
+        private readonly IRedisDb _redisDb;
+        private readonly IDataStorage _dataStorage;
+        private readonly IRankingManager _rankingManager;
         private readonly ILogger<UpgradeController> _logger;
         
-        public UpgradeController(ILogger<UpgradeController> logger, IGameDb gameDb)
+        public UpgradeController(ILogger<UpgradeController> logger, IGameDb gameDb, IRedisDb redisDb, IDataStorage dataStorage, IRankingManager ranking)
         {
             _logger = logger;
             _gameDb = gameDb;
+            _redisDb = redisDb;
+            _dataStorage = dataStorage;
+            _rankingManager = ranking;
         }
 
         // 수습 기간 프로젝트 임으로 실제로 몬스터 강화하지는 않고 유저 경험치를 주는 방식으로 진행.
@@ -24,7 +30,7 @@ namespace ApiServer.Controllers
         public async Task<UpgradeResponse> UpgradePost(UpgradeRequest request)
         {
             var response = new UpgradeResponse();
-
+            
             // 유저의 정보를 가져옵니다.
             var (errorCode, userGameInfo) = await _gameDb.GetUserGameInfoAsync(request.ID);
             if(errorCode != 0)
@@ -35,7 +41,7 @@ namespace ApiServer.Controllers
             }
 
             // 몬스터에 대한 기획 데이터를 가져온다.
-            var monsterUpgrade = DataStorage.GetMonsterUpgrade(request.MonsterID);
+            var monsterUpgrade = _dataStorage.GetMonsterUpgrade(request.MonsterID);
             if (monsterUpgrade == null)
             {
                 // 잘못된 몬스터 ID
@@ -87,6 +93,7 @@ namespace ApiServer.Controllers
             {
                 // 업데이트 실패
                 response.Result = errorCode;
+                response.Result = errorCode;
                 _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }            
@@ -97,7 +104,7 @@ namespace ApiServer.Controllers
         private async Task<ErrorCode> UpdateStarCountAsync(UpgradeRequest request, Int32 minusStarCount, Int32 totalUpgradeCost)
         {
             // 실제로 db에 StarCount를 지불합니다.
-            var errorCode = await RankManager.UpdateStarCount(request.ID, minusStarCount, _gameDb);
+            var errorCode = await _rankingManager.UpdateStarCount(request.ID, minusStarCount, _gameDb, _redisDb);
             if (errorCode != ErrorCode.None)
             {
                 // Rollback
@@ -125,7 +132,7 @@ namespace ApiServer.Controllers
                     _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");
                 }
 
-                innerErrorCode = await RankManager.UpdateStarCount(request.ID, totalStarCount, _gameDb);
+                innerErrorCode = await _rankingManager.UpdateStarCount(request.ID, totalStarCount, _gameDb, _redisDb);
                 if (innerErrorCode != ErrorCode.None)
                 {
                     _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {innerErrorCode}");

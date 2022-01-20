@@ -8,10 +8,12 @@ namespace ApiServer.Services
     public class AuthTokenCheckMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IRedisDb _redisDb;
         
-        public AuthTokenCheckMiddleware(RequestDelegate next)
+        public AuthTokenCheckMiddleware(RequestDelegate next, IRedisDb redisDb)
         {
             _next = next;
+            _redisDb = redisDb;
         }
 
         public async Task Invoke(HttpContext context)
@@ -84,7 +86,7 @@ namespace ApiServer.Services
                 }
                 
                 // redis에서 로그인 유저 정보 받아오기... 없으면 로그인 성공한 유저가 아님.
-                var userInfo = await RedisDB.GetUserInfo(userId);
+                var userInfo = await _redisDb.GetUserInfo(userId);
                 if (userInfo == null)
                 {
                     // http Response Code
@@ -101,7 +103,7 @@ namespace ApiServer.Services
                 }
 
                 // Redis를 활용한 트랜잭션... 중복 처리 예방... 처리되기 전에 메시지를 2번 보내는 현상을 막기 위함.
-                if (!await RedisDB.SetNxAsync(userAuthToken))
+                if (!await _redisDb.SetNxAsync(userAuthToken))
                 {
                     // http Response Code
                     context.Response.StatusCode = (int) ErrorCode.AuthTokenFailSetNx;
@@ -115,7 +117,7 @@ namespace ApiServer.Services
             await _next(context);
 
             // 트랜잭션 해제(Redis 동기화 해제)
-            await RedisDB.DelNxAsync(userAuthToken);
+            await _redisDb.DelNxAsync(userAuthToken);
         }
     }
 }

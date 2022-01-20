@@ -96,12 +96,6 @@
         UpdateCatchCombatPointFailUpdateFail = 20335,
         UpdateCatchCombatPointFailException = 20336,
 
-        // PVP Server 20401 ~ 20600
-
-        // Raid Server  20601 ~ 20800
-
-
-        // 기타
-        DataStorageReadMonsterFail = 21001,
+        DataStorageReadMonsterFail = 20351,
     }
 }

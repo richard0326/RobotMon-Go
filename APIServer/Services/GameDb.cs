@@ -19,19 +19,34 @@ namespace ApiServer.Services
         private IDbConnection _dbConn;
         private IDbTransaction _dBTransaction;
         private readonly ILogger<GameDb> _logger;
+        private bool _isDisposed = false;
+        private readonly IDataStorage _dataStorage;
 
-        public GameDb(ILogger<GameDb> logger, IOptions<DbConfig> dbConfig)
+        public GameDb(ILogger<GameDb> logger, IOptions<DbConfig> dbConfig, IDataStorage dataStorage)
         {
             _dbConfig = dbConfig;
             _logger = logger;
+            _dataStorage = dataStorage;
             Open();
-            //_logger.ZLogError($"Open");
+        }
+
+        protected virtual void Dispose(bool _disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (_disposing)
+                {
+                    Close();
+                }
+
+                _isDisposed = true;
+            }
         }
 
         public void Dispose()
         {
-            Close();
-            //_logger.ZLogError($"Dispose");
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
         
         public void Open()
@@ -628,7 +643,7 @@ namespace ApiServer.Services
 
                 while (true)
                 {
-                    var levelUpInfo = DataStorage.GetLevelUpMaxExp(nowLevel);
+                    var levelUpInfo = _dataStorage.GetLevelUpMaxExp(nowLevel);
                     if (levelUpInfo is null)
                     {
                         break;

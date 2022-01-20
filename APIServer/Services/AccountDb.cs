@@ -21,21 +21,34 @@ namespace ApiServer.Services
         private IDbConnection _dbConn;
         private IDbTransaction _dBTransaction;
         private readonly ILogger<AccountDb> _logger;
+        private bool _isDisposed = false;
 
         public AccountDb(ILogger<AccountDb> logger, IOptions<DbConfig> dbConfig)
         {
             _dbConfig = dbConfig;
             _logger = logger;
             Open();
-            //_logger.ZLogError($"Open");
+        }
+
+        protected virtual void Dispose(bool _disposing)
+        {
+            if (!_isDisposed)
+            {
+                if (_disposing)
+                {
+                    Close();
+                }
+
+                _isDisposed = true;
+            }
         }
 
         public void Dispose()
         {
-            Close();
-            //_logger.ZLogError($"Dispose");
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
-        
+
         public void Open()
         {
             _dbConn = new MySqlConnection(_dbConfig.Value.AccountConnStr);

@@ -18,18 +18,20 @@ namespace ApiServer.Controllers
         // ControllerBase 객체는 ASPNET MVC에서 제공하는 객체로 모델 바인딩 하기 위해서 사용됨.
         private readonly IAccountDb _accountDb;
         private readonly IGameDb _gameDb;
+        private readonly IRedisDb _redisDb;
+        private readonly IRankingManager _rankingManager;
         private readonly ILogger<CreateAccountController> _logger;
-        
-        public CreateAccountController(ILogger<CreateAccountController> logger, IAccountDb accountDb, IGameDb gameDb)
+
+        public CreateAccountController(ILogger<CreateAccountController> logger, IAccountDb accountDb, IGameDb gameDb, IRedisDb redisDb, IRankingManager ranking)
         {
             _logger = logger;
             _accountDb = accountDb;
             _gameDb = gameDb;
+            _redisDb = redisDb;
+            _rankingManager = ranking;
         }
-        
+
         [HttpPost]
-        //public async Task<PkCreateAccountResponse> CreateAccountPost(PkCreateAccountRequest request, [FromServices] ICommonDb commonDb)
-        // -> 서비스 여기서 받고 싶은 경우
         public async Task<CreateAccountResponse> CreateAccountPost(CreateAccountRequest request)
         {
             var response = new CreateAccountResponse();
@@ -120,7 +122,7 @@ namespace ApiServer.Controllers
 
         private async Task<ErrorCode> InitStarCountAsync(CreateAccountRequest request, Int64 lastCreateIndex, Int64 lastGameInfoIndex)
         {
-            var errorCode = await RankManager.UpdateStarCount(request.ID, 0, _gameDb);
+            var errorCode = await _rankingManager.UpdateStarCount(request.ID, 0, _gameDb, _redisDb);
             if (errorCode != ErrorCode.None)
             {
                 // Rollback 계정 생성
