@@ -8,7 +8,7 @@ sudo docker pull richard0326/fluentd
 
 # 사전 작업
 1. OS 사전 작업  
-경로에 접근 권한이 있도록 허용해준다.  
+log가 있는 경로에 접근 권한이 있도록 허용해준다.  
 sudo chmod -R  00777 "richard0326"  
   
 2. mysql 사전 작업  
