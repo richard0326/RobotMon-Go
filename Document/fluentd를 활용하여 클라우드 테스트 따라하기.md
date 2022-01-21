@@ -26,9 +26,10 @@ forward 기능만 있는 fluentd 컨테이너의 fluentd.conf 파일
 (https://github.com/richard0326/RobotMon-Go/blob/main/Setting/fluentdSettings/fluentForward.conf)  
 
 # mysql 실행하기
-1. 컨테이너 실행 명령어  
 sudo docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=root1234 -d -p 3306:3306 -v /home/richard0326:/var/lib/mysql mysql:5.6.36    
 sudo docker exec -it mysql-container bash   
+mysql -u root -p  
+root1234  
 
 # redis 실행하기
 sudo docker run -p 6379:6379 --name myredis -d redis  
