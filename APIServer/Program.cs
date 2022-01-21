@@ -12,11 +12,6 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
     config.AddJsonFile("MyConfig.json",
                        optional: true,
                        reloadOnChange: true);
-
-    if (args != null)
-    {
-        config.AddCommandLine(args);
-    }
 });
 
 // Config 파일 가져오기
@@ -33,7 +28,7 @@ else
 }
 
 // Config 파일 추가하기
-builder.Configuration.AddJsonFile("appsettings.json");
+//builder.Configuration.AddJsonFile("appsettings.json");
 builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
 
 // Config 파일 추가 등록하기
@@ -47,12 +42,28 @@ builder.Services.AddSingleton<IDataStorage, DataStorage>();
 builder.Services.AddSingleton<IRankingManager, RankManager>();
 builder.Services.AddControllers();
 
-// Add services to the container.
-builder.Services.AddRazorPages();
+bool exists = System.IO.Directory.Exists("./log");
+if (!exists)
+    System.IO.Directory.CreateDirectory("./log");
+
+File.Create("./log/logTest.pos").Dispose();
+File.Create("./log/logTest.log").Dispose();
+builder.Logging.AddZLoggerFile("C:/gitfolder/RobotMon-Go/APIServer/log/logTest.log");
 
 // Zlogger 추가
 builder.Logging.ClearProviders();
-builder.Logging.AddZLoggerConsole();
+if (builder.Environment.EnvironmentName == Environments.Production)
+{
+    //bool exists = System.IO.Directory.Exists("./log");
+    //if (!exists)
+    //    System.IO.Directory.CreateDirectory("./log");
+
+    //File.Create("./log/logTest.pos").Dispose();
+    //File.Create("./log/logTest.log").Dispose();
+    //builder.Logging.AddZLoggerFile("./log/logTest.log");
+}
+
+builder.Logging.AddZLoggerConsole(); // fluentd container
 
 // app build
 var app = builder.Build();
