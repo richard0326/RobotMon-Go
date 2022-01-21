@@ -38,10 +38,10 @@ MyConfig의 "Environment" 설정에 따라 appsettings.Production.json 또는 ap
 appsettings.Production.json 파일은 Redis, DB의 ip, port가 클라우드 환경에 알맞게 세팅되어 있음.   
 
 ## docker build  
-richard0326/robotmon-go-apiserver  
+rockylinux 8.5 -> richard0326/robotmon-go-apiserver  
 ApiServer build할때 사용한 dockerfile  
 (https://github.com/richard0326/RobotMon-Go/blob/main/Setting/apiserver/Dockerfile)  
 
-richard0326/fluentd  
+fluentd 1.14.0 -> richard0326/fluentd  
 Fluentd에 MySQL5.6.36 포함하여 build할때 사용한 dockerfile  
 (https://github.com/richard0326/RobotMon-Go/blob/main/Setting/fluentdSettings/Dockerfile)  
