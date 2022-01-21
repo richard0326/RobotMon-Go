@@ -31,25 +31,17 @@ sudo docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=root1234 -d -p 330
 sudo docker exec -it mysql-container bash   
 
 # redis 실행하기
-1. 컨테이너 실행 명령어  
 sudo docker run -p 6379:6379 --name myredis -d redis  
 
 # foward fluentd 실행하기  
-forward를 진행할 fluentd 서버  
-1. 컨테이너 실행 명령어  
 sudo docker run -u root -p 24224:24224 -v /home/richard0326/fluentForward.conf:/fluentd/etc/fluent.conf --name fluentd_forward richard0326/fluentd  
   
 # apiserver 실행하기
-1. fluentd 컨테이너 실행 명령어  
 sudo docker run -u root -v /home/richard0326/fluent.conf:/fluentd/etc/fluent.conf -v /home/richard0326:/fluentd/logs/ --name fluentd richard0326/fluentd  
   
-2. apiserver 컨테이너 실행 명령어  
+fluentd container는 돌아가게 냅두고, 서버에 다시 새로 접속한다.    
 sudo docker run -d --privileged -p 5000:5000 -v /home/richard0326:/home/fluentd --name apiserver richard0326/robotmon-go-apiserver /sbin/init  
-
-3. apiserver 컨테이너 접속 명령어  
-sudo docker exec -it apiserver /bin/bash   
-
-4. apiserver 서버 실행 시키기  
+sudo docker exec -it apiserver /bin/bash  
 cd home/net6.0  
 vi MyConfig.json    
 아래와 같이 변경해준다.  
