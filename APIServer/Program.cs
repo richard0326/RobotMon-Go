@@ -1,6 +1,7 @@
 using ApiServer;
 using ApiServer.Options;
 using ApiServer.Services;
+using Microsoft.Extensions.Logging.Console;
 using ZLogger;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,28 +43,32 @@ builder.Services.AddSingleton<IDataStorage, DataStorage>();
 builder.Services.AddSingleton<IRankingManager, RankManager>();
 builder.Services.AddControllers();
 
-bool exists = System.IO.Directory.Exists("./log");
-if (!exists)
-    System.IO.Directory.CreateDirectory("./log");
-
-File.Create("./log/logTest.pos").Dispose();
-File.Create("./log/logTest.log").Dispose();
-builder.Logging.AddZLoggerFile("C:/gitfolder/RobotMon-Go/APIServer/log/logTest.log");
-
-// Zlogger 추가
-builder.Logging.ClearProviders();
-if (builder.Environment.EnvironmentName == Environments.Production)
+builder.Host.ConfigureLogging(logging =>
 {
-    //bool exists = System.IO.Directory.Exists("./log");
-    //if (!exists)
-    //    System.IO.Directory.CreateDirectory("./log");
+    logging.ClearProviders();
 
-    //File.Create("./log/logTest.pos").Dispose();
-    //File.Create("./log/logTest.log").Dispose();
-    //builder.Logging.AddZLoggerFile("./log/logTest.log");
-}
+    if (builder.Environment.EnvironmentName == Environments.Production)
+    {
+        var fileDir = Configuration["logdir"];
+        bool exists = Directory.Exists(fileDir);
+        if (!exists)
+        {
+            Directory.CreateDirectory(fileDir);
+        }
 
-builder.Logging.AddZLoggerConsole(); // fluentd container
+        exists = File.Exists($"{fileDir}logTest.pos");
+        if (!exists)
+        {
+            File.Create($"{fileDir}logTest.pos").Dispose();
+        }
+
+        logging.AddZLoggerRollingFile((dt, x) => $"{fileDir}{dt.ToLocalTime():yyyy-MM-dd}_{x:000}.log", x => x.ToLocalTime().Date, 1024);
+    }
+    else
+    {
+        logging.AddZLoggerConsole();
+    }
+});
 
 // app build
 var app = builder.Build();
@@ -77,7 +82,9 @@ app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 var redisDb = app.Services.GetService<IRedisDb>();
 var datastorage = app.Services.GetService<IDataStorage>();
 var rankingManager = app.Services.GetService<IRankingManager>();
-if (redisDb is null || datastorage is null || rankingManager is null)
+var logger = app.Services.GetService<ILogger<Program>>();
+
+if (redisDb is null || datastorage is null || rankingManager is null || logger is null)
 {
     Console.WriteLine("singleton is null");
 }
@@ -89,9 +96,9 @@ else
     rankingManager.Init(Configuration["DbConfig:GameConnStr"], redisDb);
 
     // 현재 모드 확인하기
-    Console.WriteLine($"Program env Mode : {app.Environment.EnvironmentName}");
-    Console.WriteLine($"My appsetting Mode : {Configuration["Mode"]}");
-    Console.WriteLine($"urls : {Configuration["urls"]}");
+    logger.ZLogInformation($"Program env Mode : {app.Environment.EnvironmentName}");
+    logger.ZLogInformation($"My appsetting Mode : {Configuration["Mode"]}");
+    logger.ZLogInformation($"urls : {Configuration["urls"]}");
 
     // 앱 실행 - IP Port 설정
     app.Run(Configuration["urls"]);
