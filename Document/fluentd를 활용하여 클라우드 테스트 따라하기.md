@@ -15,16 +15,23 @@ sudo systemctl start docker
 richard0326/robotmon-go-apiserver  
 ApiServer build할때 사용한 dockerfile  
 (https://github.com/richard0326/RobotMon-Go/blob/main/Setting/apiserver/Dockerfile)  
+
 richard0326/fluentd  
 Fluentd에 MySQL5.6.36 포함하여 build할때 사용한 dockerfile  
 (https://github.com/richard0326/RobotMon-Go/blob/main/Setting/fluentdSettings/Dockerfile)  
 
-# version
-OS  
-Docker  
+# 개발 환경
+.NET core SDK 6.0.1  
+Docker 20.10.12   
+
+# Docker image version
 MySQL 5.6.36  
-Redis  
-Fluentd  
+Redis 6.2.6  
+Fluentd 1.14.0  
+rockylinux 8.5   
+
+# 클라우드 서버 환경
+CentOS 8  
 
 # build된 container 다운 받기
 sudo docker pull richard0326/robotmon-go-apiserver  
@@ -55,9 +62,7 @@ forward 기능만 있는 fluentd 컨테이너의 fluentd.conf 파일
 
 # mysql 실행하기
 1. 컨테이너 실행 명령어  
-sudo docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=root1234 -d -p 3306:3306 -v /home/richard0326:/var/lib/mysql mysql:5.6.36   
-
-2. 컨테이너 접속 명령어  
+sudo docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=root1234 -d -p 3306:3306 -v /home/richard0326:/var/lib/mysql mysql:5.6.36    
 sudo docker exec -it mysql-container bash   
 
 # redis 실행하기
@@ -71,10 +76,10 @@ sudo docker run -u root -p 24224:24224 -v /home/richard0326/fluentForward.conf:/
   
 # apiserver 실행하기
 1. fluentd 컨테이너 실행 명령어  
-sudo docker run -u root -v /home/richard0326/fluent.conf:/fluentd/etc/fluent.conf -v /home/richard0326/fluentdlog:/fluentd/logs --name fluentd richard0326/fluentd  
-
+sudo docker run -u root -v /home/richard0326/fluent.conf:/fluentd/etc/fluent.conf -v /home/richard0326:/fluentd/logs/ --name fluentd richard0326/fluentd  
+  
 2. apiserver 컨테이너 실행 명령어  
-sudo docker run -d --log-driver json-file --log-opt max-size=10m --privileged -p 5000:5000 -v /home/richard0326:/home/fluentd --name apiserver richard0326/robotmon-go-apiserver /sbin/init  
+sudo docker run -d --privileged -p 5000:5000 -v /home/richard0326:/home/fluentd --name apiserver richard0326/robotmon-go-apiserver /sbin/init  
 
 3. apiserver 컨테이너 접속 명령어  
 sudo docker exec -it apiserver /bin/bash   
@@ -83,13 +88,19 @@ sudo docker exec -it apiserver /bin/bash
 cd home/net6.0  
 vi MyConfig.json    
 (https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/MyConfig.json)  
-"Environment": "Development" -> "Production"  
-appsettings.production.json 파일에 Redis, DB ip가 클라우드 환경에 맞게 세팅되어 있음.   
+아래와 같이 변경해준다.  
+{  
+  "Environment": "Production",  
+  "urls": "http://*:5000",  
+  "logdir": "/home/fluentd/"  
+}    
+참고로  
+"Production"로 설정하면 실행파일에서 appsettings.Production.json을 실행  
+"Development"로 설정하면 실행파일에서 appsettings.Development.json을 실행  
+appsettings.Production.json 파일은 Redis, DB의 ip, port가 클라우드 환경에 맞게 세팅되어 있음.   
 (https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/appsettings.Production.json)  
-"urls": "http://localhost:5000" -> 자유롭게 변경      
-- dotnet APIServer.dll   
-- dotnet APIServer.dll --urls "http://*:5000" (urls를 인자로 사용하면 기존의 conf가 오버라이드)  
+dotnet ApiServer.dll   
 
-# 테스트
+# 테스트  
 테스트는 메인 화면의 README.md를 참고하여 진행하면 좋을 것 같습니다.  
 (https://github.com/richard0326/RobotMon-Go#readme)  
