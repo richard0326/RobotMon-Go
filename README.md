@@ -63,34 +63,25 @@
 마무리 작업(1/19~28)
 - dotnet 6 버전으로 변경(1/20)  
 - 코드 및 문서 정리(1/20~21)
-- 발표 준비(1/24~26)
-- 발표(1/27)  
+- 발표 준비(1/24~25)
+- 발표(1/26)  
 - 교육 종료(1/28)  
 
 시간 여유되면 구현할 것
-- 배치Job 프로그램(기간 지난 우편 정리)
-- 교환기능
+- 배치Job 프로그램(기간 지난 우편 정리)  
+- 교환기능  
 
 
-## 서버 실행 방법
-windows 환경  
-1번 방식  
-- 실행 파일(app.exe, app.dll)이 있는 파일 경로로 이동한다.
-- 다음 명령어로 실행 : "dotnet [프로젝트명].dll --urls [IP주소]"
-
-2번 방식  
-- cmd 창에서 다음 명령어로 실행 : "dotnet run --project [프로젝트경로] --urls [IP주소]" 
-
-사용 예시
-- 명령어1 : dotnet ApiServer.dll --urls "http://localhost:5110"
-- 명령어2 : dotnet run --project C:\Users\ ... \RobotMon-Go\ApiServer\ApiServer.csproj --urls "http://*:5110"
+## API 서버 실행 방법
+1. dotnet ApiServer.dll
+2. dotnet run --project C:\Users\ ... \RobotMon-Go\ApiServer\ApiServer.csproj
 
 ## URL 설명
 사용 예시  :  
 ![](./Document/images/UrlExample.PNG)      
 모든 요청은 POST로 진행  
 body를 객체와 일치하여 Json 포맷으로 보내면 됨.  
-이 파일 참고 : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/httpTest.http
+구체적인 사용 예시 : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/httpTest.http
 
 http://[IP]:[port]/Login   
 요청 Req : https://github.com/richard0326/RobotMon-Go/blob/main/APIServer/Model/ReqRes/LoginRequest.cs   

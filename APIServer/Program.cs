@@ -99,7 +99,7 @@ else
     logger.ZLogInformation($"Program env Mode : {app.Environment.EnvironmentName}");
     logger.ZLogInformation($"My appsetting Mode : {Configuration["Mode"]}");
     logger.ZLogInformation($"urls : {Configuration["urls"]}");
-
+    logger.ZLogInformation(Environment.Version.ToString());
     // 앱 실행 - IP Port 설정
     app.Run(Configuration["urls"]);
 }
