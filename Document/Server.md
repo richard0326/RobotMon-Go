@@ -1,5 +1,6 @@
 ## 서버구조도 및 흐름
 ![](./images/1.PNG)    
+![](./images/2.PNG)   
 
 ## 개발 환경
 .NET core SDK 6.0.1  
