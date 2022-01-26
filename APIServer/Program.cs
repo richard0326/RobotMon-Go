@@ -65,7 +65,7 @@ builder.Host.ConfigureLogging(logging =>
 
         logging.AddZLoggerRollingFile(
             (dt, x) => $"{fileDir}{dt.ToLocalTime():yyyy-MM-dd}_{x:000}.log", 
-            x => x.ToLocalTime().Date, 1024);
+            x => x.ToLocalTime().Date, 1024); // 1024KB
     }
     else
     {
