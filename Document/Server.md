@@ -1,7 +1,8 @@
 ## 서버구조도 및 흐름
 ![](./images/fluentd_test.PNG)    
 
-![](./images/시연 영상.mp4)
+## 시연 영상
+(./images/시연 영상.mp4)
 
 ## 개발 환경
 .NET core SDK 6.0.1  
