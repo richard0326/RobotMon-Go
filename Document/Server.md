@@ -1,9 +1,6 @@
 ## 서버구조도 및 흐름
 ![](./images/1.PNG)    
 
-## 시연 영상
-(./images/시연 영상.mp4)
-
 ## 개발 환경
 .NET core SDK 6.0.1  
 Docker 20.10.12   
