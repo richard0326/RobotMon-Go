@@ -37,7 +37,8 @@ namespace ApiServer.Services
             }
         }
 
-        public async Task<ErrorCode> UpdateStarCount(string id, Int32 starCount, IGameDb gameDb, IRedisDb redisDb)
+        public async Task<ErrorCode> UpdateStarCount(string id, 
+            Int32 starCount, IGameDb gameDb, IRedisDb redisDb)
         {
             // Redis의 랭킹 값을 변경을 시도한다.
             if (await redisDb.UpdateRankAsync(id, starCount) == false)

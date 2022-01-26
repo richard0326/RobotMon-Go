@@ -40,7 +40,8 @@ namespace ApiServer.Controllers
             var saltValue = Security.SaltString();
             var hashingPassword = Security.MakeHashingPassWord(saltValue, request.PW);
 
-            var (errorCode, lastCreateIndex) = await _accountDb.CreateAccountDataAsync(request.ID, hashingPassword, saltValue);
+            var (errorCode, lastCreateIndex) = await _accountDb.CreateAccountDataAsync(
+                    request.ID, hashingPassword, saltValue);
             if (errorCode != ErrorCode.None)
             {
                 response.Result = errorCode;

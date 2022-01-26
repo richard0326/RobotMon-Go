@@ -93,7 +93,6 @@ namespace ApiServer.Controllers
             {
                 // 업데이트 실패
                 response.Result = errorCode;
-                response.Result = errorCode;
                 _logger.ZLogError($"{nameof(UpgradePost)} ErrorCode : {response.Result}");
                 return response;
             }            

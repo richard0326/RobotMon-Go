@@ -30,7 +30,8 @@ else
 
 // Config 파일 추가하기
 //builder.Configuration.AddJsonFile("appsettings.json");
-builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
+builder.Configuration.AddJsonFile(
+    $"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
 
 // Config 파일 추가 등록하기
 builder.Services.Configure<DbConfig>(Configuration.GetSection(nameof(DbConfig)));
@@ -62,7 +63,9 @@ builder.Host.ConfigureLogging(logging =>
             File.Create($"{fileDir}logTest.pos").Dispose();
         }
 
-        logging.AddZLoggerRollingFile((dt, x) => $"{fileDir}{dt.ToLocalTime():yyyy-MM-dd}_{x:000}.log", x => x.ToLocalTime().Date, 1024);
+        logging.AddZLoggerRollingFile(
+            (dt, x) => $"{fileDir}{dt.ToLocalTime():yyyy-MM-dd}_{x:000}.log", 
+            x => x.ToLocalTime().Date, 1024);
     }
     else
     {

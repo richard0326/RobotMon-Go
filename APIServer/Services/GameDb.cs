@@ -197,13 +197,13 @@ namespace ApiServer.Services
 
                 if (updateCount == 0)
                 {
-                    _logger.ZLogError($"{nameof(TryDailyCheckAsync)} Error : {ErrorCode.UserGameInfoFailStarCountUpdateFail}");
+                    _logger.ZLogError($"{nameof(UpdateUserStarCountAsync)} Error : {ErrorCode.UserGameInfoFailStarCountUpdateFail}");
                     return ErrorCode.UserGameInfoFailStarCountUpdateFail;
                 }
             }
             catch (Exception e)
             {
-                _logger.ZLogError($"{nameof(InitUserGameInfoAsync)} Exception : {e}");
+                _logger.ZLogError($"{nameof(UpdateUserStarCountAsync)} Exception : {e}");
                 return ErrorCode.UserGameInfoFailStarCountException;
             }
             return ErrorCode.None;
@@ -360,7 +360,8 @@ namespace ApiServer.Services
                 }
                 
                 // data 갱신
-                var updateQuery = $"UPDATE dailycheck Set RewardCount = RewardCount + 1, RewardDate = CURDATE() WHERE ID = @userId";
+                var updateQuery = 
+                    $"UPDATE dailycheck Set RewardCount = RewardCount + 1, RewardDate = CURDATE() WHERE ID = @userId";
                 var updateCount = await _dbConn.ExecuteAsync(updateQuery, new
                 {
                     userId = ID
