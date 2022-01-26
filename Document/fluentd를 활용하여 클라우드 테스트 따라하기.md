@@ -1,3 +1,6 @@
+# docker 테스트 환경
+![](./images/fluentd_test.PNG) 
+
 # docker 설치, 켜기
 sudo wget -qO- http://get.docker.com/ | sh  
 sudo systemctl start docker  
