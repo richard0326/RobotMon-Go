@@ -12,7 +12,6 @@
   
   
 ## 문서
-- 서버 구조도
 - 패킷(WebAPI에서는 요청과 응답) 시퀸스 다이얼 그램
     - PlantUML로 작성한다
 - Database Table
@@ -20,10 +19,10 @@
 - ppt 발표 자료
 - 클라우드 테스트.md
 
-## 세팅
-- apiserver 세팅
-- fluentd 세팅
-- mysql 세팅
+## 세팅 정보
+- apiserver 관련 정보
+- fluentd 관련 정보
+- mysql 관련 
 
 ## 서버 애플리케이션 실행
 - 최종적으로 Rocky Linux에서 실행될 예정이다  
