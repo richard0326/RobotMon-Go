@@ -6,7 +6,6 @@
 ```
 @startuml
 Client <-> APIServer: Req/Res CreateAccountController
-note right APIServer: DB에 중복 ID를 체크한다.
 @enduml
 ```
   
@@ -14,7 +13,6 @@ note right APIServer: DB에 중복 ID를 체크한다.
 ```
 @startuml
 Client <-> APIServer: Req/Res LoginController
-note right APIServer: Redis 중복 로그인 검증, 보안토큰 생성 및 전달
 @enduml
 ```
   
@@ -22,8 +20,6 @@ note right APIServer: Redis 중복 로그인 검증, 보안토큰 생성 및 전
 ```
 @startuml
 Client <-> APIServer: Req/Res UserGameInfoController
-note right APIServer: 유저 개인의 정보를 준다. ex) 경험치, 몬스터, 소지품 등등
-
 @enduml
 ```
 
@@ -32,7 +28,6 @@ note right APIServer: 유저 개인의 정보를 준다. ex) 경험치, 몬스�
 ```
 @startuml
 Client <-> APIServer: Req/Res FieldMonsterController
-note right APIServer: 유저 위치 정보에 따른 주변 지역 정보를 제공한다. 
 @enduml
 ```
  
@@ -40,7 +35,6 @@ note right APIServer: 유저 위치 정보에 따른 주변 지역 정보를 제
 ```
 @startuml
 Client <-> APIServer: Req/Res CatchController
-note right APIServer: 유저 이동한 위치 정보에 따른 주변 지역 정보를 제공한다. (기존 위치의 정보를 제외한 정보) 
 @enduml
 ```
 
@@ -48,7 +42,6 @@ note right APIServer: 유저 이동한 위치 정보에 따른 주변 지역 정
 ```
 @startuml
 Client <-> APIServer: Req/Res RemoveCatchController
-note right APIServer: 유저 이동한 위치 정보에 따른 주변 지역 정보를 제공한다. (기존 위치의 정보를 제외한 정보) 
 @enduml
 ```
 
@@ -62,8 +55,7 @@ Client <-> APIServer: Req/Res CatchListController
 ### 출석체크
 ```
 @startuml
-Client <-> APIServer: Req/Res DailyCheckController
-note right APIServer: 출석체크에 따른 보상을 제공한다. 
+Client <-> APIServer: Req/Res DailyCheckController 
 @enduml
 ```
 
@@ -71,7 +63,6 @@ note right APIServer: 출석체크에 따른 보상을 제공한다.
 ```
 @startuml
 Client <-> APIServer: Req/Res RankingListController
-note right APIServer: .
 @enduml
 ``` 
 
@@ -79,7 +70,6 @@ note right APIServer: .
 ```
 @startuml
 Client <-> APIServer: Req/Res SendPresentController
-note right APIServer: .
 @enduml
 ``` 
 
@@ -87,7 +77,6 @@ note right APIServer: .
 ```
 @startuml
 Client <-> APIServer: Req/Res MailListController
-note right APIServer: .
 @enduml
 ``` 
 
@@ -95,7 +84,6 @@ note right APIServer: .
 ```
 @startuml
 Client <-> APIServer: Req/Res SendMailController
-note right APIServer: .
 @enduml
 ``` 
 
@@ -103,7 +91,6 @@ note right APIServer: .
 ```
 @startuml
 Client <-> APIServer: Req/Re sRecvMailController
-note right APIServer: .
 @enduml
 ``` 
 
@@ -111,7 +98,6 @@ note right APIServer: .
 ```
 @startuml
 Client <-> APIServer: Req/Res UpgradeController
-note right APIServer: .
 @enduml
 ``` 
 
@@ -119,6 +105,5 @@ note right APIServer: .
 ```
 @startuml
 Client <-> APIServer: Req/Res EvolveController
-note right APIServer: .
 @enduml
 ``` 
