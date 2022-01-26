@@ -1,5 +1,5 @@
 ## 서버구조도 및 흐름
-![](./images/fluentd_test.PNG)    
+![](./images/1.PNG)    
 
 ## 시연 영상
 (./images/시연 영상.mp4)
